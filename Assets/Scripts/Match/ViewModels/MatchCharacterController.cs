@@ -5,7 +5,7 @@ using UnityEngine;
 /// Gère les déplacements du personnage
 /// </summary>
 [RequireComponent(typeof(AIInput), typeof(PlayerInput))]
-public class CharacterController : MonoBehaviour
+public class MatchCharacterController : MonoBehaviour
 {
     #region Propriétés
 
@@ -81,6 +81,14 @@ public class CharacterController : MonoBehaviour
     public void GiveControlToAI()
     {
         _activeInput = _aiInput;
+    }
+
+    /// <summary>
+    /// Active ou non les commandes du personnages
+    /// </summary>
+    public void EnableInput(bool enable)
+    {
+        //TAF
     }
 
     #endregion

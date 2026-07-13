@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - Obstacles/Field
+  - Obstacles/OutOfField
+  - Ball
+  - Player/MatchCharacter
+  - Obstacles/Wall
   layers:
   - Default
   - TransparentFX
@@ -11,11 +16,11 @@ TagManager:
   - 
   - Water
   - UI
-  - Obstacles/Field
-  - Obstacles/Wall
-  - OutOfField
-  - Player
-  - Ball
+  - 
+  - 
+  - 
+  - 
+  - 
   - 
   - 
   - 

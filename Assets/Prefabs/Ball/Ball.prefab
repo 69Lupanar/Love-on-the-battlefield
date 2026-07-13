@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 3300745272491833509}
   - component: {fileID: 5935378643820169444}
   - component: {fileID: 2687816510441123923}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Ball
-  m_TagString: Untagged
+  m_TagString: Ball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -98,7 +98,7 @@ MonoBehaviour:
   _obstacleTags:
   - Obstacles/Field
   - Obstacles/Wall
-  _outOfFieldTag: OutOFField
+  _outOfFieldTag: Obstacles/OutOfField
   _playerTag: Player
 --- !u!1 &3359814360663519817
 GameObject:
