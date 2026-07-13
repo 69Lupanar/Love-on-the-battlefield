@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.Match
@@ -5,49 +6,28 @@ namespace Assets.Scripts.Match
     /// <summary>
     /// Gère la création des joueurs
     /// </summary>
-    public class MatchSpawnerViewModel : MonoBehaviour
+    internal sealed class MatchSpawnerViewModel : MonoBehaviour
     {
         #region Propriétés
 
         /// <summary>
         /// Les persos du joueur
         /// </summary>
-        public MatchCharacterController[] Allies { get; private set; }
+        internal List<Transform> AlliesT { get; private set; } = new();
 
         /// <summary>
         /// Les persos ennemis
         /// </summary>
-        public MatchCharacterController[] Enemies { get; private set; }
+        internal List<Transform> EnemiesT { get; private set; } = new();
 
         /// <summary>
         /// Les ballons
         /// </summary>
-        public Ball[] Balls { get; private set; }
-
-        /// <summary>
-        /// L'ID du perso contrôlé par le joueur
-        /// </summary>
-        public int ActivePlayerIndex { get; set; }
+        internal List<Transform> BallsT { get; private set; } = new();
 
         #endregion
 
         #region Inspecteur
-
-        [field: SerializeField]
-        [field: Tooltip("Nombre d'alliés à instancier")]
-        public int NbAllies { get; set; } = 6;
-
-        [field: SerializeField]
-        [field: Tooltip("Nombre d'ennemis à instancier")]
-        public int NbEnemies { get; set; } = 6;
-
-        [field: SerializeField]
-        [field: Tooltip("Nombre de ballons à instancier")]
-        public int NbBalls { get; set; } = 5;
-
-        [Space(10)]
-        [Header("Spawner")]
-        [Space(10)]
 
         [SerializeField]
         [Tooltip("Prefab des alliés dirigés par le joueur")]
@@ -82,88 +62,122 @@ namespace Assets.Scripts.Match
         #region Méthodes publiques
 
         /// <summary>
-        /// Alloue les tables pour les persos et les ballons
+        /// Désactive les joueurs et ballons actifs
         /// </summary>
-        public void AllocateArrays()
+        internal void DisableActivePlayersAndBalls()
         {
-            Allies = new MatchCharacterController[NbAllies];
-            Enemies = new MatchCharacterController[NbEnemies];
-            Balls = new Ball[NbBalls];
+            for (int i = 0; i < AlliesT.Count; ++i)
+            {
+                AlliesT[i].SetParent(_inactiveAlliesParent);
+            }
+
+            for (int i = 0; i < EnemiesT.Count; ++i)
+            {
+                EnemiesT[i].SetParent(_inactiveEnemiesParent);
+            }
+
+            for (int i = 0; i < BallsT.Count; ++i)
+            {
+                BallsT[i].SetParent(_inactiveBallsParent);
+            }
         }
 
         /// <summary>
-        /// Assigne le perso à contrôler par le joueur
+        /// Instancie les joueurs et ballons
         /// </summary>
-        /// <param name="index">L'id du perso actif</param>
-        public void SetActivePlayer(int index)
+        internal void SpawnPlayersAndBalls(int nbAllies, int nbEnemies, int nbBalls)
         {
-            ActivePlayerIndex = index;
+            AlliesT.Clear();
+            EnemiesT.Clear();
+            BallsT.Clear();
+            Transform character;
+            Transform ball;
 
-            for (int i = 0; i < NbAllies; ++i)
+            for (int i = 0; i < nbAllies; ++i)
             {
-                if (i == index)
+                if (_inactiveAlliesParent.childCount > 0)
                 {
-                    Allies[i].GiveControlToPlayer();
+                    character = _inactiveAlliesParent.GetChild(0);
                 }
                 else
                 {
-                    Allies[i].GiveControlToAI();
+                    character = Instantiate(_allyPrefab, transform).transform;
                 }
+
+                character.SetParent(transform);
+                AlliesT.Add(character);
+            }
+
+            for (int i = 0; i < nbEnemies; ++i)
+            {
+                if (_inactiveEnemiesParent.childCount > 0)
+                {
+                    character = _inactiveEnemiesParent.GetChild(0);
+                }
+                else
+                {
+                    character = Instantiate(_enemyPrefab, transform).transform;
+                }
+
+                character.SetParent(transform);
+                EnemiesT.Add(character);
+            }
+
+            for (int i = 0; i < nbBalls; ++i)
+            {
+                if (_inactiveBallsParent.childCount > 0)
+                {
+                    ball = _inactiveBallsParent.GetChild(0);
+                }
+                else
+                {
+                    ball = Instantiate(_ballPrefab, transform).transform;
+                }
+
+                ball.SetParent(transform);
+                BallsT.Add(ball);
             }
         }
 
         /// <summary>
-        /// Désactive les joueurs et ballons actifs
+        /// Ramène les joueurs et ballons à leurs positions et rotations d'origine
         /// </summary>
-        internal void EnablePlayersInput(bool enable)
+        internal void ResetPlayersAndBallsPoses()
         {
-            for (int i = 0; i < Allies.Length; ++i)
+            for (int i = 0; i < AlliesT.Count; ++i)
             {
-                Allies[i].EnableInput(enable);
+                AlliesT[i].transform.SetPositionAndRotation(GetSpawnPosition(_inactiveAlliesParent.position, i, AlliesT.Count), _inactiveAlliesParent.rotation);
             }
 
-            for (int i = 0; i < Enemies.Length; ++i)
+            for (int i = 0; i < EnemiesT.Count; ++i)
             {
-                Enemies[i].EnableInput(enable);
-            }
-        }
-
-        /// <summary>
-        /// Assigne les persos et ballons
-        /// </summary>
-        internal void SetPlayersAndBalls(Transform[] alliesT, Transform[] enemiesT, Transform[] ballsT)
-        {
-            for (int i = 0; i < alliesT.Length; ++i)
-            {
-                Allies[i] = alliesT[i].GetComponent<MatchCharacterController>();
+                EnemiesT[i].transform.SetPositionAndRotation(GetSpawnPosition(_inactiveEnemiesParent.position, i, EnemiesT.Count), _inactiveEnemiesParent.rotation);
             }
 
-            for (int i = 0; i < enemiesT.Length; ++i)
+            for (int i = 0; i < BallsT.Count; ++i)
             {
-                Enemies[i] = enemiesT[i].GetComponent<MatchCharacterController>();
-            }
-
-            for (int i = 0; i < ballsT.Length; ++i)
-            {
-                Balls[i] = ballsT[i].GetComponent<Ball>();
-            }
-        }
-
-        internal void SetTeams()
-        {
-            for (int i = 0; i < NbAllies; ++i)
-            {
-                Allies[i].IsAlly = false;
-            }
-
-            for (int i = 0; i < NbEnemies; ++i)
-            {
-                Enemies[i].GiveControlToAI();
-                Enemies[i].IsAlly = false;
+                BallsT[i].transform.SetPositionAndRotation(GetSpawnPosition(_inactiveBallsParent.position, i, BallsT.Count), _inactiveBallsParent.rotation);
             }
         }
 
         #endregion
 
+        #region Méthodes privées
+
+        /// <summary>
+        /// Calcule la position où placer l'objet
+        /// </summary>
+        /// <param name="origin">La position d'origine</param>
+        /// <param name="i">Index de l'élément actuel</param>
+        /// <param name="max">Nb d'objets total à créer</param>
+        /// <returns>La position de l'objet dans la scène</returns>
+        private Vector3 GetSpawnPosition(Vector3 origin, int i, int max)
+        {
+            float startPosX = -Mathf.Floor(max / 2f) * _spawnSpacing + (max % 2 == 0 ? _spawnSpacing / 2f : 0f) + _spawnSpacing * i;
+            origin.x += startPosX;
+            return origin;
+        }
+
+        #endregion
     }
 }

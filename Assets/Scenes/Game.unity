@@ -167,16 +167,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce98315f66d9b4b4e853b4d83a3f750c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assets.Scripts.Match::Assets.Scripts.Match.MatchManagerView
-  _nbAlliesField: {fileID: 800707691}
-  _nbEnemiesField: {fileID: 2082154323}
-  _nbBallsField: {fileID: 766272419}
-  _allyPrefab: {fileID: 7615408743015150759, guid: 1ac0f2b081b3c294db6931ce76f0126d, type: 3}
-  _enemyPrefab: {fileID: 3244571412668085665, guid: bb437d42362851f428d1c3dc4d29f59b, type: 3}
-  _ballPrefab: {fileID: 3030693535154255985, guid: daf5e336587845d4d848e567be43f833, type: 3}
-  _inactiveAlliesParent: {fileID: 334784811}
-  _inactiveEnemiesParent: {fileID: 984324169}
-  _inactiveBallsParent: {fileID: 1071646205}
-  _spawnSpacing: 1.5
 --- !u!114 &14516229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,9 +179,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cfc097cb9e2a8542b354484624454f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assets.Scripts.Match::MatchSpawnerViewModel
-  <NbAllies>k__BackingField: 6
-  <NbEnemies>k__BackingField: 6
-  <NbBalls>k__BackingField: 5
   _allyPrefab: {fileID: 7615408743015150759, guid: 1ac0f2b081b3c294db6931ce76f0126d, type: 3}
   _enemyPrefab: {fileID: 3244571412668085665, guid: bb437d42362851f428d1c3dc4d29f59b, type: 3}
   _ballPrefab: {fileID: 3030693535154255985, guid: daf5e336587845d4d848e567be43f833, type: 3}
@@ -278,6 +265,53 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &196672272
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 196672273}
+  - component: {fileID: 196672274}
+  m_Layer: 0
+  m_Name: Match Settings
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &196672273
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 196672272}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1527388465}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &196672274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 196672272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02deec48f73afb84db306a2e226fd949, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assets.Scripts.Match::Assets.Scripts.Match.MatchSettingsView
+  _nbAlliesField: {fileID: 800707691}
+  _nbEnemiesField: {fileID: 2082154323}
+  _nbBallsField: {fileID: 766272419}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -675,7 +709,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5031165631325415339, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_Name
-      value: InputField
+      value: Nb Balls InputField
       objectReference: {fileID: 0}
     - target: {fileID: 5639673717344952596, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_fontSize
@@ -744,7 +778,7 @@ PrefabInstance:
     - target: {fileID: 6701598416432370036, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 14516228}
+      objectReference: {fileID: 196672274}
     - target: {fileID: 6701598416432370036, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -755,7 +789,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6701598416432370036, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Assets.Scripts.Match.MatchManagerView, Assets.Scripts.Match
+      value: Assets.Scripts.Match.MatchSettingsView, Assets.Scripts.Match
       objectReference: {fileID: 0}
     - target: {fileID: 6701598416432370036, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -1585,6 +1619,7 @@ Transform:
   m_Children:
   - {fileID: 14516226}
   - {fileID: 1831745583}
+  - {fileID: 196672273}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1527947728
@@ -1670,20 +1705,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1831745581}
-        m_TargetAssemblyTypeName: Assets.Scripts.Match.MatchManagerView, Assets.Scripts.Match
-        m_MethodName: OnStartNewMatchBtnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 14516228}
-        m_TargetAssemblyTypeName: Assets.Scripts.Match.MatchSpawnerView, Assets.Scripts.Match
+      - m_Target: {fileID: 196672274}
+        m_TargetAssemblyTypeName: Assets.Scripts.Match.MatchSettingsView, Assets.Scripts.Match
         m_MethodName: OnStartNewMatchBtnClick
         m_Mode: 1
         m_Arguments:
@@ -1926,7 +1949,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5031165631325415339, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_Name
-      value: InputField
+      value: Nb Enemies InputField
       objectReference: {fileID: 0}
     - target: {fileID: 5639673717344952596, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_fontSize
@@ -1995,7 +2018,7 @@ PrefabInstance:
     - target: {fileID: 6701598416432370036, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 14516228}
+      objectReference: {fileID: 196672274}
     - target: {fileID: 6701598416432370036, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -2006,7 +2029,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6701598416432370036, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Assets.Scripts.Match.MatchManagerView, Assets.Scripts.Match
+      value: Assets.Scripts.Match.MatchSettingsView, Assets.Scripts.Match
       objectReference: {fileID: 0}
     - target: {fileID: 6701598416432370036, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -2157,6 +2180,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5031165631325415339, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
+      propertyPath: m_Name
+      value: Nb Allies InputField
+      objectReference: {fileID: 0}
     - target: {fileID: 6701598416432370036, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.size
       value: 1
@@ -2168,7 +2195,7 @@ PrefabInstance:
     - target: {fileID: 6701598416432370036, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 14516228}
+      objectReference: {fileID: 196672274}
     - target: {fileID: 6701598416432370036, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -2179,7 +2206,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6701598416432370036, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Assets.Scripts.Match.MatchManagerView, Assets.Scripts.Match
+      value: Assets.Scripts.Match.MatchSettingsView, Assets.Scripts.Match
       objectReference: {fileID: 0}
     - target: {fileID: 6701598416432370036, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName

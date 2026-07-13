@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.Match
@@ -27,7 +28,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Init
         /// </summary>
-        private void Start()
+        private void Awake()
         {
             _vm = GetComponent<MatchManagerViewModel>();
             _spawner = FindAnyObjectByType<MatchSpawnerView>();
@@ -38,10 +39,21 @@ namespace Assets.Scripts.Match
         #region Méthodes publiques
 
         /// <summary>
-        /// Appelée par le bouton Start New Match
+        /// Démarre un nouveau match
         /// </summary>
-        public void OnStartNewMatchBtnClick()
+        internal void StartNewMatch()
         {
+            _spawner.CleanupField();
+            (List<Transform> alliesT, List<Transform> enemiesT, List<Transform> ballsT) = _spawner.Spawn(_vm.NbAllies, _vm.NbEnemies, _vm.NbBalls);
+
+            if (_vm.Allies != null)
+            {
+                _vm.EnablePlayersInput(false);
+            }
+            _vm.SetPlayersAndBalls(alliesT, enemiesT, ballsT);
+            _vm.SetTeams();
+            _vm.SetActivePlayer(_vm.ActivePlayerIndex);
+            _vm.EnablePlayersInput(false);
         }
 
         #endregion

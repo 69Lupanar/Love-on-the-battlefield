@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.Match
@@ -12,17 +13,17 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Les persos du joueur
         /// </summary>
-        public MatchCharacterController[] Allies { get; private set; }
+        public List<MatchCharacterController> Allies { get; private set; } = new();
 
         /// <summary>
         /// Les persos ennemis
         /// </summary>
-        public MatchCharacterController[] Enemies { get; private set; }
+        public List<MatchCharacterController> Enemies { get; private set; } = new();
 
         /// <summary>
         /// Les ballons
         /// </summary>
-        public Ball[] Balls { get; private set; }
+        public List<Ball> Balls { get; private set; } = new();
 
         /// <summary>
         /// L'ID du perso contrôlé par le joueur
@@ -50,16 +51,6 @@ namespace Assets.Scripts.Match
         #region Méthodes publiques
 
         /// <summary>
-        /// Alloue les tables pour les persos et les ballons
-        /// </summary>
-        public void AllocateArrays()
-        {
-            Allies = new MatchCharacterController[NbAllies];
-            Enemies = new MatchCharacterController[NbEnemies];
-            Balls = new Ball[NbBalls];
-        }
-
-        /// <summary>
         /// Assigne le perso à contrôler par le joueur
         /// </summary>
         /// <param name="index">L'id du perso actif</param>
@@ -85,12 +76,12 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal void EnablePlayersInput(bool enable)
         {
-            for (int i = 0; i < Allies.Length; ++i)
+            for (int i = 0; i < Allies.Count; ++i)
             {
                 Allies[i].EnableInput(enable);
             }
 
-            for (int i = 0; i < Enemies.Length; ++i)
+            for (int i = 0; i < Enemies.Count; ++i)
             {
                 Enemies[i].EnableInput(enable);
             }
@@ -99,21 +90,28 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Assigne les persos et ballons
         /// </summary>
-        internal void SetPlayersAndBalls(Transform[] alliesT, Transform[] enemiesT, Transform[] ballsT)
+        /// <param name="alliesT">Transforms des persos alliés</param>
+        /// <param name="enemiesT">Transforms des persos ennemis</param>
+        /// <param name="ballsT">Transforms des ballons</param>
+        internal void SetPlayersAndBalls(List<Transform> alliesT, List<Transform> enemiesT, List<Transform> ballsT)
         {
-            for (int i = 0; i < alliesT.Length; ++i)
+            Allies.Clear();
+            Allies.Clear();
+            Allies.Clear();
+
+            for (int i = 0; i < alliesT.Count; ++i)
             {
-                Allies[i] = alliesT[i].GetComponent<MatchCharacterController>();
+                Allies.Add(alliesT[i].GetComponent<MatchCharacterController>());
             }
 
-            for (int i = 0; i < enemiesT.Length; ++i)
+            for (int i = 0; i < enemiesT.Count; ++i)
             {
-                Enemies[i] = enemiesT[i].GetComponent<MatchCharacterController>();
+                Enemies.Add(enemiesT[i].GetComponent<MatchCharacterController>());
             }
 
-            for (int i = 0; i < ballsT.Length; ++i)
+            for (int i = 0; i < ballsT.Count; ++i)
             {
-                Balls[i] = ballsT[i].GetComponent<Ball>();
+                Balls.Add(ballsT[i].GetComponent<Ball>());
             }
         }
 
