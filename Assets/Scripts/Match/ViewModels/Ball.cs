@@ -16,6 +16,13 @@ namespace Assets.Scripts.Match
         public bool IsLive { get; set; }
 
         /// <summary>
+        /// Indique l'équipe à laquelle la balle est réservée.
+        /// Utilisé au début du match avant lorsque les joueurs partent récupérer la balle.
+        /// (0 : Aucune équipe, 1 : Alliés, 2 : Ennemis)
+        /// </summary>
+        public bool ReservedTeamID { get; set; }
+
+        /// <summary>
         /// Indique quelle équipe porte la balle.
         /// Si à -1, aucune équipe ne porte la balle
         /// </summary>

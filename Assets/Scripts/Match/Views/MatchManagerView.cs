@@ -48,8 +48,10 @@ namespace Assets.Scripts.Match
 
             if (_vm.Allies != null)
             {
+                // Désactive les inputs des joueurs déjà présents avant de les retirer
                 _vm.EnablePlayersInput(false);
             }
+
             _vm.SetPlayersAndBalls(alliesT, enemiesT, ballsT);
             _vm.SetTeams();
             _vm.SetActivePlayer(_vm.ActivePlayerIndex);

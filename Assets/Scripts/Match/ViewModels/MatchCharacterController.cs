@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 /// Gère les déplacements du personnage
 /// </summary>
-[RequireComponent(typeof(PlayerInput), typeof(AIInput))]
+[RequireComponent(typeof(MatchPlayerInput), typeof(AIInput))]
 public class MatchCharacterController : MonoBehaviour
 {
     #region Propriétés
@@ -20,7 +20,7 @@ public class MatchCharacterController : MonoBehaviour
 
     [SerializeField]
     [Tooltip("Commandes du joueur")]
-    private PlayerInput _playerInput;
+    private MatchPlayerInput _playerInput;
 
     [SerializeField]
     [Tooltip("Commandes de l'IA")]
