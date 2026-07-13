@@ -128,10 +128,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 14516226}
-  - component: {fileID: 14516227}
+  - component: {fileID: 14516229}
   - component: {fileID: 14516228}
   m_Layer: 0
-  m_Name: Match Manager
+  m_Name: Match Spawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -155,21 +155,6 @@ Transform:
   - {fileID: 1071646205}
   m_Father: {fileID: 1527388465}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &14516227
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 14516225}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab16501c9f9548e4bac50ae2f991d679, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assets.Scripts.Match::Assets.Scripts.Match.MatchManager
-  <NbAllies>k__BackingField: 6
-  <NbEnemies>k__BackingField: 6
-  <NbBalls>k__BackingField: 5
 --- !u!114 &14516228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185,6 +170,28 @@ MonoBehaviour:
   _nbAlliesField: {fileID: 800707691}
   _nbEnemiesField: {fileID: 2082154323}
   _nbBallsField: {fileID: 766272419}
+  _allyPrefab: {fileID: 7615408743015150759, guid: 1ac0f2b081b3c294db6931ce76f0126d, type: 3}
+  _enemyPrefab: {fileID: 3244571412668085665, guid: bb437d42362851f428d1c3dc4d29f59b, type: 3}
+  _ballPrefab: {fileID: 3030693535154255985, guid: daf5e336587845d4d848e567be43f833, type: 3}
+  _inactiveAlliesParent: {fileID: 334784811}
+  _inactiveEnemiesParent: {fileID: 984324169}
+  _inactiveBallsParent: {fileID: 1071646205}
+  _spawnSpacing: 1.5
+--- !u!114 &14516229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 14516225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cfc097cb9e2a8542b354484624454f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assets.Scripts.Match::MatchSpawnerViewModel
+  <NbAllies>k__BackingField: 6
+  <NbEnemies>k__BackingField: 6
+  <NbBalls>k__BackingField: 5
   _allyPrefab: {fileID: 7615408743015150759, guid: 1ac0f2b081b3c294db6931ce76f0126d, type: 3}
   _enemyPrefab: {fileID: 3244571412668085665, guid: bb437d42362851f428d1c3dc4d29f59b, type: 3}
   _ballPrefab: {fileID: 3030693535154255985, guid: daf5e336587845d4d848e567be43f833, type: 3}
@@ -1577,6 +1584,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 14516226}
+  - {fileID: 1831745583}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1527947728
@@ -1662,8 +1670,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 14516228}
+      - m_Target: {fileID: 1831745581}
         m_TargetAssemblyTypeName: Assets.Scripts.Match.MatchManagerView, Assets.Scripts.Match
+        m_MethodName: OnStartNewMatchBtnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 14516228}
+        m_TargetAssemblyTypeName: Assets.Scripts.Match.MatchSpawnerView, Assets.Scripts.Match
         m_MethodName: OnStartNewMatchBtnClick
         m_Mode: 1
         m_Arguments:
@@ -1743,6 +1763,66 @@ Transform:
   m_Children:
   - {fileID: 1108472082}
   m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1831745580
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1831745583}
+  - component: {fileID: 1831745582}
+  - component: {fileID: 1831745581}
+  m_Layer: 0
+  m_Name: Match Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1831745581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1831745580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6380c8670ece984ba6ff084d5b36fc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assets.Scripts.Match::MatchManagerView
+--- !u!114 &1831745582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1831745580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec2ef049bba983d4d8d97e5549070741, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assets.Scripts.Match::MatchManagerViewModel
+  <NbAllies>k__BackingField: 6
+  <NbEnemies>k__BackingField: 6
+  <NbBalls>k__BackingField: 5
+--- !u!4 &1831745583
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1831745580}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1527388465}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1883130125
 PrefabInstance:

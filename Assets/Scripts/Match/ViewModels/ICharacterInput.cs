@@ -5,6 +5,14 @@ namespace Assets.Scripts.Match
     /// </summary>
     public interface ICharacterInput
     {
+        /// <summary>
+        /// Active les commandes
+        /// </summary>
+        public void Enable();
 
+        /// <summary>
+        /// Désactive les commandes
+        /// </summary>
+        public void Disable();
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 /// Gère les déplacements du personnage
 /// </summary>
-[RequireComponent(typeof(AIInput), typeof(PlayerInput))]
+[RequireComponent(typeof(PlayerInput), typeof(AIInput))]
 public class MatchCharacterController : MonoBehaviour
 {
     #region Propriétés
@@ -12,11 +12,19 @@ public class MatchCharacterController : MonoBehaviour
     /// <summary>
     /// true si c'est un allié du joueur
     /// </summary>
-    public bool IsAlly { get; private set; }
+    public bool IsAlly { get; set; }
 
     #endregion
 
     #region Inspecteur
+
+    [SerializeField]
+    [Tooltip("Commandes du joueur")]
+    private PlayerInput _playerInput;
+
+    [SerializeField]
+    [Tooltip("Commandes de l'IA")]
+    private AIInput _aiInput;
 
     [SerializeField]
     [Tooltip("Emplacement de la balle quand tenue par le joueur")]
@@ -27,45 +35,13 @@ public class MatchCharacterController : MonoBehaviour
     #region Instance
 
     /// <summary>
-    /// Commandes du joueur
-    /// </summary>
-    private ICharacterInput _playerInput;
-
-    /// <summary>
-    /// Commandes de l'IA
-    /// </summary>
-    private ICharacterInput _aiInput;
-
-    /// <summary>
     /// Commandes actives du personnage
     /// </summary>
     private ICharacterInput _activeInput;
 
     #endregion
 
-    #region Méthodes Unity
-
-    /// <summary>
-    /// init
-    /// </summary>
-    private void Start()
-    {
-        _playerInput = GetComponent<PlayerInput>();
-        _aiInput = GetComponent<AIInput>();
-    }
-
-    #endregion
-
     #region Méthodes publiques
-
-    /// <summary>
-    /// Assigne le personnage à une équipe
-    /// </summary>
-    /// <param name="isAlly">true si c'est un allié du joueur</param>
-    public void SetTeam(bool isAlly)
-    {
-        IsAlly = isAlly;
-    }
 
     /// <summary>
     /// Donne le contrôle du perso au joueur
@@ -88,7 +64,16 @@ public class MatchCharacterController : MonoBehaviour
     /// </summary>
     public void EnableInput(bool enable)
     {
-        //TAF
+        if (enable)
+        {
+            _playerInput.Enable();
+            _aiInput.Enable();
+        }
+        else
+        {
+            _playerInput.Disable();
+            _aiInput.Disable();
+        }
     }
 
     #endregion

@@ -3,9 +3,9 @@ using UnityEngine;
 namespace Assets.Scripts.Match
 {
     /// <summary>
-    /// Gère le déroulement d'un match
+    /// Gère la création des joueurs
     /// </summary>
-    public class MatchManagerViewModel : MonoBehaviour
+    public class MatchSpawnerViewModel : MonoBehaviour
     {
         #region Propriétés
 
@@ -44,6 +44,38 @@ namespace Assets.Scripts.Match
         [field: SerializeField]
         [field: Tooltip("Nombre de ballons à instancier")]
         public int NbBalls { get; set; } = 5;
+
+        [Space(10)]
+        [Header("Spawner")]
+        [Space(10)]
+
+        [SerializeField]
+        [Tooltip("Prefab des alliés dirigés par le joueur")]
+        private GameObject _allyPrefab;
+
+        [SerializeField]
+        [Tooltip("Prefab des ennemis dirigés par l'IA")]
+        private GameObject _enemyPrefab;
+
+        [SerializeField]
+        [Tooltip("Prefab des ballons")]
+        private GameObject _ballPrefab;
+
+        [SerializeField]
+        [Tooltip("Point de placement des alliés en début de partie")]
+        private Transform _inactiveAlliesParent;
+
+        [SerializeField]
+        [Tooltip("Point de placement des ennemis en début de partie")]
+        private Transform _inactiveEnemiesParent;
+
+        [SerializeField]
+        [Tooltip("Point de placement des ballons en début de partie")]
+        private Transform _inactiveBallsParent;
+
+        [SerializeField]
+        [Tooltip("Espacement entre les objets lors de leur création")]
+        private float _spawnSpacing = 1.5f;
 
         #endregion
 
@@ -132,5 +164,6 @@ namespace Assets.Scripts.Match
         }
 
         #endregion
+
     }
 }
