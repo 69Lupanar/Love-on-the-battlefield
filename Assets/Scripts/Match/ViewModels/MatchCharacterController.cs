@@ -1,80 +1,101 @@
-using Assets.Scripts.Match;
 using UnityEngine;
 
-/// <summary>
-/// Gère les déplacements du personnage
-/// </summary>
-[RequireComponent(typeof(MatchPlayerInput), typeof(AIInput))]
-public class MatchCharacterController : MonoBehaviour
+namespace Assets.Scripts.Match
 {
-    #region Propriétés
-
     /// <summary>
-    /// true si c'est un allié du joueur
+    /// Gère les déplacements du personnage
     /// </summary>
-    public bool IsAlly { get; set; }
-
-    #endregion
-
-    #region Inspecteur
-
-    [SerializeField]
-    [Tooltip("Commandes du joueur")]
-    private MatchPlayerInput _playerInput;
-
-    [SerializeField]
-    [Tooltip("Commandes de l'IA")]
-    private AIInput _aiInput;
-
-    [SerializeField]
-    [Tooltip("Emplacement de la balle quand tenue par le joueur")]
-    private Transform _ballHoldingPos;
-
-    #endregion
-
-    #region Instance
-
-    /// <summary>
-    /// Commandes actives du personnage
-    /// </summary>
-    private ICharacterInput _activeInput;
-
-    #endregion
-
-    #region Méthodes publiques
-
-    /// <summary>
-    /// Donne le contrôle du perso au joueur
-    /// </summary>
-    public void GiveControlToPlayer()
+    [RequireComponent(typeof(MatchPlayerInput), typeof(AIInput), typeof(Rigidbody))]
+    public class MatchCharacterController : MonoBehaviour
     {
-        _activeInput = _playerInput;
-    }
+        #region Propriétés
 
-    /// <summary>
-    /// Donne le contrôle du perso à l'IA
-    /// </summary>
-    public void GiveControlToAI()
-    {
-        _activeInput = _aiInput;
-    }
+        /// <summary>
+        /// true si c'est un allié du joueur
+        /// </summary>
+        public bool IsAlly { get; set; }
 
-    /// <summary>
-    /// Active ou non les commandes du personnages
-    /// </summary>
-    public void EnableInput(bool enable)
-    {
-        if (enable)
+        #endregion
+
+        #region Inspecteur
+
+        [SerializeField]
+        [Tooltip("Commandes du joueur")]
+        private MatchPlayerInput _playerInput;
+
+        [SerializeField]
+        [Tooltip("Commandes de l'IA")]
+        private AIInput _aiInput;
+
+        [SerializeField]
+        [Tooltip("Emplacement de la balle quand tenue par le joueur")]
+        private Transform _ballHoldingPos;
+
+        #endregion
+
+        #region Instance
+
+        /// <summary>
+        /// Commandes actives du personnage
+        /// </summary>
+        private ICharacterInput _activeInput;
+
+        /// <summary>
+        /// Rigidbody
+        /// </summary>
+        private Rigidbody _rb;
+
+        #endregion
+
+        #region Méthodes Unity
+
+        /// <summary>
+        /// Init
+        /// </summary>
+        private void Awake()
         {
-            _playerInput.Enable();
-            _aiInput.Enable();
+            _rb = GetComponent<Rigidbody>();
         }
-        else
+
+        #endregion
+
+        #region Méthodes publiques
+
+        /// <summary>
+        /// Donne le contrôle du perso au joueur
+        /// </summary>
+        public void GiveControlToPlayer()
         {
-            _playerInput.Disable();
+            _activeInput = _playerInput;
             _aiInput.Disable();
+            _playerInput.Enable();
         }
-    }
 
-    #endregion
+        /// <summary>
+        /// Donne le contrôle du perso à l'IA
+        /// </summary>
+        public void GiveControlToAI()
+        {
+            _activeInput = _aiInput;
+            _aiInput.Enable();
+            _playerInput.Disable();
+        }
+
+        /// <summary>
+        /// Active ou non les commandes du personnages
+        /// </summary>
+        public void EnableInput(bool enable)
+        {
+            if (enable)
+            {
+                _activeInput.Enable();
+            }
+            else
+            {
+                _activeInput.Disable();
+            }
+        }
+
+        #endregion
+    }
 }

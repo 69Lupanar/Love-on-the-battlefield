@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Assets.Scripts.Match
 {
     /// <summary>
@@ -8,11 +10,16 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Active les commandes
         /// </summary>
-        public void Enable();
+        Vector2 MoveAxis { get; set; }
+
+        /// <summary>
+        /// Active les commandes
+        /// </summary>
+        void Enable();
 
         /// <summary>
         /// Désactive les commandes
         /// </summary>
-        public void Disable();
+        void Disable();
     }
 }

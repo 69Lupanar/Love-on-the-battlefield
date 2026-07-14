@@ -56,6 +56,9 @@ namespace Assets.Scripts.Match
             _vm.SetTeams();
             _vm.SetActivePlayer(_vm.ActivePlayerIndex);
             _vm.EnablePlayersInput(false);
+
+            // A retirer une fois les tests finis
+            _vm.EnablePlayersInput(true);
         }
 
         #endregion
