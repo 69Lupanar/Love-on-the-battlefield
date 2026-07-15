@@ -36,11 +36,6 @@ namespace Assets.Scripts.Match
         public bool PreviousTargetTrigger { get; set; }
 
         /// <summary>
-        /// true si le joueur presse la touche de saut
-        /// </summary>
-        public bool JumpTrigger { get; set; }
-
-        /// <summary>
         /// true si le joueur presse la touche d'esquive
         /// </summary>
         public bool DodgeTrigger { get; set; }
@@ -55,6 +50,11 @@ namespace Assets.Scripts.Match
         /// </summary>
         public bool IsHoldingFire { get; set; }
 
+        /// <summary>
+        /// true si le joueur maintient le bouton de saut
+        /// </summary>
+        public bool IsHoldingJump { get; set; }
+
         #endregion
 
         #region Méthodes Unity
@@ -67,6 +67,8 @@ namespace Assets.Scripts.Match
             _input ??= new MatchPlayerInputActions();
             _input.Player.Fire.started += OnFireButtonDown;
             _input.Player.Fire.canceled += OnFireButtonUp;
+            _input.Player.Jump.started += OnJumpButtonDown;
+            _input.Player.Jump.canceled += OnJumpButtonUp;
         }
 
         /// <summary>
@@ -78,7 +80,6 @@ namespace Assets.Scripts.Match
             SwapCharacterAxis = _input.Player.SwapCharacter.ReadValue<Vector2>();
             NextTargetTrigger = _input.Player.NextTarget.triggered;
             PreviousTargetTrigger = _input.Player.PreviousTarget.triggered;
-            JumpTrigger = _input.Player.Jump.triggered;
             DodgeTrigger = _input.Player.Dodge.triggered;
             BlockTrigger = _input.Player.Block.triggered;
         }
@@ -140,6 +141,22 @@ namespace Assets.Scripts.Match
         private void OnFireButtonUp(InputAction.CallbackContext _)
         {
             IsHoldingFire = false;
+        }
+
+        /// <summary>
+        /// Appelée quand on appuie sur le bouton de saut
+        /// </summary>
+        private void OnJumpButtonDown(InputAction.CallbackContext _)
+        {
+            IsHoldingJump = true;
+        }
+
+        /// <summary>
+        /// Appelée quand on relâche le bouton de saut
+        /// </summary>
+        private void OnJumpButtonUp(InputAction.CallbackContext _)
+        {
+            IsHoldingJump = false;
         }
 
         #endregion
