@@ -119,7 +119,7 @@ namespace Assets.Scripts.Match
         {
             for (int i = 0; i < NbAllies; ++i)
             {
-                Allies[i].IsAlly = false;
+                Allies[i].IsAlly = true;
             }
 
             for (int i = 0; i < NbEnemies; ++i)

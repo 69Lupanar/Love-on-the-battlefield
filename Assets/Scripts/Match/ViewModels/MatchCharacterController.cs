@@ -1,4 +1,3 @@
-using Assets.Scripts.StateMachine;
 using UnityEngine;
 
 namespace Assets.Scripts.Match
@@ -7,7 +6,7 @@ namespace Assets.Scripts.Match
     /// Gère les déplacements du personnage
     /// </summary>
     [RequireComponent(typeof(MatchPlayerInput), typeof(MatchAIInput), typeof(Rigidbody))]
-    public class MatchCharacterController : MonoBehaviour, IStateContext<MatchCharacterController, ICharacterInput, MatchCharacterState>
+    public class MatchCharacterController : MonoBehaviour
     {
         #region Propriétés
 
@@ -15,21 +14,6 @@ namespace Assets.Scripts.Match
         /// true si c'est un allié du joueur
         /// </summary>
         public bool IsAlly { get; set; }
-
-        /// <summary>
-        /// L'état actuel du perso
-        /// </summary>
-        public MatchCharacterState RootState { get; set; }
-
-        /// <summary>
-        /// Transform
-        /// </summary>
-        internal Transform T { get; private set; }
-
-        /// <summary>
-        /// Rigidbody
-        /// </summary>
-        internal Rigidbody Rb { get; private set; }
 
         #endregion
 
@@ -65,7 +49,12 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Commandes actives du personnage
         /// </summary>
-        private ICharacterInput _activeInput;
+        private IMatchCharacterInput _activeInput;
+
+        /// <summary>
+        /// Rigidbody
+        /// </summary>
+        private Rigidbody _rb;
 
         #endregion
 
@@ -76,8 +65,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void Awake()
         {
-            T = transform;
-            Rb = GetComponent<Rigidbody>();
+            _rb = GetComponent<Rigidbody>();
         }
 
         /// <summary>
@@ -142,7 +130,7 @@ namespace Assets.Scripts.Match
         private void Move(Vector2 moveDir)
         {
             Vector3 moveXZ = new(moveDir.x, 0f, moveDir.y);
-            T.Translate(_moveSpeed * Time.deltaTime * moveXZ);
+            _rb.MovePosition(_rb.position + _moveSpeed * Time.deltaTime * moveXZ);
         }
 
         /// <summary>

@@ -5,19 +5,34 @@ namespace Assets.Scripts.Match
     /// <summary>
     /// Gère les entrées de l'IA
     /// </summary>
-    public class MatchAIInput : MonoBehaviour, ICharacterInput
+    public class MatchAIInput : MonoBehaviour, IMatchCharacterInput
     {
         #region Instance
 
         /// <summary>
-        /// Valeur de l'axe de mouvement
+        /// La table des inputs
+        /// </summary>
+        private MatchPlayerInputActions _input;
+
+        /// <summary>
+        /// Valeur de l'axe de mouvement (joystick gauche)
         /// </summary>
         public Vector2 MoveAxis { get; set; }
 
         /// <summary>
-        /// true si le joueur presse la touche de saut
+        /// Valeur de l'axe du joystick droit
         /// </summary>
-        public bool JumpTrigger { get; set; }
+        public Vector2 SwapCharacterAxis { get; set; }
+
+        /// <summary>
+        /// true si le joueur presse la touche de passage à la cible suivante
+        /// </summary>
+        public bool NextTargetTrigger { get; set; }
+
+        /// <summary>
+        /// true si le joueur presse la touche de passage à la cible précédente
+        /// </summary>
+        public bool PreviousTargetTrigger { get; set; }
 
         /// <summary>
         /// true si le joueur presse la touche d'esquive
@@ -33,6 +48,11 @@ namespace Assets.Scripts.Match
         /// true si le joueur maintient le bouton de tir
         /// </summary>
         public bool IsHoldingFire { get; set; }
+
+        /// <summary>
+        /// true si le joueur maintient le bouton de saut
+        /// </summary>
+        public bool IsHoldingJump { get; set; }
 
         #endregion
 
@@ -63,10 +83,8 @@ namespace Assets.Scripts.Match
         /// </summary>
         public void Enable()
         {
-
             // On doit le faire pour désactiver les fonctions d'Unity
             enabled = true;
-
         }
 
         /// <summary>
@@ -74,10 +92,8 @@ namespace Assets.Scripts.Match
         /// </summary>
         public void Disable()
         {
-
             // On doit le faire pour désactiver les fonctions d'Unity
             enabled = false;
-
         }
 
         #endregion

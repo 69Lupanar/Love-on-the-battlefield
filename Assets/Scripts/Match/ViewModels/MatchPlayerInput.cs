@@ -6,7 +6,7 @@ namespace Assets.Scripts.Match
     /// <summary>
     /// Gère les entrées du joueur
     /// </summary>
-    public class MatchPlayerInput : MonoBehaviour, ICharacterInput
+    public class MatchPlayerInput : MonoBehaviour, IMatchCharacterInput
     {
         #region Instance
 

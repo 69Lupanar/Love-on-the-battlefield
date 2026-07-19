@@ -102,7 +102,7 @@ GameObject:
   - component: {fileID: 326827863985421855}
   - component: {fileID: 3114684587872825515}
   - component: {fileID: 7187157857969334345}
-  - component: {fileID: -6858955105527083199}
+  - component: {fileID: 4250687827361344137}
   - component: {fileID: 9060468952870296851}
   - component: {fileID: 4610676096796686571}
   m_Layer: 0
@@ -179,7 +179,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &-6858955105527083199
+--- !u!114 &4250687827361344137
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -188,9 +188,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1930855978471140891}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3a36e771c5dfa74fa3bfc942ef38e10, type: 3}
+  m_Script: {fileID: 11500000, guid: d6445da83af251b4ba20a681dd3f681a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assets.Scripts.Match::Assets.Scripts.Match.AIInput
+  m_EditorClassIdentifier: Assets.Scripts.Match::Assets.Scripts.Match.MatchAIInput
 --- !u!114 &9060468952870296851
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -216,7 +216,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assets.Scripts.Match::CharacterController
   _playerInput: {fileID: 9060468952870296851}
-  _aiInput: {fileID: -6858955105527083199}
+  _aiInput: {fileID: 4250687827361344137}
   _ballHoldingPos: {fileID: 226849027909941257}
   _meshHolder: {fileID: 1953135120897825709}
   _moveSpeed: 5
