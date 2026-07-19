@@ -1,3 +1,4 @@
+using Assets.Scripts.StateMachine;
 using UnityEngine;
 
 namespace Assets.Scripts.Match
@@ -5,8 +6,8 @@ namespace Assets.Scripts.Match
     /// <summary>
     /// Gère les déplacements du personnage
     /// </summary>
-    [RequireComponent(typeof(MatchPlayerInput), typeof(AIInput), typeof(Rigidbody))]
-    public class MatchCharacterController : MonoBehaviour
+    [RequireComponent(typeof(MatchPlayerInput), typeof(MatchAIInput), typeof(Rigidbody))]
+    public class MatchCharacterController : MonoBehaviour, IStateContext<MatchCharacterController, ICharacterInput, MatchCharacterState>
     {
         #region Propriétés
 
@@ -14,6 +15,21 @@ namespace Assets.Scripts.Match
         /// true si c'est un allié du joueur
         /// </summary>
         public bool IsAlly { get; set; }
+
+        /// <summary>
+        /// L'état actuel du perso
+        /// </summary>
+        public MatchCharacterState RootState { get; set; }
+
+        /// <summary>
+        /// Transform
+        /// </summary>
+        internal Transform T { get; private set; }
+
+        /// <summary>
+        /// Rigidbody
+        /// </summary>
+        internal Rigidbody Rb { get; private set; }
 
         #endregion
 
@@ -25,7 +41,7 @@ namespace Assets.Scripts.Match
 
         [SerializeField]
         [Tooltip("Commandes de l'IA")]
-        private AIInput _aiInput;
+        private MatchAIInput _aiInput;
 
         [SerializeField]
         [Tooltip("Emplacement de la balle quand tenue par le joueur")]
@@ -39,13 +55,8 @@ namespace Assets.Scripts.Match
         [Tooltip("Vitesse de mouvement")]
         private float _moveSpeed = 7.5f;
 
-        [SerializeField]
-        [Tooltip("Intervalle de force du saut")]
-        private Vector2 _minMaxJumpForce = new(3f, 5f);
-
-        [SerializeField]
-        [Tooltip("Intervalle de force du tir")]
-        private Vector2 _minMaxFireForce = new(5f, 10f);
+        [Tooltip("Données de mouvement d'un personnage lors d'un match")]
+        public MatchCharacterMovementData MovementData;
 
         #endregion
 
@@ -56,16 +67,6 @@ namespace Assets.Scripts.Match
         /// </summary>
         private ICharacterInput _activeInput;
 
-        /// <summary>
-        /// Transform
-        /// </summary>
-        private Transform _t;
-
-        /// <summary>
-        /// Rigidbody
-        /// </summary>
-        private Rigidbody _rb;
-
         #endregion
 
         #region Méthodes Unity
@@ -75,8 +76,8 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void Awake()
         {
-            _t = transform;
-            _rb = GetComponent<Rigidbody>();
+            T = transform;
+            Rb = GetComponent<Rigidbody>();
         }
 
         /// <summary>
@@ -141,7 +142,7 @@ namespace Assets.Scripts.Match
         private void Move(Vector2 moveDir)
         {
             Vector3 moveXZ = new(moveDir.x, 0f, moveDir.y);
-            _t.Translate(_moveSpeed * Time.deltaTime * moveXZ);
+            T.Translate(_moveSpeed * Time.deltaTime * moveXZ);
         }
 
         /// <summary>

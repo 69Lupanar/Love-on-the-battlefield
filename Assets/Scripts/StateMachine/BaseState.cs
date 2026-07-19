@@ -7,7 +7,10 @@ namespace Assets.Scripts.StateMachine
     /// </summary>
     /// <typeparam name="TContext">Contient les valeurs à lire et éditer.</typeparam>
     /// <typeparam name="TInput">Le type d'InputSystem à utilsier (Clavier, Manette, etc.)</typeparam>
-    public abstract class BaseState<TContext, TInput> : State
+    public abstract class BaseState<TContext, TInput, TBaseState> : State
+        where TContext : IStateContext<TContext, TInput, TBaseState>
+        where TInput : IStateInput
+        where TBaseState : BaseState<TContext, TInput, TBaseState>
     {
         #region Instance
 
@@ -24,21 +27,21 @@ namespace Assets.Scripts.StateMachine
         /// <summary>
         /// Instancie et active les états
         /// </summary>
-        protected StateMachine<TContext, TInput> Factory { get; private set; }
+        protected StateMachine<TContext, TInput, TBaseState> Factory { get; private set; }
 
         /// <summary>
         /// L'état suivant dans la hiérarchie
         /// </summary>
-        private BaseState<TContext, TInput> SubState { get; set; }
+        private BaseState<TContext, TInput, TBaseState> SubState { get; set; }
 
         /// <summary>
         /// L'état précédent dans la hiérarchie
         /// </summary>
-        private BaseState<TContext, TInput> SuperState { get; set; }
+        private BaseState<TContext, TInput, TBaseState> SuperState { get; set; }
 
         #endregion
 
-        #region Constructeur
+        #region Méthodes publiques
 
         /// <summary>
         /// Sets TContext, TInput and the factory manually when we retrieve a state from the factory
@@ -46,16 +49,24 @@ namespace Assets.Scripts.StateMachine
         /// <param name="context">Contient les valeurs à lire et éditer</param>
         /// <param name="input">Lit les actions du joueur</param>
         /// <param name="factory"> Instancie et active les états</param>
-        public void SetContextAndInput(TContext context, TInput input, StateMachine<TContext, TInput> factory)
+        public void Init(TContext context, TInput input, StateMachine<TContext, TInput, TBaseState> factory)
         {
             Ctx = context;
             Input = input;
             Factory = factory;
         }
 
-        #endregion
-
-        #region Méthodes publiques
+        /// <summary>
+        /// Sets the context and input
+        /// </summary>
+        /// <param name="context">Contient les valeurs à lire et éditer</param>
+        /// <param name="input">Lit les actions du joueur</param>
+        public void SetContextAndInput(TContext context, TInput input)
+        {
+            Ctx = context;
+            Input = input;
+            SubState?.SetContextAndInput(context, input);
+        }
 
         /// <summary>
         /// Entre dans l'état pour l'initialiser
@@ -118,7 +129,7 @@ namespace Assets.Scripts.StateMachine
         /// <summary>
         /// Récupère l'état tout en bas de la hiérarchie et renvoie TRUE s'il est du type renseigné
         /// </summary>
-        public bool Is<TState>() where TState : BaseState<TContext, TInput>
+        public bool Is<TState>() where TState : BaseState<TContext, TInput, TBaseState>
         {
             if (SubState != null)
             {
@@ -147,20 +158,19 @@ namespace Assets.Scripts.StateMachine
         /// Echange l'état actuel par un autre du type renseigné
         /// </summary>
         /// <typeparam name="TState">Le type du nouvel état</typeparam>
-        protected void SwitchState<TState>() where TState : BaseState<TContext, TInput>, new()
+        protected void SwitchState<TState>() where TState : BaseState<TContext, TInput, TBaseState>, new()
         {
             // Quitte l'état actuel ainsi que tous ses sous-états
             ExitStates();
 
-            if (Factory.IsRootState(this))
+            if (SuperState != null)
             {
                 // Si c'est un état racine, on démarre une nouvelle hiérarchie depuis la machine
-                Factory.SetRootState<TState>();
+                Factory.SetRootState<TState>(Ctx, Input);
             }
             else
             {
                 //Sinon, on transfère notre super-état à ce nouvel état
-                ExitStates();
                 SuperState.SetSubState<TState>();
             }
         }
@@ -169,9 +179,9 @@ namespace Assets.Scripts.StateMachine
         /// Assigne un sous-état à cet état
         /// </summary>
         /// <typeparam name="TState">L'état du sous-état</typeparam>
-        protected void SetSubState<TState>() where TState : BaseState<TContext, TInput>, new()
+        protected void SetSubState<TState>() where TState : BaseState<TContext, TInput, TBaseState>, new()
         {
-            BaseState<TContext, TInput> newSubState = Factory.GetState<TState>();
+            TState newSubState = (TState)Factory.GetState<TState>(Ctx, Input);
             SubState = newSubState;
             newSubState.SetSuperState(this);
             newSubState.EnterStates();
@@ -185,7 +195,7 @@ namespace Assets.Scripts.StateMachine
         /// Assigne un super-état à celui-ci
         /// </summary>
         /// <param name="newSuperState">Le super-état qui dirige celui-ci</param>
-        private void SetSuperState(BaseState<TContext, TInput> newSuperState)
+        private void SetSuperState(BaseState<TContext, TInput, TBaseState> newSuperState)
         {
             SuperState = newSuperState;
         }

@@ -1,3 +1,4 @@
+using Assets.Scripts.StateMachine;
 using UnityEngine;
 
 namespace Assets.Scripts.Match
@@ -5,7 +6,7 @@ namespace Assets.Scripts.Match
     /// <summary>
     /// Gère les inputs du joueur et de l'IA
     /// </summary>
-    public interface ICharacterInput
+    public interface ICharacterInput : IStateInput
     {
         /// <summary>
         /// Active les commandes

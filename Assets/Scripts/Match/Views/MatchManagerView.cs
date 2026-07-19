@@ -62,9 +62,5 @@ namespace Assets.Scripts.Match
         }
 
         #endregion
-
-        #region Méthodes privées
-
-        #endregion
     }
 }

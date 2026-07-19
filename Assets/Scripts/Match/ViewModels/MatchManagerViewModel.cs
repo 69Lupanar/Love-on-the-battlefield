@@ -48,13 +48,13 @@ namespace Assets.Scripts.Match
 
         #endregion
 
-        #region Méthodes publiques
+        #region Méthodes internes
 
         /// <summary>
         /// Assigne le perso à contrôler par le joueur
         /// </summary>
         /// <param name="index">L'id du perso actif</param>
-        public void SetActivePlayer(int index)
+        internal void SetActivePlayer(int index)
         {
             ActivePlayerIndex = index;
 

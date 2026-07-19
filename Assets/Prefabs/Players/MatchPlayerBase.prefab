@@ -220,9 +220,17 @@ MonoBehaviour:
   _ballHoldingPos: {fileID: 226849027909941257}
   _meshHolder: {fileID: 1953135120897825709}
   _moveSpeed: 5
-  _rotSpeed: 2
-  _minMaxJumpForce: {x: 3, y: 5}
-  _minMaxFireForce: {x: 5, y: 10}
+  MovementData:
+    MoveSpeed: 5
+    DodgeSpeed: 10
+    JumpForceInterval: {x: 3, y: 7}
+    FireForceInterval: {x: 10, y: 20}
+    DodgeDuration: 0.5
+    BlockDuration: 0.25
+    DodgeEnergyCost: 0.5
+    BlockEnergyCost: 0.5
+    JumpChargeEnergyCostPerFrame: 0.33
+    FireChargeEnergyCostPerFrame: 0.33
 --- !u!1 &2628802797196885321
 GameObject:
   m_ObjectHideFlags: 0

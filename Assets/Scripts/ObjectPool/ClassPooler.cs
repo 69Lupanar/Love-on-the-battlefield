@@ -13,14 +13,14 @@ namespace Assets.Scripts.ObjectPool
     /// </summary>
     /// <typeparam name="TBase">Le type de base dont les pools pourront contenir des types hérités.</typeparam>
     [Serializable]
-    public class ClassPooler<TBase> where TBase : class
+    public class ClassPooler<TBase> : IDisposable where TBase : class
     {
         #region Instance
 
         /// <summary>
         /// Le dictionnaire contenant toutes les ObjectPools
         /// </summary>
-        private readonly Dictionary<string, ObjectPool<TBase>> _poolDictionary;
+        private Dictionary<string, ObjectPool<TBase>> _poolDictionary;
 
         #endregion
 
@@ -125,6 +125,19 @@ namespace Assets.Scripts.ObjectPool
             }
 
             _poolDictionary[key].Release(obj);
+        }
+
+        /// <summary>
+        /// Nettoyage
+        /// </summary>
+        public void Dispose()
+        {
+            foreach (KeyValuePair<string, ObjectPool<TBase>> item in _poolDictionary)
+            {
+                _poolDictionary[item.Key].Dispose();
+            }
+
+            _poolDictionary = null;
         }
 
         #endregion
