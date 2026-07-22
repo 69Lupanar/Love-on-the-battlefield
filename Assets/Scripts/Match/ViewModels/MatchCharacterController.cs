@@ -19,6 +19,9 @@ namespace Assets.Scripts.Match
 
         #region Inspecteur
 
+        [Header("Components")]
+        [Space(10)]
+
         [SerializeField]
         [Tooltip("Commandes du joueur")]
         private MatchPlayerInput _playerInput;
@@ -36,11 +39,22 @@ namespace Assets.Scripts.Match
         private Transform _meshHolder;
 
         [SerializeField]
-        [Tooltip("Vitesse de mouvement")]
-        private float _moveSpeed = 7.5f;
+        [Tooltip("Halo du perso s'il est un allié")]
+        private GameObject _haloAlly;
+
+        [SerializeField]
+        [Tooltip("Halo du perso s'il est un ennemi")]
+        private GameObject _haloEnemy;
+
+        [Space(10)]
+        [Header("Physics")]
+        [Space(10)]
 
         [Tooltip("Données de mouvement d'un personnage lors d'un match")]
         public MatchCharacterMovementData MovementData;
+
+        [Tooltip("Distance du raycast vérifiant la présence d'un allié à proximité")]
+        public float _swapCharacterRaycastDst = 10f;
 
         #endregion
 
@@ -55,6 +69,11 @@ namespace Assets.Scripts.Match
         /// Rigidbody
         /// </summary>
         private Rigidbody _rb;
+
+        /// <summary>
+        /// true si le joueur est en cours de changement de personnage
+        /// </summary>
+        private bool _isSwappingCharacter;
 
         #endregion
 
@@ -73,10 +92,24 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void Update()
         {
+            // Translation + Rotation
             if (_activeInput.MoveAxis != Vector2.zero)
             {
                 Move(_activeInput.MoveAxis);
                 RotateMesh(_activeInput.MoveAxis);
+            }
+
+            // Changement d'allié contrôlé par le joueur
+            if (_activeInput.SwapCharacterAxis != Vector2.zero)
+            {
+                _isSwappingCharacter = true;
+                // TAF : Indiquer l'allié sélectionné
+            }
+
+            if (_isSwappingCharacter && _activeInput.SwapCharacterAxis == Vector2.zero)
+            {
+                _isSwappingCharacter = false;
+                //TAF : Passer le contrôle à l'allié sélectionné
             }
         }
 
@@ -119,6 +152,17 @@ namespace Assets.Scripts.Match
             }
         }
 
+        /// <summary>
+        /// Réinitialise le perso pour une nouvelle manche
+        /// </summary>
+        public void ResetPlayer()
+        {
+            _haloAlly.SetActive(false);
+            _haloAlly.SetActive(false);
+            _rb.linearVelocity = Vector3.zero;
+            _meshHolder.rotation = Quaternion.identity;
+        }
+
         #endregion
 
         #region Méthodes privées
@@ -130,7 +174,7 @@ namespace Assets.Scripts.Match
         private void Move(Vector2 moveDir)
         {
             Vector3 moveXZ = new(moveDir.x, 0f, moveDir.y);
-            _rb.MovePosition(_rb.position + _moveSpeed * Time.deltaTime * moveXZ);
+            _rb.MovePosition(_rb.position + MovementData.MoveSpeed * Time.deltaTime * moveXZ);
         }
 
         /// <summary>

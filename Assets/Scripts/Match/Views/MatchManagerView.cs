@@ -19,7 +19,12 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Le spawner des joueurs et ballons
         /// </summary>
-        private MatchSpawnerView _spawner;
+        private MatchSpawnerView _spawnerV;
+
+        /// <summary>
+        /// Le spawner des joueurs et ballons
+        /// </summary>
+        private MatchSpawnerViewModel _spawnerVM;
 
         #endregion
 
@@ -31,7 +36,8 @@ namespace Assets.Scripts.Match
         private void Awake()
         {
             _vm = GetComponent<MatchManagerViewModel>();
-            _spawner = FindAnyObjectByType<MatchSpawnerView>();
+            _spawnerV = FindAnyObjectByType<MatchSpawnerView>();
+            _spawnerVM = FindAnyObjectByType<MatchSpawnerViewModel>();
         }
 
         #endregion
@@ -43,8 +49,8 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal void StartNewMatch()
         {
-            _spawner.CleanupField();
-            (List<Transform> alliesT, List<Transform> enemiesT, List<Transform> ballsT) = _spawner.Spawn(_vm.NbAllies, _vm.NbEnemies, _vm.NbBalls);
+            _spawnerV.CleanupField();
+            (List<Transform> alliesT, List<Transform> enemiesT, List<Transform> ballsT) = _spawnerV.Spawn(_vm.NbAllies, _vm.NbEnemies, _vm.NbBalls);
 
             if (_vm.Allies != null)
             {
@@ -55,10 +61,27 @@ namespace Assets.Scripts.Match
             _vm.SetPlayersAndBalls(alliesT, enemiesT, ballsT);
             _vm.SetTeams();
             _vm.SetActivePlayer(_vm.ActivePlayerIndex);
+
+            StartNewSet();
+        }
+
+        #endregion
+
+        #region Méthodes privées
+
+        /// <summary>
+        /// Démarre une nouvelle manche
+        /// </summary>
+        private void StartNewSet()
+        {
+            _spawnerVM.ResetPlayersAndBallsPoses();
+            _vm.ResetPlayersAndBalls();
             _vm.EnablePlayersInput(false);
 
             // A retirer une fois les tests finis
             _vm.EnablePlayersInput(true);
+
+            // TAF: Démarrer le décompte avant de rendre le contrôle aux persos
         }
 
         #endregion

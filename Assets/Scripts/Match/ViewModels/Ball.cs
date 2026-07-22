@@ -46,7 +46,30 @@ namespace Assets.Scripts.Match
 
         #endregion
 
+        #region Instance
+
+        /// <summary>
+        /// Transform
+        /// </summary>
+        private Transform _t;
+
+        /// <summary>
+        /// Rigidbody
+        /// </summary>
+        private Rigidbody _rb;
+
+        #endregion
+
         #region Méthodes Unity
+
+        /// <summary>
+        /// Init
+        /// </summary>
+        private void Awake()
+        {
+            _t = transform;
+            _rb = GetComponent<Rigidbody>();
+        }
 
         /// <summary>
         /// Appelée quand collision avec un autre objet
@@ -78,6 +101,18 @@ namespace Assets.Scripts.Match
                 //TAF : Eliminer le joueur
             }
 
+        }
+
+        #endregion
+
+        #region Méthodes internes
+
+        /// <summary>
+        /// Réinitialise la balle pour la prochaine manche
+        /// </summary>
+        internal void ResetBall()
+        {
+            _rb.linearVelocity = _rb.angularVelocity = Vector3.zero;
         }
 
         #endregion

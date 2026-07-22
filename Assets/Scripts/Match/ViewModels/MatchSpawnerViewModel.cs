@@ -146,12 +146,12 @@ namespace Assets.Scripts.Match
         {
             for (int i = 0; i < AlliesT.Count; ++i)
             {
-                AlliesT[i].transform.SetPositionAndRotation(GetSpawnPosition(_inactiveAlliesParent.position, i, AlliesT.Count), _inactiveAlliesParent.rotation);
+                AlliesT[i].transform.position = GetSpawnPosition(_inactiveAlliesParent.position, i, AlliesT.Count);
             }
 
             for (int i = 0; i < EnemiesT.Count; ++i)
             {
-                EnemiesT[i].transform.SetPositionAndRotation(GetSpawnPosition(_inactiveEnemiesParent.position, i, EnemiesT.Count), _inactiveEnemiesParent.rotation);
+                EnemiesT[i].transform.position = GetSpawnPosition(_inactiveEnemiesParent.position, i, EnemiesT.Count);
             }
 
             for (int i = 0; i < BallsT.Count; ++i)

@@ -115,6 +115,9 @@ namespace Assets.Scripts.Match
             }
         }
 
+        /// <summary>
+        /// Assigne les équipes à chaque perso
+        /// </summary>
         internal void SetTeams()
         {
             for (int i = 0; i < NbAllies; ++i)
@@ -124,8 +127,29 @@ namespace Assets.Scripts.Match
 
             for (int i = 0; i < NbEnemies; ++i)
             {
-                Enemies[i].GiveControlToAI();
                 Enemies[i].IsAlly = false;
+                Enemies[i].GiveControlToAI();
+            }
+        }
+
+        /// <summary>
+        /// Réinitialise les persos pour une nouvelle manche
+        /// </summary>
+        internal void ResetPlayersAndBalls()
+        {
+            for (int i = 0; i < NbAllies; ++i)
+            {
+                Allies[i].ResetPlayer();
+            }
+
+            for (int i = 0; i < NbEnemies; ++i)
+            {
+                Enemies[i].ResetPlayer();
+            }
+
+            for (int i = 0; i < NbBalls; ++i)
+            {
+                Balls[i].ResetBall();
             }
         }
 
