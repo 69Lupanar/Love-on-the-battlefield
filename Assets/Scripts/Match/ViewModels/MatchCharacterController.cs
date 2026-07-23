@@ -6,7 +6,7 @@ namespace Assets.Scripts.Match
     /// Gère les déplacements du personnage
     /// </summary>
     [RequireComponent(typeof(MatchPlayerInput), typeof(MatchAIInput), typeof(Rigidbody))]
-    public class MatchCharacterController : MonoBehaviour
+    public sealed class MatchCharacterController : MonoBehaviour
     {
         #region Propriétés
 

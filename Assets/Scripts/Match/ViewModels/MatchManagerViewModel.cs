@@ -6,29 +6,36 @@ namespace Assets.Scripts.Match
     /// <summary>
     /// Gère le déroulement d'un match
     /// </summary>
-    public class MatchManagerViewModel : MonoBehaviour
+    internal sealed class MatchManagerViewModel : MonoBehaviour
     {
         #region Propriétés
 
         /// <summary>
         /// Les persos du joueur
         /// </summary>
-        public List<MatchCharacterController> Allies { get; private set; } = new();
+        internal List<MatchCharacterController> Allies { get; private set; } = new();
 
         /// <summary>
         /// Les persos ennemis
         /// </summary>
-        public List<MatchCharacterController> Enemies { get; private set; } = new();
+        internal List<MatchCharacterController> Enemies { get; private set; } = new();
 
         /// <summary>
         /// Les ballons
         /// </summary>
-        public List<Ball> Balls { get; private set; } = new();
+        internal List<Ball> Balls { get; private set; } = new();
 
         /// <summary>
         /// L'ID du perso contrôlé par le joueur
         /// </summary>
-        public int ActivePlayerIndex { get; set; }
+        internal int ActivePlayerIndex { get; set; }
+
+        /// <summary>
+        /// L'ID du perso allié actuellement sélectionné comme cible
+        /// lors du changement de contrôle
+        /// (-1 si aucun)
+        /// </summary>
+        internal int CurAllyTargetForSwapIndex { get; }
 
         #endregion
 
@@ -36,15 +43,15 @@ namespace Assets.Scripts.Match
 
         [field: SerializeField]
         [field: Tooltip("Nombre d'alliés à instancier")]
-        public int NbAllies { get; set; } = 6;
+        internal int NbAllies { get; set; } = 6;
 
         [field: SerializeField]
         [field: Tooltip("Nombre d'ennemis à instancier")]
-        public int NbEnemies { get; set; } = 6;
+        internal int NbEnemies { get; set; } = 6;
 
         [field: SerializeField]
         [field: Tooltip("Nombre de ballons à instancier")]
-        public int NbBalls { get; set; } = 5;
+        internal int NbBalls { get; set; } = 5;
 
         #endregion
 

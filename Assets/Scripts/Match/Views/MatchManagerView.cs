@@ -7,7 +7,7 @@ namespace Assets.Scripts.Match
     /// Gère le déroulement d'un match
     /// </summary>
     [RequireComponent(typeof(MatchManagerViewModel))]
-    public class MatchManagerView : MonoBehaviour
+    internal sealed class MatchManagerView : MonoBehaviour
     {
         #region Instance
 
@@ -26,6 +26,11 @@ namespace Assets.Scripts.Match
         /// </summary>
         private MatchSpawnerViewModel _spawnerVM;
 
+        /// <summary>
+        /// La caméra
+        /// </summary>
+        private MatchPlayerCameraView _cameraV;
+
         #endregion
 
         #region Méthodes Unity
@@ -38,6 +43,7 @@ namespace Assets.Scripts.Match
             _vm = GetComponent<MatchManagerViewModel>();
             _spawnerV = FindAnyObjectByType<MatchSpawnerView>();
             _spawnerVM = FindAnyObjectByType<MatchSpawnerViewModel>();
+            _cameraV = FindAnyObjectByType<MatchPlayerCameraView>();
         }
 
         #endregion
@@ -61,6 +67,7 @@ namespace Assets.Scripts.Match
             _vm.SetPlayersAndBalls(alliesT, enemiesT, ballsT);
             _vm.SetTeams();
             _vm.SetActivePlayer(_vm.ActivePlayerIndex);
+            _cameraV.MatchIsOver = false;
 
             StartNewSet();
         }
