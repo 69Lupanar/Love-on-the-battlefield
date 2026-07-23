@@ -6,14 +6,19 @@ namespace Assets.Scripts.Match
     /// Gère les déplacements du personnage
     /// </summary>
     [RequireComponent(typeof(MatchPlayerInput), typeof(MatchAIInput), typeof(Rigidbody))]
-    public sealed class MatchCharacterController : MonoBehaviour
+    internal sealed class MatchCharacterController : MonoBehaviour
     {
         #region Propriétés
 
         /// <summary>
+        /// Commandes actives du personnage
+        /// </summary>
+        internal IMatchCharacterInput ActiveInput => _activeInput;
+
+        /// <summary>
         /// true si c'est un allié du joueur
         /// </summary>
-        public bool IsAlly { get; set; }
+        internal bool IsAlly { get; set; }
 
         #endregion
 
@@ -50,11 +55,9 @@ namespace Assets.Scripts.Match
         [Header("Physics")]
         [Space(10)]
 
+        [SerializeField]
         [Tooltip("Données de mouvement d'un personnage lors d'un match")]
-        public MatchCharacterMovementData MovementData;
-
-        [Tooltip("Distance du raycast vérifiant la présence d'un allié à proximité")]
-        public float _swapCharacterRaycastDst = 10f;
+        internal MatchCharacterMovementData MovementData;
 
         #endregion
 
@@ -70,11 +73,6 @@ namespace Assets.Scripts.Match
         /// </summary>
         private Rigidbody _rb;
 
-        /// <summary>
-        /// true si le joueur est en cours de changement de personnage
-        /// </summary>
-        private bool _isSwappingCharacter;
-
         #endregion
 
         #region Méthodes Unity
@@ -87,40 +85,14 @@ namespace Assets.Scripts.Match
             _rb = GetComponent<Rigidbody>();
         }
 
-        /// <summary>
-        /// Màj à chaque frame
-        /// </summary>
-        private void Update()
-        {
-            // Translation + Rotation
-            if (_activeInput.MoveAxis != Vector2.zero)
-            {
-                Move(_activeInput.MoveAxis);
-                RotateMesh(_activeInput.MoveAxis);
-            }
-
-            // Changement d'allié contrôlé par le joueur
-            if (_activeInput.SwapCharacterAxis != Vector2.zero)
-            {
-                _isSwappingCharacter = true;
-                // TAF : Indiquer l'allié sélectionné
-            }
-
-            if (_isSwappingCharacter && _activeInput.SwapCharacterAxis == Vector2.zero)
-            {
-                _isSwappingCharacter = false;
-                //TAF : Passer le contrôle à l'allié sélectionné
-            }
-        }
-
         #endregion
 
-        #region Méthodes publiques
+        #region Méthodes internes
 
         /// <summary>
         /// Donne le contrôle du perso au joueur
         /// </summary>
-        public void GiveControlToPlayer()
+        internal void GiveControlToPlayer()
         {
             _activeInput = _playerInput;
             _aiInput.Disable();
@@ -130,7 +102,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Donne le contrôle du perso à l'IA
         /// </summary>
-        public void GiveControlToAI()
+        internal void GiveControlToAI()
         {
             _activeInput = _aiInput;
             _aiInput.Enable();
@@ -140,7 +112,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Active ou non les commandes du personnages
         /// </summary>
-        public void EnableInput(bool enable)
+        internal void EnableInput(bool enable)
         {
             if (enable)
             {
@@ -155,23 +127,19 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Réinitialise le perso pour une nouvelle manche
         /// </summary>
-        public void ResetPlayer()
+        internal void ResetPlayer()
         {
             _haloAlly.SetActive(false);
             _haloAlly.SetActive(false);
             _rb.linearVelocity = Vector3.zero;
-            _meshHolder.rotation = Quaternion.identity;
+            _meshHolder.localEulerAngles = Vector3.zero;
         }
-
-        #endregion
-
-        #region Méthodes privées
 
         /// <summary>
         /// Déplace le personnage
         /// </summary>
         /// <param name="moveDir">Direction du mouvement</param>
-        private void Move(Vector2 moveDir)
+        internal void Move(Vector2 moveDir)
         {
             Vector3 moveXZ = new(moveDir.x, 0f, moveDir.y);
             _rb.MovePosition(_rb.position + MovementData.MoveSpeed * Time.deltaTime * moveXZ);
@@ -181,12 +149,21 @@ namespace Assets.Scripts.Match
         /// Pivote le mesh dans la direction du mouvement
         /// </summary>
         /// <param name="moveDir">Direction du mouvement</param>
-        private void RotateMesh(Vector2 moveDir)
+        internal void RotateMesh(Vector2 moveDir)
         {
             Vector3 moveXZ = new(moveDir.x, 0f, moveDir.y);
             float angle = Mathf.Atan2(moveXZ.x, moveXZ.z) * Mathf.Rad2Deg;
 
             _meshHolder.rotation = Quaternion.AngleAxis(angle, Vector3.up);
+        }
+
+        /// <summary>
+        /// Affiche le halo du perso comme étant celui d'un allié ou d'un ennemi
+        /// </summary>
+        internal void DislayHalo(bool show)
+        {
+            _haloAlly.SetActive(show && IsAlly);
+            _haloEnemy.SetActive(show && !IsAlly);
         }
 
         #endregion

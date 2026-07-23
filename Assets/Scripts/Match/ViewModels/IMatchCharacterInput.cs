@@ -13,11 +13,6 @@ namespace Assets.Scripts.Match
         Vector2 MoveAxis { get; set; }
 
         /// <summary>
-        /// Valeur de l'axe du joystick droit
-        /// </summary>
-        Vector2 SwapCharacterAxis { get; set; }
-
-        /// <summary>
         /// true si le joueur presse la touche de passage à la cible suivante
         /// </summary>
         bool NextTargetTrigger { get; set; }

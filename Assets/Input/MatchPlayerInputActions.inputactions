@@ -16,11 +16,11 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "SwapCharacter",
+                    "name": "SwapCharacterAxis",
                     "type": "Value",
                     "id": "f1f5473d-96f1-45cb-a6e3-3fe9ad6a7674",
                     "expectedControlType": "Vector2",
-                    "processors": "",
+                    "processors": "StickDeadzone(min=0.3)",
                     "interactions": "",
                     "initialStateCheck": true
                 },
@@ -98,14 +98,14 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "SwapCharacter",
+                    "action": "SwapCharacterAxis",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "20d032ea-1789-4e96-b91a-7b8ab0dbb47e",
-                    "path": "<Gamepad>/rightTrigger",
+                    "path": "<Gamepad>/rightShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
@@ -160,7 +160,7 @@
                 {
                     "name": "",
                     "id": "2a3009b1-31d1-44c4-8fc2-9930bfb40024",
-                    "path": "<Gamepad>/rightShoulder",
+                    "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
@@ -171,7 +171,7 @@
                 {
                     "name": "",
                     "id": "a1b9a326-958b-4ab5-9427-54595eaaf40b",
-                    "path": "<Gamepad>/leftShoulder",
+                    "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",

@@ -27,6 +27,11 @@ namespace Assets.Scripts.Match
         private MatchSpawnerViewModel _spawnerVM;
 
         /// <summary>
+        /// Lae MatchPlayerManagerViewModel
+        /// </summary>
+        private MatchPlayerControllerViewModel _playerVM;
+
+        /// <summary>
         /// La caméra
         /// </summary>
         private MatchPlayerCameraView _cameraV;
@@ -43,6 +48,7 @@ namespace Assets.Scripts.Match
             _vm = GetComponent<MatchManagerViewModel>();
             _spawnerV = FindAnyObjectByType<MatchSpawnerView>();
             _spawnerVM = FindAnyObjectByType<MatchSpawnerViewModel>();
+            _playerVM = FindAnyObjectByType<MatchPlayerControllerViewModel>();
             _cameraV = FindAnyObjectByType<MatchPlayerCameraView>();
         }
 
@@ -58,16 +64,16 @@ namespace Assets.Scripts.Match
             _spawnerV.CleanupField();
             (List<Transform> alliesT, List<Transform> enemiesT, List<Transform> ballsT) = _spawnerV.Spawn(_vm.NbAllies, _vm.NbEnemies, _vm.NbBalls);
 
-            if (_vm.Allies != null)
+            if (_playerVM.Allies != null)
             {
                 // Désactive les inputs des joueurs déjà présents avant de les retirer
-                _vm.EnablePlayersInput(false);
+                _playerVM.EnablePlayersInput(false);
             }
 
-            _vm.SetPlayersAndBalls(alliesT, enemiesT, ballsT);
-            _vm.SetTeams();
-            _vm.SetActivePlayer(_vm.ActivePlayerIndex);
-            _cameraV.MatchIsOver = false;
+            _playerVM.SetPlayersAndBalls(alliesT, enemiesT, ballsT);
+            _playerVM.SetTeams();
+            _playerVM.SetActivePlayer(_playerVM.ActivePlayerIndex);
+            _vm.MatchIsOver = false;
 
             StartNewSet();
         }
@@ -82,11 +88,11 @@ namespace Assets.Scripts.Match
         private void StartNewSet()
         {
             _spawnerVM.ResetPlayersAndBallsPoses();
-            _vm.ResetPlayersAndBalls();
-            _vm.EnablePlayersInput(false);
+            _playerVM.ResetPlayersAndBalls();
+            _playerVM.EnablePlayersInput(false);
 
             // A retirer une fois les tests finis
-            _vm.EnablePlayersInput(true);
+            _playerVM.EnablePlayersInput(true);
 
             // TAF: Démarrer le décompte avant de rendre le contrôle aux persos
         }

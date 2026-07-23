@@ -7,7 +7,7 @@ namespace Assets.Scripts.Match
     /// <summary>
     /// Gère l'UI des paramètres du match
     /// </summary>
-    public class MatchSettingsView : MonoBehaviour
+    public sealed class MatchSettingsView : MonoBehaviour
     {
         #region Inspecteur
 

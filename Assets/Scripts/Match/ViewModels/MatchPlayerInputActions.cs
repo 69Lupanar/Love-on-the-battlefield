@@ -104,11 +104,11 @@ namespace Assets.Scripts.Match
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""SwapCharacter"",
+                    ""name"": ""SwapCharacterAxis"",
                     ""type"": ""Value"",
                     ""id"": ""f1f5473d-96f1-45cb-a6e3-3fe9ad6a7674"",
                     ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
+                    ""processors"": ""StickDeadzone(min=0.3)"",
                     ""interactions"": """",
                     ""initialStateCheck"": true
                 },
@@ -186,14 +186,14 @@ namespace Assets.Scripts.Match
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
-                    ""action"": ""SwapCharacter"",
+                    ""action"": ""SwapCharacterAxis"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
                     ""id"": ""20d032ea-1789-4e96-b91a-7b8ab0dbb47e"",
-                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
@@ -248,7 +248,7 @@ namespace Assets.Scripts.Match
                 {
                     ""name"": """",
                     ""id"": ""2a3009b1-31d1-44c4-8fc2-9930bfb40024"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
@@ -259,7 +259,7 @@ namespace Assets.Scripts.Match
                 {
                     ""name"": """",
                     ""id"": ""a1b9a326-958b-4ab5-9427-54595eaaf40b"",
-                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
@@ -287,7 +287,7 @@ namespace Assets.Scripts.Match
             // Player
             m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
             m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
-            m_Player_SwapCharacter = m_Player.FindAction("SwapCharacter", throwIfNotFound: true);
+            m_Player_SwapCharacterAxis = m_Player.FindAction("SwapCharacterAxis", throwIfNotFound: true);
             m_Player_NextTarget = m_Player.FindAction("NextTarget", throwIfNotFound: true);
             m_Player_PreviousTarget = m_Player.FindAction("PreviousTarget", throwIfNotFound: true);
             m_Player_Fire = m_Player.FindAction("Fire", throwIfNotFound: true);
@@ -375,7 +375,7 @@ namespace Assets.Scripts.Match
         private readonly InputActionMap m_Player;
         private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
         private readonly InputAction m_Player_Move;
-        private readonly InputAction m_Player_SwapCharacter;
+        private readonly InputAction m_Player_SwapCharacterAxis;
         private readonly InputAction m_Player_NextTarget;
         private readonly InputAction m_Player_PreviousTarget;
         private readonly InputAction m_Player_Fire;
@@ -398,9 +398,9 @@ namespace Assets.Scripts.Match
             /// </summary>
             public InputAction @Move => m_Wrapper.m_Player_Move;
             /// <summary>
-            /// Provides access to the underlying input action "Player/SwapCharacter".
+            /// Provides access to the underlying input action "Player/SwapCharacterAxis".
             /// </summary>
-            public InputAction @SwapCharacter => m_Wrapper.m_Player_SwapCharacter;
+            public InputAction @SwapCharacterAxis => m_Wrapper.m_Player_SwapCharacterAxis;
             /// <summary>
             /// Provides access to the underlying input action "Player/NextTarget".
             /// </summary>
@@ -454,9 +454,9 @@ namespace Assets.Scripts.Match
                 @Move.started += instance.OnMove;
                 @Move.performed += instance.OnMove;
                 @Move.canceled += instance.OnMove;
-                @SwapCharacter.started += instance.OnSwapCharacter;
-                @SwapCharacter.performed += instance.OnSwapCharacter;
-                @SwapCharacter.canceled += instance.OnSwapCharacter;
+                @SwapCharacterAxis.started += instance.OnSwapCharacterAxis;
+                @SwapCharacterAxis.performed += instance.OnSwapCharacterAxis;
+                @SwapCharacterAxis.canceled += instance.OnSwapCharacterAxis;
                 @NextTarget.started += instance.OnNextTarget;
                 @NextTarget.performed += instance.OnNextTarget;
                 @NextTarget.canceled += instance.OnNextTarget;
@@ -489,9 +489,9 @@ namespace Assets.Scripts.Match
                 @Move.started -= instance.OnMove;
                 @Move.performed -= instance.OnMove;
                 @Move.canceled -= instance.OnMove;
-                @SwapCharacter.started -= instance.OnSwapCharacter;
-                @SwapCharacter.performed -= instance.OnSwapCharacter;
-                @SwapCharacter.canceled -= instance.OnSwapCharacter;
+                @SwapCharacterAxis.started -= instance.OnSwapCharacterAxis;
+                @SwapCharacterAxis.performed -= instance.OnSwapCharacterAxis;
+                @SwapCharacterAxis.canceled -= instance.OnSwapCharacterAxis;
                 @NextTarget.started -= instance.OnNextTarget;
                 @NextTarget.performed -= instance.OnNextTarget;
                 @NextTarget.canceled -= instance.OnNextTarget;
@@ -571,12 +571,12 @@ namespace Assets.Scripts.Match
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnMove(InputAction.CallbackContext context);
             /// <summary>
-            /// Method invoked when associated input action "SwapCharacter" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// Method invoked when associated input action "SwapCharacterAxis" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
             /// </summary>
             /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-            void OnSwapCharacter(InputAction.CallbackContext context);
+            void OnSwapCharacterAxis(InputAction.CallbackContext context);
             /// <summary>
             /// Method invoked when associated input action "NextTarget" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
             /// </summary>

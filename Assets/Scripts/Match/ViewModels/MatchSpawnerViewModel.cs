@@ -151,7 +151,7 @@ namespace Assets.Scripts.Match
 
             for (int i = 0; i < EnemiesT.Count; ++i)
             {
-                EnemiesT[i].transform.position = GetSpawnPosition(_inactiveEnemiesParent.position, i, EnemiesT.Count);
+                EnemiesT[i].transform.SetPositionAndRotation(GetSpawnPosition(_inactiveEnemiesParent.position, i, EnemiesT.Count), _inactiveEnemiesParent.rotation);
             }
 
             for (int i = 0; i < BallsT.Count; ++i)

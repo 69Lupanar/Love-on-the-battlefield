@@ -23,7 +23,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Valeur de l'axe du joystick droit
         /// </summary>
-        public Vector2 SwapCharacterAxis { get; set; }
+        public Vector2 SwapCharacterAxis { get; private set; }
 
         /// <summary>
         /// true si le joueur presse la touche de passage à la cible suivante
@@ -44,6 +44,11 @@ namespace Assets.Scripts.Match
         /// true si le joueur presse la touche de blocage
         /// </summary>
         public bool BlockTrigger { get; set; }
+
+        /// <summary>
+        /// true si le joueur presse la touche de tir
+        /// </summary>
+        public bool FireTrigger { get; set; }
 
         /// <summary>
         /// true si le joueur maintient le bouton de tir
@@ -77,11 +82,12 @@ namespace Assets.Scripts.Match
         public void Update()
         {
             MoveAxis = _input.Player.Move.ReadValue<Vector2>();
-            SwapCharacterAxis = _input.Player.SwapCharacter.ReadValue<Vector2>();
+            SwapCharacterAxis = _input.Player.SwapCharacterAxis.ReadValue<Vector2>();
             NextTargetTrigger = _input.Player.NextTarget.triggered;
             PreviousTargetTrigger = _input.Player.PreviousTarget.triggered;
             DodgeTrigger = _input.Player.Dodge.triggered;
             BlockTrigger = _input.Player.Block.triggered;
+            FireTrigger = _input.Player.Fire.triggered;
         }
 
         /// <summary>

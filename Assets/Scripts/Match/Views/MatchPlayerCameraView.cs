@@ -7,15 +7,6 @@ namespace Assets.Scripts.Match
     /// </summary>
     internal sealed class MatchPlayerCameraView : MonoBehaviour
     {
-        #region Propriétés
-
-        /// <summary>
-        /// true si aucun match n'est en cours
-        /// </summary>
-        internal bool MatchIsOver { get; set; } = true;
-
-        #endregion
-
         #region Inspecteur
 
         [SerializeField]
@@ -27,9 +18,14 @@ namespace Assets.Scripts.Match
         #region Instance
 
         /// <summary>
+        /// Le MatchPlayerControllerViewModel
+        /// </summary>
+        private MatchPlayerControllerViewModel _playerVM;
+
+        /// <summary>
         /// Le MatchManagerViewModel
         /// </summary>
-        private MatchManagerViewModel _managerVM;
+        private MatchManagerViewModel _matchVM;
 
         #endregion
 
@@ -40,7 +36,8 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void Awake()
         {
-            _managerVM = FindAnyObjectByType<MatchManagerViewModel>();
+            _playerVM = FindAnyObjectByType<MatchPlayerControllerViewModel>();
+            _matchVM = FindAnyObjectByType<MatchManagerViewModel>();
         }
 
         /// <summary>
@@ -48,13 +45,13 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void Update()
         {
-            if (!MatchIsOver)
+            if (!_matchVM.MatchIsOver)
             {
-                MatchCharacterController activePlayer = _managerVM.Allies[_managerVM.ActivePlayerIndex];
+                MatchCharacterController activePlayer = _playerVM.Allies[_playerVM.ActivePlayerIndex];
 
-                if (_managerVM.CurAllyTargetForSwapIndex > -1)
+                if (_playerVM.CurAllyTargetForSwapIndex > -1)
                 {
-                    MatchCharacterController curAllyTargetForSwap = _managerVM.Allies[_managerVM.CurAllyTargetForSwapIndex];
+                    MatchCharacterController curAllyTargetForSwap = _playerVM.Allies[_playerVM.CurAllyTargetForSwapIndex];
 
                     Vector3 total = activePlayer.transform.position + curAllyTargetForSwap.transform.position;
                     total /= 2f;
