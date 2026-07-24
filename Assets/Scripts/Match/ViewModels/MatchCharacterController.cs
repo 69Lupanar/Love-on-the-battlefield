@@ -129,8 +129,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal void ResetPlayer()
         {
-            _haloAlly.SetActive(false);
-            _haloAlly.SetActive(false);
+            DislayHalo(false);
             _rb.linearVelocity = Vector3.zero;
             _meshHolder.localEulerAngles = Vector3.zero;
         }
@@ -158,7 +157,7 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
-        /// Affiche le halo du perso comme étant celui d'un allié ou d'un ennemi
+        /// Affiche le halo du perso comme étant celui d'un alli"é ou d'un ennemi
         /// </summary>
         internal void DislayHalo(bool show)
         {

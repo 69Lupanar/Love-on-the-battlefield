@@ -290,6 +290,9 @@ namespace Assets.Scripts.Match
                 {
                     int index = Allies.IndexOf(_lastSwapCharacterTarget);
                     SetActivePlayer(index);
+
+                    // On transfère la valeur du joystick pour éviter de pouvoir imméiatement changer de joueur à nouveau
+                    (_lastSwapCharacterTarget.ActiveInput as MatchPlayerInput).SwapCharacterAxis = input.SwapCharacterAxis;
                 }
             }
 

@@ -53,9 +53,8 @@ namespace Assets.Scripts.Match
                 {
                     MatchCharacterController curAllyTargetForSwap = _playerVM.Allies[_playerVM.CurAllyTargetForSwapIndex];
 
-                    Vector3 total = activePlayer.transform.position + curAllyTargetForSwap.transform.position;
-                    total /= 2f;
-                    _cameraTarget.position = new Vector3(total.x, _cameraTarget.position.y, total.z);
+                    Vector3 avg = (activePlayer.transform.position + curAllyTargetForSwap.transform.position) / 2f;
+                    _cameraTarget.position = new Vector3(avg.x, _cameraTarget.position.y, avg.z);
                 }
                 else
                 {

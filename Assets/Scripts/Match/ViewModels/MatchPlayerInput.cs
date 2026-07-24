@@ -23,7 +23,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Valeur de l'axe du joystick droit
         /// </summary>
-        public Vector2 SwapCharacterAxis { get; private set; }
+        public Vector2 SwapCharacterAxis { get; set; }
 
         /// <summary>
         /// true si le joueur presse la touche de passage à la cible suivante

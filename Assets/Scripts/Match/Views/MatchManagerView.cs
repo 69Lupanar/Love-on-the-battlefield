@@ -72,7 +72,6 @@ namespace Assets.Scripts.Match
 
             _playerVM.SetPlayersAndBalls(alliesT, enemiesT, ballsT);
             _playerVM.SetTeams();
-            _playerVM.SetActivePlayer(_playerVM.ActivePlayerIndex);
             _vm.MatchIsOver = false;
 
             StartNewSet();
@@ -89,6 +88,7 @@ namespace Assets.Scripts.Match
         {
             _spawnerVM.ResetPlayersAndBallsPoses();
             _playerVM.ResetPlayersAndBalls();
+            _playerVM.SetActivePlayer(_playerVM.ActivePlayerIndex);
             _playerVM.EnablePlayersInput(false);
 
             // A retirer une fois les tests finis
