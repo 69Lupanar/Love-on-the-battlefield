@@ -250,6 +250,15 @@ namespace Assets.Scripts.Match
                 character.Move(activeInput.MoveAxis);
                 character.RotateMesh(activeInput.MoveAxis);
             }
+
+            if (activeInput.PreviousTargetTrigger)
+            {
+                SelectNewOpponentTarget(character, -1);
+            }
+            if (activeInput.NextTargetTrigger)
+            {
+                SelectNewOpponentTarget(character, 1);
+            }
         }
 
         /// <summary>
@@ -325,6 +334,51 @@ namespace Assets.Scripts.Match
             }
 
             _lastSwapCharacterAxis = _playerInput.SwapCharacterAxis;
+        }
+
+        /// <summary>
+        /// Sélectionne une nouvelle cible pour le perso
+        /// </summary>
+        /// <param name="character">Le perso concerné</param>
+        /// <param name="increment">Position si suivant, négatif si précédent</param>
+        private void SelectNewOpponentTarget(MatchCharacterController character, int increment)
+        {
+            int previousTargetIndex = character.LastOpponentTargetIndex;
+
+            // On choisit la cible adverse
+            character.LastOpponentTargetIndex += increment;
+
+            if (character.LastOpponentTargetIndex < 0)
+                character.LastOpponentTargetIndex = character.IsAlly ? Enemies.Count - 1 : Allies.Count - 1;
+            if (character.IsAlly && character.LastOpponentTargetIndex == Enemies.Count || !character.IsAlly && character.LastOpponentTargetIndex == Allies.Count)
+                character.LastOpponentTargetIndex = 0;
+
+            // Si le perso est celui du joueur, on affiche le halo de sa cible parmi les ennemis
+            // et on masque celle de la cible précédente s'il y en a une
+            if (Allies.Contains(character) && Allies.IndexOf(character) == ActivePlayerIndex)
+            {
+                if (previousTargetIndex > -1)
+                {
+                    Enemies[previousTargetIndex].DislayHalo(false);
+                }
+
+                Enemies[character.LastOpponentTargetIndex].DislayHalo(true);
+            }
+        }
+
+        /// <summary>
+        /// Retire au perso les infos sur sa cible. Utilisée quand la cible se fait éliminer
+        /// </summary>
+        /// <param name="character">Le perso concerné</param>>
+        private void ClearTarget(MatchCharacterController character)
+        {
+            // Si le perso est celui du joueur, on masque le halo de sa cible
+            if (character.LastOpponentTargetIndex > -1 && Allies.Contains(character) && Allies.IndexOf(character) == ActivePlayerIndex)
+            {
+                Enemies[character.LastOpponentTargetIndex].DislayHalo(false);
+            }
+
+            character.LastOpponentTargetIndex = -1;
         }
 
         /// <summary>

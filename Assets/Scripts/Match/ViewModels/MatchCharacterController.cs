@@ -20,6 +20,11 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal bool IsAlly { get; set; }
 
+        /// <summary>
+        /// Le dernier adversaire ciblé par le joueur
+        /// </summary>
+        internal int LastOpponentTargetIndex { get; set; }
+
         #endregion
 
         #region Inspecteur
@@ -132,6 +137,7 @@ namespace Assets.Scripts.Match
             DislayHalo(false);
             _rb.linearVelocity = Vector3.zero;
             _meshHolder.localEulerAngles = Vector3.zero;
+            LastOpponentTargetIndex = -1;
         }
 
         /// <summary>
