@@ -26,6 +26,11 @@ namespace Assets.Scripts.Match
         public Vector2 SwapCharacterAxis { get; set; }
 
         /// <summary>
+        /// true si le joueur presse la touche d'annulation de passage à la cible suivante
+        /// </summary>
+        public bool CancelSwapTrigger { get; set; }
+
+        /// <summary>
         /// true si le joueur presse la touche de passage à la cible suivante
         /// </summary>
         public bool NextTargetTrigger { get; set; }
@@ -83,6 +88,7 @@ namespace Assets.Scripts.Match
         {
             MoveAxis = _input.Player.Move.ReadValue<Vector2>();
             SwapCharacterAxis = _input.Player.SwapCharacterAxis.ReadValue<Vector2>();
+            CancelSwapTrigger = _input.Player.CancelSwap.triggered;
             NextTargetTrigger = _input.Player.NextTarget.triggered;
             PreviousTargetTrigger = _input.Player.PreviousTarget.triggered;
             DodgeTrigger = _input.Player.Dodge.triggered;

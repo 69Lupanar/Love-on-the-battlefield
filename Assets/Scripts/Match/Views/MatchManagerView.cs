@@ -87,7 +87,7 @@ namespace Assets.Scripts.Match
         private void StartNewSet()
         {
             _spawnerVM.ResetPlayersAndBallsPoses();
-            _playerVM.ResetPlayersAndBalls();
+            _playerVM.ResetController();
             _playerVM.SetActivePlayer(_playerVM.ActivePlayerIndex);
             _playerVM.EnablePlayersInput(false);
 

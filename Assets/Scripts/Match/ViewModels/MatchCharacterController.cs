@@ -5,7 +5,7 @@ namespace Assets.Scripts.Match
     /// <summary>
     /// Gère les déplacements du personnage
     /// </summary>
-    [RequireComponent(typeof(MatchPlayerInput), typeof(MatchAIInput), typeof(Rigidbody))]
+    [RequireComponent(typeof(MatchAIInput), typeof(Rigidbody))]
     internal sealed class MatchCharacterController : MonoBehaviour
     {
         #region Propriétés
@@ -26,14 +26,6 @@ namespace Assets.Scripts.Match
 
         [Header("Components")]
         [Space(10)]
-
-        [SerializeField]
-        [Tooltip("Commandes du joueur")]
-        private MatchPlayerInput _playerInput;
-
-        [SerializeField]
-        [Tooltip("Commandes de l'IA")]
-        private MatchAIInput _aiInput;
 
         [SerializeField]
         [Tooltip("Emplacement de la balle quand tenue par le joueur")]
@@ -64,6 +56,16 @@ namespace Assets.Scripts.Match
         #region Instance
 
         /// <summary>
+        /// Commandes du joueur
+        /// </summary>
+        private MatchPlayerInput _playerInput;
+
+        /// <summary>
+        /// Commandes de l'IA
+        /// </summary>
+        private MatchAIInput _aiInput;
+
+        /// <summary>
         /// Commandes actives du personnage
         /// </summary>
         private IMatchCharacterInput _activeInput;
@@ -83,6 +85,8 @@ namespace Assets.Scripts.Match
         private void Awake()
         {
             _rb = GetComponent<Rigidbody>();
+            _playerInput = FindAnyObjectByType<MatchPlayerInput>();
+            _aiInput = GetComponent<MatchAIInput>();
         }
 
         #endregion
@@ -95,8 +99,6 @@ namespace Assets.Scripts.Match
         internal void GiveControlToPlayer()
         {
             _activeInput = _playerInput;
-            _aiInput.Disable();
-            _playerInput.Enable();
         }
 
         /// <summary>
@@ -105,8 +107,6 @@ namespace Assets.Scripts.Match
         internal void GiveControlToAI()
         {
             _activeInput = _aiInput;
-            _aiInput.Enable();
-            _playerInput.Disable();
         }
 
         /// <summary>
