@@ -106,7 +106,7 @@ GameObject:
   - component: {fileID: 4610676096796686571}
   m_Layer: 6
   m_Name: MatchPlayerBase
-  m_TagString: Player/MatchCharacter
+  m_TagString: Match/Character
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

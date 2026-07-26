@@ -172,8 +172,8 @@ namespace Assets.Scripts.Match
         internal void SetPlayersAndBalls(List<Transform> alliesT, List<Transform> enemiesT, List<Transform> ballsT)
         {
             Allies.Clear();
-            Allies.Clear();
-            Allies.Clear();
+            Enemies.Clear();
+            Balls.Clear();
 
             for (int i = 0; i < alliesT.Count; ++i)
             {
@@ -228,7 +228,7 @@ namespace Assets.Scripts.Match
 
             for (int i = 0; i < _matchVM.NbBalls; ++i)
             {
-                Balls[i].ResetBall();
+                Balls[i].ResetBall(i, _matchVM.NbBalls);
             }
         }
 
@@ -312,6 +312,12 @@ namespace Assets.Scripts.Match
                     SetActivePlayer(index);
                     _lastSwapCharacterTarget = null;
                     CurAllyTargetForSwapIndex = -1;
+                }
+
+                // On masque également le halo de la cible ennemi s'il y en a une
+                if (activePlayer.LastOpponentTargetIndex > -1)
+                {
+                    Enemies[activePlayer.LastOpponentTargetIndex].DislayHalo(false);
                 }
             }
 

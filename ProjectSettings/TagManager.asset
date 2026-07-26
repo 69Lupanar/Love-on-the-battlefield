@@ -6,9 +6,9 @@ TagManager:
   tags:
   - Obstacles/Field
   - Obstacles/OutOfField
-  - Ball
-  - Player/MatchCharacter
   - Obstacles/Wall
+  - Match/Ball
+  - Match/Character
   layers:
   - Default
   - TransparentFX

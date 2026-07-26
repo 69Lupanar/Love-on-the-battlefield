@@ -9,7 +9,7 @@ namespace Assets.Scripts.Match
     [Serializable]
     public struct MatchCharacterMovementData
     {
-        #region Instance
+        #region Inspecteur
 
         [Tooltip("Vitesse de mouvement")]
         public float MoveSpeed;
