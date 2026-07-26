@@ -38,6 +38,10 @@ namespace Assets.Scripts.Match
         private float _displayHaloSpeedThreshold = 1f;
 
         [SerializeField]
+        [Tooltip("Transform parente des halos")]
+        private Transform _haloParent;
+
+        [SerializeField]
         [Tooltip("Halo de la balle si portée par un allié")]
         private GameObject _haloAlly;
 
@@ -76,6 +80,11 @@ namespace Assets.Scripts.Match
         private Rigidbody _rb;
 
         /// <summary>
+        /// Le SphereCollider
+        /// </summary>
+        private SphereCollider _col;
+
+        /// <summary>
         /// La vitesse de la balle à la frame précédente
         /// </summary>
         private Vector3 _lastLinearVelocity;
@@ -91,6 +100,7 @@ namespace Assets.Scripts.Match
         {
             _t = transform;
             _rb = GetComponent<Rigidbody>();
+            _col = GetComponent<SphereCollider>();
         }
 
         /// <summary>
@@ -112,6 +122,11 @@ namespace Assets.Scripts.Match
             }
 
             _lastLinearVelocity = _rb.linearVelocity;
+
+            // Déplace manuellement les halos avec le ballon, vu que le ballon roule
+            Vector3 y = _t.transform.position + new Vector3(0f, -_t.lossyScale.y / 2f, 0f);
+            _haloParent.transform.position = y;
+            _haloParent.transform.eulerAngles = Vector3.zero;
         }
 
         /// <summary>
@@ -140,18 +155,6 @@ namespace Assets.Scripts.Match
                 //TAF : Ramaner la balle en jeu par les receveurs
                 IsLive = false;
             }
-
-            if (go.CompareTag(_characterTag) && IsLive)
-            {
-                if (IsLive)
-                {
-                    //TAF : Eliminer le joueur
-                }
-                else
-                {
-                    //TAF : Récupérer la balle (passe ou ramassage en fonction de ActiveTeamID)
-                }
-            }
         }
 
         #endregion
@@ -170,6 +173,22 @@ namespace Assets.Scripts.Match
             ReservedTeamID = GetBallTeamID(index, nbBalls);
             DisplayHalo(true);
             _rb.linearVelocity = _rb.angularVelocity = Vector3.zero;
+        }
+
+        /// <summary>
+        /// Change l'état de la balle pour indiquer qu'elle a été ramassée
+        /// </summary>
+        /// <param name="isAlly">true si récupérée par un membre de l'équipe du joueur, false pour l'équipe adverse</param>
+        internal void PickUp(bool isAlly)
+        {
+            IsLive = false;
+            ReservedTeamID = -1;    //Une fois la balle récupérée, cette variable passe à -1 pour permettre à toutes les équipes de la ramasser.
+            ActiveTeamID = isAlly ? 0 : 1;
+            _t.localPosition = Vector3.zero;
+            _rb.isKinematic = true;
+            _rb.useGravity = false;
+            _col.enabled = false;
+            DisplayHalo(false);
         }
 
         #endregion

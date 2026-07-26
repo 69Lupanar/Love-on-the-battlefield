@@ -21,6 +21,11 @@ namespace Assets.Scripts.Match
         internal bool IsAlly { get; set; }
 
         /// <summary>
+        /// true si le perso porte un ballon
+        /// </summary>
+        internal bool IsHoldingABall { get; set; }
+
+        /// <summary>
         /// Le dernier adversaire ciblé par le joueur
         /// </summary>
         internal int LastOpponentTargetIndex { get; set; }
@@ -31,6 +36,10 @@ namespace Assets.Scripts.Match
 
         [Header("Components")]
         [Space(10)]
+
+        [SerializeField]
+        [Tooltip("Tag du ballon")]
+        private string _ballTag;
 
         [SerializeField]
         [Tooltip("Emplacement de la balle quand tenue par le joueur")]
@@ -94,6 +103,58 @@ namespace Assets.Scripts.Match
             _aiInput = GetComponent<MatchAIInput>();
         }
 
+        /// <summary>
+        /// Appelée quand collision avec un autre objet
+        /// </summary>
+        /// <param name="collision">Infos sur la collision</param>
+        private void OnCollisionEnter(Collision collision)
+        {
+            GameObject go = collision.gameObject;
+
+            if (go.CompareTag(_ballTag))
+            {
+                Ball ball = go.GetComponent<Ball>();
+
+                if (!ball.IsLive)
+                {
+                    // TAF: Ramasser la balle
+                    PickUpBall(ball);
+                }
+                else
+                {
+                    switch (ball.ActiveTeamID)
+                    {
+                        case 0:
+                            if (IsAlly)
+                            {
+                                // TAF : Balle alliée, c'est une passe donc le perso la récupère
+                                PickUpBall(ball);
+
+                            }
+                            else
+                            {
+                                // TAF : Balle ennemie, le perso est éliminé
+
+                            }
+                            break;
+                        case 1:
+                            if (!IsAlly)
+                            {
+                                // TAF : Balle alliée, c'est une passe donc le perso la récupère
+                                PickUpBall(ball);
+
+                            }
+                            else
+                            {
+                                // TAF : Balle ennemie, le perso est éliminé
+
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+
         #endregion
 
         #region Méthodes internes
@@ -134,10 +195,13 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal void ResetPlayer()
         {
-            DislayHalo(false);
             _rb.linearVelocity = Vector3.zero;
             _meshHolder.localEulerAngles = Vector3.zero;
             LastOpponentTargetIndex = -1;
+            IsHoldingABall = false;
+
+            // TAF: Relâcher le ballon s'il en a un
+            DislayHalo(false);
         }
 
         /// <summary>
@@ -163,12 +227,30 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
-        /// Affiche le halo du perso comme étant celui d'un alli"é ou d'un ennemi
+        /// Affiche le halo du perso comme étant celui d'un allié ou d'un ennemi
         /// </summary>
         internal void DislayHalo(bool show)
         {
             _haloAlly.SetActive(show && IsAlly);
             _haloEnemy.SetActive(show && !IsAlly);
+        }
+
+        /// <summary>
+        /// Récupère le ballon
+        /// </summary>
+        /// <param name="ball">Le ballon</param>
+        private void PickUpBall(Ball ball)
+        {
+            // Si le perso détient déjà un ballon
+            // ou qu'il tente de récupérer une balle réservée à l'ennemi,
+            // il ne peut pas en ramasser une nouvelle
+
+            if (IsHoldingABall || (IsAlly && ball.ReservedTeamID == 1) || (!IsAlly && ball.ReservedTeamID == 0))
+                return;
+
+            IsHoldingABall = true;
+            ball.transform.SetParent(_ballHoldingPos);
+            ball.PickUp(IsAlly);
         }
 
         #endregion
