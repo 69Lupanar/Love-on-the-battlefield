@@ -56,14 +56,24 @@ namespace Assets.Scripts.Match
         public bool FireTrigger { get; set; }
 
         /// <summary>
-        /// true si le joueur maintient le bouton de tir
+        /// true si le joueur appuie sur le bouton de tir
         /// </summary>
-        public bool IsHoldingFire { get; set; }
+        public bool HasPressedFire { get; set; }
 
         /// <summary>
-        /// true si le joueur maintient le bouton de saut
+        /// true si le joueur relâche le bouton de tir
         /// </summary>
-        public bool IsHoldingJump { get; set; }
+        public bool HasReleasedFire { get; set; }
+
+        /// <summary>
+        /// true si le joueur appuie sur le bouton de saut
+        /// </summary>
+        public bool HasPressedJump { get; set; }
+
+        /// <summary>
+        /// true si le joueur relâche le bouton de saut
+        /// </summary>
+        public bool HasReleasedJump { get; set; }
 
         #endregion
 
@@ -94,6 +104,17 @@ namespace Assets.Scripts.Match
             DodgeTrigger = _input.Player.Dodge.triggered;
             BlockTrigger = _input.Player.Block.triggered;
             FireTrigger = _input.Player.Fire.triggered;
+        }
+
+        /// <summary>
+        /// Màj à chaque frame
+        /// </summary>
+        private void LateUpdate()
+        {
+            HasPressedFire = false;
+            HasReleasedFire = false;
+            HasPressedJump = false;
+            HasReleasedJump = false;
         }
 
         /// <summary>
@@ -144,7 +165,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void OnFireButtonDown(InputAction.CallbackContext _)
         {
-            IsHoldingFire = true;
+            HasPressedFire = true;
         }
 
         /// <summary>
@@ -152,7 +173,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void OnFireButtonUp(InputAction.CallbackContext _)
         {
-            IsHoldingFire = false;
+            HasReleasedFire = true;
         }
 
         /// <summary>
@@ -160,7 +181,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void OnJumpButtonDown(InputAction.CallbackContext _)
         {
-            IsHoldingJump = true;
+            HasPressedJump = true;
         }
 
         /// <summary>
@@ -168,7 +189,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void OnJumpButtonUp(InputAction.CallbackContext _)
         {
-            IsHoldingJump = false;
+            HasReleasedJump = true;
         }
 
         #endregion

@@ -171,8 +171,12 @@ namespace Assets.Scripts.Match
             IsLive = false;
             ActiveTeamID = -1;
             ReservedTeamID = GetBallTeamID(index, nbBalls);
+
             DisplayHalo(true);
+
             _rb.linearVelocity = _rb.angularVelocity = Vector3.zero;
+            _t.SetParent(null); // Si la balle est attachée à un joueur, on la libère
+            EnablePhysics(true);
         }
 
         /// <summary>
@@ -185,10 +189,26 @@ namespace Assets.Scripts.Match
             ReservedTeamID = -1;    //Une fois la balle récupérée, cette variable passe à -1 pour permettre à toutes les équipes de la ramasser.
             ActiveTeamID = isAlly ? 0 : 1;
             _t.localPosition = Vector3.zero;
-            _rb.isKinematic = true;
-            _rb.useGravity = false;
-            _col.enabled = false;
+            EnablePhysics(false);
             DisplayHalo(false);
+        }
+
+        /// <summary>
+        /// Active ou non la physique sur cet objet
+        /// </summary>
+        internal void EnablePhysics(bool enable)
+        {
+            _rb.isKinematic = !enable;
+            _rb.useGravity = enable;
+            _col.enabled = enable;
+        }
+
+        /// <summary>
+        /// Applique une impulsion au ballon
+        /// </summary>
+        internal void ApplyImpulseForce(Vector3 direction, float force)
+        {
+            _rb.AddForce(direction * force, ForceMode.Impulse);
         }
 
         #endregion

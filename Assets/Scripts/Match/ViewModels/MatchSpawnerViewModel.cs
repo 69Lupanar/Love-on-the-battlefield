@@ -98,13 +98,13 @@ namespace Assets.Scripts.Match
                 if (_inactiveAlliesParent.childCount > 0)
                 {
                     character = _inactiveAlliesParent.GetChild(0);
+                    character.SetParent(null);
                 }
                 else
                 {
-                    character = Instantiate(_allyPrefab, transform).transform;
+                    character = Instantiate(_allyPrefab).transform;
                 }
 
-                character.SetParent(transform);
                 AlliesT.Add(character);
             }
 
@@ -113,13 +113,13 @@ namespace Assets.Scripts.Match
                 if (_inactiveEnemiesParent.childCount > 0)
                 {
                     character = _inactiveEnemiesParent.GetChild(0);
+                    character.SetParent(null);
                 }
                 else
                 {
-                    character = Instantiate(_enemyPrefab, transform).transform;
+                    character = Instantiate(_enemyPrefab).transform;
                 }
 
-                character.SetParent(transform);
                 EnemiesT.Add(character);
             }
 
@@ -128,13 +128,13 @@ namespace Assets.Scripts.Match
                 if (_inactiveBallsParent.childCount > 0)
                 {
                     ball = _inactiveBallsParent.GetChild(0);
+                    ball.SetParent(null);
                 }
                 else
                 {
-                    ball = Instantiate(_ballPrefab, transform).transform;
+                    ball = Instantiate(_ballPrefab).transform;
                 }
 
-                ball.SetParent(transform);
                 BallsT.Add(ball);
             }
         }

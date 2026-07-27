@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Assets.Scripts.Match
@@ -23,12 +24,22 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// true si le perso porte un ballon
         /// </summary>
-        internal bool IsHoldingABall { get; set; }
+        internal bool IsHoldingABall => _ballHolder.childCount > 0;
+
+        /// <summary>
+        /// true si le perso est éliminé
+        /// </summary>
+        internal bool IsEliminated { get; set; }
 
         /// <summary>
         /// Le dernier adversaire ciblé par le joueur
         /// </summary>
         internal int LastOpponentTargetIndex { get; set; }
+
+        /// <summary>
+        /// Temps actuel de chargement du tir
+        /// </summary>
+        internal float Energy { get; private set; }
 
         #endregion
 
@@ -43,7 +54,7 @@ namespace Assets.Scripts.Match
 
         [SerializeField]
         [Tooltip("Emplacement de la balle quand tenue par le joueur")]
-        private Transform _ballHoldingPos;
+        private Transform _ballHolder;
 
         [SerializeField]
         [Tooltip("Parent du mesh du personnage")]
@@ -195,12 +206,11 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal void ResetPlayer()
         {
+            IsEliminated = false;
+            Energy = 1f;
             _rb.linearVelocity = Vector3.zero;
             _meshHolder.localEulerAngles = Vector3.zero;
             LastOpponentTargetIndex = -1;
-            IsHoldingABall = false;
-
-            // TAF: Relâcher le ballon s'il en a un
             DislayHalo(false);
         }
 
@@ -236,6 +246,48 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
+        /// Charge un tir
+        /// </summary>
+        internal void ChargeShot()
+        {
+            if (Energy > 0f)
+            {
+                Energy -= Time.deltaTime * MovementData.FireChargeSpeed;
+            }
+        }
+
+        /// <summary>
+        /// Tire le ballon
+        /// </summary>
+        internal void Shoot()
+        {
+            // Plus le joueur charge longtemps, plus son tir sera puissant
+            Energy = 1f;
+            Vector3 dir = _meshHolder.forward;
+            float force = math.lerp(MovementData.FireForceInterval.y, MovementData.FireForceInterval.x, Energy);
+
+            // Libère la balle et lui applique une force
+            Ball ball = ReleaseBall();
+            ball.ApplyImpulseForce(dir, force);
+        }
+
+        /// <summary>
+        /// Force le joueur à relâcher le ballon
+        /// </summary>
+        /// <returns>La Transform du ballon</returns>
+        internal Ball ReleaseBall()
+        {
+            Ball ball = _ballHolder.GetChild(0).GetComponent<Ball>();
+            ball.transform.SetParent(null);
+            ball.EnablePhysics(true);
+            return ball;
+        }
+
+        #endregion
+
+        #region Méthodes privées
+
+        /// <summary>
         /// Récupère le ballon
         /// </summary>
         /// <param name="ball">Le ballon</param>
@@ -248,8 +300,7 @@ namespace Assets.Scripts.Match
             if (IsHoldingABall || (IsAlly && ball.ReservedTeamID == 1) || (!IsAlly && ball.ReservedTeamID == 0))
                 return;
 
-            IsHoldingABall = true;
-            ball.transform.SetParent(_ballHoldingPos);
+            ball.transform.SetParent(_ballHolder);
             ball.PickUp(IsAlly);
         }
 

@@ -33,14 +33,24 @@ namespace Assets.Scripts.Match
         bool BlockTrigger { get; set; }
 
         /// <summary>
-        /// true si le joueur maintient le bouton de tir
+        /// true si le joueur appuie sur le bouton de tir
         /// </summary>
-        bool IsHoldingFire { get; set; }
+        bool HasPressedFire { get; set; }
 
         /// <summary>
-        /// true si le joueur maintient le bouton de saut
+        /// true si le joueur relâche le bouton de tir
         /// </summary>
-        bool IsHoldingJump { get; set; }
+        bool HasReleasedFire { get; set; }
+
+        /// <summary>
+        /// true si le joueur appuie sur le bouton de saut
+        /// </summary>
+        bool HasPressedJump { get; set; }
+
+        /// <summary>
+        /// true si le joueur relâche le bouton de saut
+        /// </summary>
+        bool HasReleasedJump { get; set; }
 
         /// <summary>
         /// Active les commandes

@@ -251,6 +251,7 @@ namespace Assets.Scripts.Match
                 character.RotateMesh(activeInput.MoveAxis);
             }
 
+            // Changement de cible
             if (activeInput.PreviousTargetTrigger)
             {
                 SelectNewOpponentTarget(character, -1);
@@ -258,6 +259,19 @@ namespace Assets.Scripts.Match
             if (activeInput.NextTargetTrigger)
             {
                 SelectNewOpponentTarget(character, 1);
+            }
+
+            // Tir
+            if (character.IsHoldingABall)
+            {
+                if (activeInput.HasPressedFire)
+                {
+                    character.ChargeShot();
+                }
+                if (activeInput.HasReleasedFire)
+                {
+                    character.Shoot();
+                }
             }
         }
 

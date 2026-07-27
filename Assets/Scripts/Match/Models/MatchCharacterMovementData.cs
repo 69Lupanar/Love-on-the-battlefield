@@ -36,10 +36,10 @@ namespace Assets.Scripts.Match
         public float BlockEnergyCost;
 
         [Tooltip("Coût en énergie de chargement du saut chaque frame")]
-        public float JumpChargeEnergyCostPerFrame;
+        public float JumpChargeSpeed;
 
         [Tooltip("Coût en énergie de chargement du saut chaque frame")]
-        public float FireChargeEnergyCostPerFrame;
+        public float FireChargeSpeed;
 
         #endregion
     }
