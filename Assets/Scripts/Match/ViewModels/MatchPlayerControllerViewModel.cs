@@ -77,6 +77,11 @@ namespace Assets.Scripts.Match
         private bool _isSwappingCharacter;
 
         /// <summary>
+        /// true pour attendre avant de tirer
+        /// </summary>
+        private bool _waitBeforeFire;
+
+        /// <summary>
         /// la dernière position du joystick droit
         /// </summary>
         private Vector2 _lastSwapCharacterAxis;
@@ -264,11 +269,11 @@ namespace Assets.Scripts.Match
             // Tir
             if (character.IsHoldingABall)
             {
-                if (activeInput.HasPressedFire)
+                if (activeInput.HasPressedFire && !_isSwappingCharacter)
                 {
                     character.ChargeShot();
                 }
-                if (activeInput.HasReleasedFire)
+                if (activeInput.HasReleasedFire && character.Energy < 1f)
                 {
                     character.Shoot();
                 }
