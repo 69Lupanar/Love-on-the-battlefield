@@ -1,3 +1,4 @@
+using System;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -9,6 +10,15 @@ namespace Assets.Scripts.Match
     [RequireComponent(typeof(MatchAIInput), typeof(Rigidbody))]
     internal sealed class MatchCharacterController : MonoBehaviour
     {
+        #region Evénements
+
+        /// <summary>
+        /// Appelée quand l'énergie du joueur change
+        /// </summary>
+        internal Action<float> OnEnergyValueChanged { get; set; }
+
+        #endregion
+
         #region Propriétés
 
         /// <summary>
@@ -37,9 +47,20 @@ namespace Assets.Scripts.Match
         internal int LastOpponentTargetIndex { get; set; }
 
         /// <summary>
-        /// Temps actuel de chargement du tir
+        /// Energie du joueur
         /// </summary>
-        internal float Energy { get; private set; }
+        internal float Energy
+        {
+            get => _energy;
+            private set
+            {
+                if (_energy != value)
+                {
+                    _energy = value;
+                    OnEnergyValueChanged?.Invoke(value);
+                }
+            }
+        }
 
         #endregion
 
@@ -99,6 +120,11 @@ namespace Assets.Scripts.Match
         /// Rigidbody
         /// </summary>
         private Rigidbody _rb;
+
+        /// <summary>
+        /// Energie du joueur
+        /// </summary>
+        private float _energy;
 
         #endregion
 
