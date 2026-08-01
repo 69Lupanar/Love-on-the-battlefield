@@ -151,6 +151,27 @@ namespace Assets.Scripts.Match
             ComputePlayerInput(Allies[ActivePlayerIndex]);
         }
 
+        /// <summary>
+        /// Màj à chaque frame
+        /// </summary>
+        private void FixedUpdate()
+        {
+            if (_matchVM.MatchIsOver)
+                return;
+
+            for (int i = 0; i < _matchVM.NbAllies; ++i)
+            {
+                ComputeInputFixed(Allies[i]);
+            }
+
+            for (int i = 0; i < _matchVM.NbEnemies; ++i)
+            {
+                ComputeInputFixed(Enemies[i]);
+            }
+
+            ComputePlayerInput(Allies[ActivePlayerIndex]);
+        }
+
         #endregion
 
         #region Méthodes internes
@@ -267,6 +288,23 @@ namespace Assets.Scripts.Match
 
         #region Méthodes privées
 
+        #region Input
+
+        /// <summary>
+        /// Execute les actions en fonction des commandes actives du perso
+        /// </summary>
+        /// <param name="character">Le perso</param>
+        private void ComputeInputFixed(MatchCharacterController character)
+        {
+            IMatchCharacterInput activeInput = character.ActiveInput;
+
+            // Translation + Rotation
+            if (activeInput.MoveAxis != Vector2.zero)
+            {
+                character.Move(activeInput.MoveAxis);
+            }
+        }
+
         /// <summary>
         /// Execute les actions en fonction des commandes actives du perso
         /// </summary>
@@ -278,7 +316,6 @@ namespace Assets.Scripts.Match
             // Translation + Rotation
             if (activeInput.MoveAxis != Vector2.zero)
             {
-                character.Move(activeInput.MoveAxis);
                 character.RotateMesh(activeInput.MoveAxis);
             }
 
@@ -293,9 +330,9 @@ namespace Assets.Scripts.Match
             }
 
             // Tir
-            if (character.IsHoldingABall)
+            if (character.IsHoldingABall && !_isSwappingCharacter)
             {
-                if (activeInput.IsHoldingFire && !_isSwappingCharacter)
+                if (activeInput.IsHoldingFire)
                 {
                     character.ChargeShot();
                 }
@@ -312,15 +349,6 @@ namespace Assets.Scripts.Match
         /// <param name="activePlayer">Le perso contrôlé par le joueur</param>
         private void ComputePlayerInput(MatchCharacterController activePlayer)
         {
-            SwapCharacter(activePlayer);
-        }
-
-        /// <summary>
-        /// Echange le contrôle d'alliés entre l'IA et le joueur
-        /// </summary>
-        /// <param name="activePlayer">Le perso contrôlé par le joueur</param>
-        private void SwapCharacter(MatchCharacterController activePlayer)
-        {
             if (_lastSwapCharacterAxis == Vector2.zero && _playerInput.SwapCharacterAxis != Vector2.zero)
             {
                 _isSwappingCharacter = true;
@@ -333,14 +361,7 @@ namespace Assets.Scripts.Match
 
                 if (target && target.IsAlly)
                 {
-                    if (_lastSwapCharacterTarget != null && _lastSwapCharacterTarget != target)
-                    {
-                        // Fait disparaître le halo de la cible précédente
-                        _lastSwapCharacterTarget.DislayHalo(false);
-                    }
-
-                    //Affiche le halo de la nouvelle cible
-                    target.DislayHalo(true);
+                    DisplayHaloes(_lastSwapCharacterTarget, target);
                     _lastSwapCharacterTarget = target;
                     CurAllyTargetForSwapIndex = Allies.IndexOf(target);
                 }
@@ -349,42 +370,81 @@ namespace Assets.Scripts.Match
             // On passe le contrôle à l'allié sélectionné
             if (_isSwappingCharacter && _playerInput.FireTrigger)
             {
-                _isSwappingCharacter = false;
+                SwapControl(activePlayer, _lastSwapCharacterTarget);
 
-                if (_lastSwapCharacterTarget != null)
-                {
-                    int index = Allies.IndexOf(_lastSwapCharacterTarget);
-                    SetActivePlayer(index);
-                    _lastSwapCharacterTarget = null;
-                    CurAllyTargetForSwapIndex = -1;
-                }
-
-                // On masque également le halo de la cible ennemi s'il y en a une
-                if (activePlayer.LastOpponentTargetIndex > -1)
-                {
-                    Enemies[activePlayer.LastOpponentTargetIndex].DislayHalo(false);
-                }
+                // Pour empêcher le nouveau perso de tirer
+                _playerInput.IsHoldingFire = false;
+                _playerInput.HasReleasedFire = false;
             }
 
             // On annule le changement de perso
             if (_isSwappingCharacter && _playerInput.CancelSwapTrigger)
             {
-                _isSwappingCharacter = false;
-
-                if (_lastSwapCharacterTarget != null)
-                {
-                    if (_lastSwapCharacterTarget != null)
-                    {
-                        // Fait disparaître le halo de la cible précédente
-                        _lastSwapCharacterTarget.DislayHalo(false);
-                    }
-
-                    _lastSwapCharacterTarget = null;
-                    CurAllyTargetForSwapIndex = -1;
-                }
+                CancelSwap();
             }
 
             _lastSwapCharacterAxis = _playerInput.SwapCharacterAxis;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Affiche les halos des persos dont on doit échanger le contrôle
+        /// </summary>
+        /// <param name="newTarget"></param>
+        private void DisplayHaloes(MatchCharacterController lastTarget, MatchCharacterController newTarget)
+        {
+            if (lastTarget != null && lastTarget != newTarget)
+            {
+                // Fait disparaître le halo de la cible précédente
+                lastTarget.DislayHalo(false);
+            }
+
+            //Affiche le halo de la nouvelle cible
+            newTarget.DislayHalo(true);
+        }
+
+        /// <summary>
+        /// Echange le contrôle d'alliés entre l'IA et le joueur
+        /// </summary>
+        /// <param name="activePlayer">Le perso contrôlé par le joueur</param>
+        /// <param name="target">La cible à contrôler</param>
+        private void SwapControl(MatchCharacterController activePlayer, MatchCharacterController target)
+        {
+            // On passe le contrôle à l'allié sélectionné
+            _isSwappingCharacter = false;
+
+            if (_lastSwapCharacterTarget != null)
+            {
+                int index = Allies.IndexOf(target);
+                SetActivePlayer(index);
+                _lastSwapCharacterTarget = null;
+                CurAllyTargetForSwapIndex = -1;
+            }
+
+            // On masque également le halo de la cible ennemi s'il y en a une
+            if (activePlayer.LastOpponentTargetIndex > -1)
+            {
+                Enemies[activePlayer.LastOpponentTargetIndex].DislayHalo(false);
+            }
+
+        }
+
+        /// <summary>
+        /// Annule le changement de perso
+        /// </summary>
+        private void CancelSwap()
+        {
+            _isSwappingCharacter = false;
+
+            if (_lastSwapCharacterTarget != null)
+            {
+                // Fait disparaître le halo de la cible précédente
+                _lastSwapCharacterTarget.DislayHalo(false);
+            }
+
+            _lastSwapCharacterTarget = null;
+            CurAllyTargetForSwapIndex = -1;
         }
 
         /// <summary>
