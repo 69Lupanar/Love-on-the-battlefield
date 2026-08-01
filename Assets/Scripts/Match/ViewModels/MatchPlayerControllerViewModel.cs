@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,6 +10,15 @@ namespace Assets.Scripts.Match
     [RequireComponent(typeof(MatchPlayerInput))]
     internal sealed class MatchPlayerControllerViewModel : MonoBehaviour
     {
+        #region Evénements
+
+        /// <summary>
+        /// Appelée quand le joueur actif change
+        /// </summary>
+        internal Action<int> OnActivePlayerChanged { get; set; }
+
+        #endregion
+
         #region Propriétés
 
         /// <summary>
@@ -29,7 +39,18 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// L'ID du perso contrôlé par le joueur
         /// </summary>
-        internal int ActivePlayerIndex { get; set; }
+        internal int ActivePlayerIndex
+        {
+            get => _activePlayerIndex;
+            set
+            {
+                if (_activePlayerIndex != value)
+                {
+                    _activePlayerIndex = value;
+                    OnActivePlayerChanged?.Invoke(value);
+                }
+            }
+        }
 
         /// <summary>
         /// L'ID du perso allié actuellement sélectionné comme cible
@@ -90,6 +111,11 @@ namespace Assets.Scripts.Match
         /// la dernière cible du changement de contrôle
         /// </summary>
         private MatchCharacterController _lastSwapCharacterTarget;
+
+        /// <summary>
+        /// L'ID du perso contrôlé par le joueur
+        /// </summary>
+        private int _activePlayerIndex;
 
         #endregion
 
@@ -269,7 +295,7 @@ namespace Assets.Scripts.Match
             // Tir
             if (character.IsHoldingABall)
             {
-                if (activeInput.HasPressedFire && !_isSwappingCharacter)
+                if (activeInput.IsHoldingFire && !_isSwappingCharacter)
                 {
                     character.ChargeShot();
                 }

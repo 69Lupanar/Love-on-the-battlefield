@@ -38,6 +38,11 @@ namespace Assets.Scripts.Match
         bool HasPressedFire { get; set; }
 
         /// <summary>
+        /// true si le joueur maintient le bouton de tir
+        /// </summary>
+        bool IsHoldingFire { get; set; }
+
+        /// <summary>
         /// true si le joueur relâche le bouton de tir
         /// </summary>
         bool HasReleasedFire { get; set; }
@@ -46,6 +51,11 @@ namespace Assets.Scripts.Match
         /// true si le joueur appuie sur le bouton de saut
         /// </summary>
         bool HasPressedJump { get; set; }
+
+        /// <summary>
+        /// true si le joueur maintient le bouton de saut
+        /// </summary>
+        bool IsHoldingJump { get; set; }
 
         /// <summary>
         /// true si le joueur relâche le bouton de saut

@@ -61,6 +61,11 @@ namespace Assets.Scripts.Match
         public bool HasPressedFire { get; set; }
 
         /// <summary>
+        /// true si le joueur maintient le bouton de tir
+        /// </summary>
+        public bool IsHoldingFire { get; set; }
+
+        /// <summary>
         /// true si le joueur relâche le bouton de tir
         /// </summary>
         public bool HasReleasedFire { get; set; }
@@ -69,6 +74,11 @@ namespace Assets.Scripts.Match
         /// true si le joueur appuie sur le bouton de saut
         /// </summary>
         public bool HasPressedJump { get; set; }
+
+        /// <summary>
+        /// true si le joueur maintient le bouton de saut
+        /// </summary>
+        public bool IsHoldingJump { get; set; }
 
         /// <summary>
         /// true si le joueur relâche le bouton de saut
@@ -166,6 +176,7 @@ namespace Assets.Scripts.Match
         private void OnFireButtonDown(InputAction.CallbackContext _)
         {
             HasPressedFire = true;
+            IsHoldingFire = true;
         }
 
         /// <summary>
@@ -174,6 +185,7 @@ namespace Assets.Scripts.Match
         private void OnFireButtonUp(InputAction.CallbackContext _)
         {
             HasReleasedFire = true;
+            IsHoldingFire = false;
         }
 
         /// <summary>
@@ -182,6 +194,7 @@ namespace Assets.Scripts.Match
         private void OnJumpButtonDown(InputAction.CallbackContext _)
         {
             HasPressedJump = true;
+            IsHoldingJump = true;
         }
 
         /// <summary>
@@ -190,6 +203,7 @@ namespace Assets.Scripts.Match
         private void OnJumpButtonUp(InputAction.CallbackContext _)
         {
             HasReleasedJump = true;
+            IsHoldingJump = false;
         }
 
         #endregion
