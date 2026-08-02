@@ -188,10 +188,14 @@ namespace Assets.Scripts.Match
             {
                 // Désactive les inputs des joueurs déjà présents avant de les retirer
                 EnablePlayersInput(false);
+
+                // Détache les callbacks des anciennes instances
+                UnsubscribeEntities();
             }
 
             SetEntities(_spawnerV.AlliesT, _spawnerV.EnemiesT, _spawnerV.BallsT);
             SetTeams();
+            SubscribeEntities();
         }
 
         /// <summary>
@@ -216,7 +220,7 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
-        /// Attache les callbacks aux entités de jeu
+        /// Détache les callbacks aux entités de jeu
         /// </summary>
         internal void UnsubscribeEntities()
         {
