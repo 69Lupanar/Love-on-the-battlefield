@@ -388,6 +388,10 @@ MonoBehaviour:
   _nbAlliesField: {fileID: 800707691}
   _nbEnemiesField: {fileID: 2082154323}
   _nbBallsField: {fileID: 766272419}
+  _matchSettings:
+    NbAllies: 6
+    NbEnemies: 6
+    NbBalls: 5
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -1713,8 +1717,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1414609349}
-  - component: {fileID: 1414609350}
   - component: {fileID: 1414609351}
+  - component: {fileID: 1414609350}
+  - component: {fileID: 1414609352}
   m_Layer: 0
   m_Name: Match Player Controller
   m_TagString: Untagged
@@ -1749,11 +1754,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 295676add6532b34a809f60fd041c2ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assets.Scripts.Match::MatchPlayerManager
-  _swapCharacterSpherecastLength: 20
-  _swapCharacterSpherecastRadius: 1
-  _swapCharacterLayerMask:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!114 &1414609351
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1766,6 +1766,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32d94ea0ea985cc4aaa2302a6dd2f98d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assets.Scripts.Match::Assets.Scripts.Match.MatchPlayerInput
+--- !u!114 &1414609352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414609348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 053b2559bab9bd84d8d8efae6a275b9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assets.Scripts.Match::Assets.Scripts.Match.MatchPlayerControllerView
+  _swapCharacterSpherecastLength: 20
+  _swapCharacterSpherecastRadius: 1
+  _swapCharacterLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &1424629499
 GameObject:
   m_ObjectHideFlags: 0
@@ -2026,18 +2043,6 @@ MonoBehaviour:
       - m_Target: {fileID: 196672274}
         m_TargetAssemblyTypeName: Assets.Scripts.Match.MatchSettingsView, Assets.Scripts.Match
         m_MethodName: OnStartNewMatchBtnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 839325767}
-        m_TargetAssemblyTypeName: Assets.Scripts.Match.MatchPlayerEnergyUIView, Assets.Scripts.Match
-        m_MethodName: GetActivePlayer
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

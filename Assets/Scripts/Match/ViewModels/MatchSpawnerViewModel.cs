@@ -85,7 +85,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Instancie les joueurs et ballons
         /// </summary>
-        internal void SpawnPlayersAndBalls(int nbAllies, int nbEnemies, int nbBalls)
+        internal void SpawnPlayersAndBalls(uint nbAllies, uint nbEnemies, uint nbBalls)
         {
             AlliesT.Clear();
             EnemiesT.Clear();
@@ -142,7 +142,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Ramène les joueurs et ballons à leurs positions et rotations d'origine
         /// </summary>
-        internal void ResetPlayersAndBallsPoses()
+        internal void ResetEntitiesPoses()
         {
             for (int i = 0; i < AlliesT.Count; ++i)
             {

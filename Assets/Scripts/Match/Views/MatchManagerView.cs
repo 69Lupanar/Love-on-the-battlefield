@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 namespace Assets.Scripts.Match
@@ -9,6 +9,29 @@ namespace Assets.Scripts.Match
     [RequireComponent(typeof(MatchManagerViewModel))]
     internal sealed class MatchManagerView : MonoBehaviour
     {
+        #region Evénements
+
+        /// <summary>
+        /// Appelée quand un nouveau match commence
+        /// </summary>
+        internal Action<MatchSettingsData> OnNewMatchStarted { get; set; }
+
+        /// <summary>
+        /// Appelée quand une nouvelle manche commence
+        /// </summary>
+        internal Action OnNewSetStarted { get; set; }
+
+        #endregion
+
+        #region Propriétés
+
+        /// <summary>
+        /// true si aucun match n'est en cours
+        /// </summary>
+        internal bool MatchIsOver => _vm.MatchIsOver;
+
+        #endregion
+
         #region Instance
 
         /// <summary>
@@ -22,19 +45,9 @@ namespace Assets.Scripts.Match
         private MatchSpawnerView _spawnerV;
 
         /// <summary>
-        /// Le spawner des joueurs et ballons
+        /// Le contrôleur des persos
         /// </summary>
-        private MatchSpawnerViewModel _spawnerVM;
-
-        /// <summary>
-        /// Lae MatchPlayerManagerViewModel
-        /// </summary>
-        private MatchPlayerControllerViewModel _playerVM;
-
-        /// <summary>
-        /// La caméra
-        /// </summary>
-        private MatchPlayerCameraView _cameraV;
+        private MatchPlayerControllerView _playerV;
 
         #endregion
 
@@ -47,9 +60,7 @@ namespace Assets.Scripts.Match
         {
             _vm = GetComponent<MatchManagerViewModel>();
             _spawnerV = FindAnyObjectByType<MatchSpawnerView>();
-            _spawnerVM = FindAnyObjectByType<MatchSpawnerViewModel>();
-            _playerVM = FindAnyObjectByType<MatchPlayerControllerViewModel>();
-            _cameraV = FindAnyObjectByType<MatchPlayerCameraView>();
+            _playerV = FindAnyObjectByType<MatchPlayerControllerView>();
         }
 
         #endregion
@@ -59,20 +70,11 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Démarre un nouveau match
         /// </summary>
-        internal void StartNewMatch()
+        /// <param name="matchSettings">Paramètres d'un match</param>
+        internal void StartNewMatch(MatchSettingsData matchSettings)
         {
-            _spawnerV.CleanupField();
-            (List<Transform> alliesT, List<Transform> enemiesT, List<Transform> ballsT) = _spawnerV.Spawn(_vm.NbAllies, _vm.NbEnemies, _vm.NbBalls);
-
-            if (_playerVM.Allies != null)
-            {
-                // Désactive les inputs des joueurs déjà présents avant de les retirer
-                _playerVM.EnablePlayersInput(false);
-            }
-
-            _playerVM.SetPlayersAndBalls(alliesT, enemiesT, ballsT);
-            _playerVM.SetTeams();
             _vm.MatchIsOver = false;
+            OnNewMatchStarted?.Invoke(matchSettings);
 
             StartNewSet();
         }
@@ -86,13 +88,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void StartNewSet()
         {
-            _spawnerVM.ResetPlayersAndBallsPoses();
-            _playerVM.ResetController();
-            _playerVM.SetActivePlayer(_playerVM.ActivePlayerIndex);
-            _playerVM.EnablePlayersInput(false);
-
-            // A retirer une fois les tests finis
-            _playerVM.EnablePlayersInput(true);
+            OnNewSetStarted?.Invoke();
 
             // TAF: Démarrer le décompte avant de rendre le contrôle aux persos
         }

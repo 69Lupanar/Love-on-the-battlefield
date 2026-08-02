@@ -20,12 +20,12 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Le MatchPlayerControllerViewModel
         /// </summary>
-        private MatchPlayerControllerViewModel _playerVM;
+        private MatchPlayerControllerView _playerV;
 
         /// <summary>
         /// Le MatchManagerViewModel
         /// </summary>
-        private MatchManagerViewModel _matchVM;
+        private MatchManagerView _matchV;
 
         #endregion
 
@@ -36,8 +36,8 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void Awake()
         {
-            _playerVM = FindAnyObjectByType<MatchPlayerControllerViewModel>();
-            _matchVM = FindAnyObjectByType<MatchManagerViewModel>();
+            _playerV = FindAnyObjectByType<MatchPlayerControllerView>();
+            _matchV = FindAnyObjectByType<MatchManagerView>();
         }
 
         /// <summary>
@@ -45,13 +45,13 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void Update()
         {
-            if (!_matchVM.MatchIsOver)
+            if (!_matchV.MatchIsOver)
             {
-                MatchCharacterController activePlayer = _playerVM.Allies[_playerVM.ActivePlayerIndex];
+                MatchCharacterController activePlayer = _playerV.Allies[_playerV.ActivePlayerIndex];
 
-                if (_playerVM.CurAllyTargetForSwapIndex > -1)
+                if (_playerV.CurAllyTargetForSwapIndex > -1)
                 {
-                    MatchCharacterController curAllyTargetForSwap = _playerVM.Allies[_playerVM.CurAllyTargetForSwapIndex];
+                    MatchCharacterController curAllyTargetForSwap = _playerV.Allies[_playerV.CurAllyTargetForSwapIndex];
 
                     Vector3 avg = (activePlayer.transform.position + curAllyTargetForSwap.transform.position) / 2f;
                     _cameraTarget.position = new Vector3(avg.x, _cameraTarget.position.y, avg.z);

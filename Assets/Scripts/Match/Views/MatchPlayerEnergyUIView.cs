@@ -30,7 +30,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Le MatchPlayerControllerViewModel
         /// </summary>
-        private MatchPlayerControllerViewModel _playerControllerVM;
+        private MatchPlayerControllerView _playerControllerV;
 
         /// <summary>
         /// Perso contrôlé par le joueur
@@ -47,7 +47,7 @@ namespace Assets.Scripts.Match
         private void Awake()
         {
             _matchManagerV = FindAnyObjectByType<MatchManagerView>();
-            _playerControllerVM = FindAnyObjectByType<MatchPlayerControllerViewModel>();
+            _playerControllerV = FindAnyObjectByType<MatchPlayerControllerView>();
         }
 
         /// <summary>
@@ -55,8 +55,18 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void Start()
         {
-            _playerControllerVM.OnActivePlayerChanged += OnActivePlayerChanged;
+            _matchManagerV.OnNewMatchStarted += OnNewMatchStarted;
+            _playerControllerV.OnActivePlayerChanged += OnActivePlayerChanged;
             _playerEnegyBarParent.gameObject.SetActive(false);
+        }
+
+        /// <summary>
+        /// Nettoyage
+        /// </summary>
+        private void OnDisable()
+        {
+            _matchManagerV.OnNewMatchStarted -= OnNewMatchStarted;
+            _playerControllerV.OnActivePlayerChanged -= OnActivePlayerChanged;
         }
 
         /// <summary>
@@ -73,26 +83,16 @@ namespace Assets.Scripts.Match
             }
         }
 
-        /// <summary>
-        /// Nettoyage
-        /// </summary>
-        private void OnDisable()
-        {
-            _playerControllerVM.OnActivePlayerChanged += OnActivePlayerChanged;
-        }
-
         #endregion
 
         #region Méthodes publiques
 
         /// <summary>
-        /// Obtient le perso contrôlé par le joueur
+        /// Appelé quand le perso actif du joueur change
         /// </summary>
-        public void GetActivePlayer()
+        private void OnNewMatchStarted(MatchSettingsData _)
         {
-            _activeCharacter = _playerControllerVM.Allies[_playerControllerVM.ActivePlayerIndex];
-            _playerEnegyBarParent.SetParent(_activeCharacter.transform);
-            _playerEnegyBarParent.localPosition = Vector3.zero;
+            GetActivePlayer();
         }
 
         /// <summary>
@@ -115,6 +115,16 @@ namespace Assets.Scripts.Match
         #endregion
 
         #region Méthodes privées
+
+        /// <summary>
+        /// Obtient le perso contrôlé par le joueur
+        /// </summary>
+        private void GetActivePlayer()
+        {
+            _activeCharacter = _playerControllerV.Allies[_playerControllerV.ActivePlayerIndex];
+            _playerEnegyBarParent.SetParent(_activeCharacter.transform);
+            _playerEnegyBarParent.localPosition = Vector3.zero;
+        }
 
         /// <summary>
         /// Màj l'UI de la barre d'énergie

@@ -23,14 +23,13 @@ namespace Assets.Scripts.Match
         [Tooltip("InputField du nb de ballons")]
         private TMP_InputField _nbBallsField;
 
+        [SerializeField]
+        [Tooltip("Paramètres d'un match")]
+        private MatchSettingsData _matchSettings;
+
         #endregion
 
         #region Instance
-
-        /// <summary>
-        /// Le ViewModel
-        /// </summary>
-        private MatchManagerViewModel _managerVM;
 
         /// <summary>
         /// Le spawner des joueurs et ballons
@@ -46,11 +45,10 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void Awake()
         {
-            _managerVM = FindAnyObjectByType<MatchManagerViewModel>();
             _managerV = FindAnyObjectByType<MatchManagerView>();
-            _nbAlliesField.SetTextWithoutNotify(_managerVM.NbAllies.ToString());
-            _nbEnemiesField.SetTextWithoutNotify(_managerVM.NbEnemies.ToString());
-            _nbBallsField.SetTextWithoutNotify(_managerVM.NbBalls.ToString());
+            _nbAlliesField.SetTextWithoutNotify(_matchSettings.NbAllies.ToString());
+            _nbEnemiesField.SetTextWithoutNotify(_matchSettings.NbEnemies.ToString());
+            _nbBallsField.SetTextWithoutNotify(_matchSettings.NbBalls.ToString());
         }
 
         #endregion
@@ -62,8 +60,8 @@ namespace Assets.Scripts.Match
         /// </summary>
         public void OnNbAlliesInputFieldEndEdit(string str)
         {
-            _managerVM.NbAllies = math.max(1, int.Parse(str));
-            _nbAlliesField.SetTextWithoutNotify(_managerVM.NbAllies.ToString());
+            _matchSettings.NbAllies = math.max(1, uint.Parse(str));
+            _nbAlliesField.SetTextWithoutNotify(_matchSettings.NbAllies.ToString());
         }
 
         /// <summary>
@@ -71,8 +69,8 @@ namespace Assets.Scripts.Match
         /// </summary>
         public void OnNbEnemiesInputFieldEndEdit(string str)
         {
-            _managerVM.NbEnemies = math.max(1, int.Parse(str));
-            _nbEnemiesField.SetTextWithoutNotify(_managerVM.NbEnemies.ToString());
+            _matchSettings.NbEnemies = math.max(1, uint.Parse(str));
+            _nbEnemiesField.SetTextWithoutNotify(_matchSettings.NbEnemies.ToString());
         }
 
         /// <summary>
@@ -80,8 +78,8 @@ namespace Assets.Scripts.Match
         /// </summary>
         public void OnNbBallsInputFieldEndEdit(string str)
         {
-            _managerVM.NbBalls = math.max(1, int.Parse(str));
-            _nbBallsField.SetTextWithoutNotify(_managerVM.NbBalls.ToString());
+            _matchSettings.NbBalls = math.max(1, uint.Parse(str));
+            _nbBallsField.SetTextWithoutNotify(_matchSettings.NbBalls.ToString());
         }
 
         /// <summary>
@@ -89,7 +87,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         public void OnStartNewMatchBtnClick()
         {
-            _managerV.StartNewMatch();
+            _managerV.StartNewMatch(_matchSettings);
         }
 
         #endregion
