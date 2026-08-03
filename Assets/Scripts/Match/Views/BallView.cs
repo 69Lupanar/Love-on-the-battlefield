@@ -5,29 +5,37 @@ namespace Assets.Scripts.Match
     /// <summary>
     /// Logique du ballon
     /// </summary>
-    [RequireComponent(typeof(Rigidbody), typeof(SphereCollider))]
-    public class Ball : MonoBehaviour
+    [RequireComponent(typeof(Rigidbody), typeof(SphereCollider), typeof(BallViewModel))]
+    internal sealed class BallView : MonoBehaviour
     {
-        #region Propri√©t√©s
+        #region PropriÈtÈs
 
         /// <summary>
         /// true si le ballon est actif
         /// </summary>
-        public bool IsLive { get; set; }
+        public bool IsLive
+        {
+            get => _vm.IsLive;
+            set => _vm.IsLive = value;
+        }
 
         /// <summary>
-        /// Indique l'√©quipe √† laquelle la balle est r√©serv√©e.
-        /// Utilis√© au d√©but du match avant lorsque les joueurs partent r√©cup√©rer la balle.
-        /// Une fois la balle r√©cup√©r√©e, cette variable passe √† -1 pour permettre √† toutes les √©quipes de la ramasser.
-        /// (-1 : Aucune √©quipe, 0 : Alli√©s, 1 : Ennemis)
+        /// Indique l'Èquipe ‡ laquelle la balle est rÈservÈe.
+        /// UtilisÈ au dÈbut du match avant lorsque les joueurs partent rÈcupÈrer la balle.
+        /// Une fois la balle rÈcupÈrÈe, cette variable passe ‡ -1 pour permettre ‡ toutes les Èquipes de la ramasser.
+        /// (-1 : Aucune Èquipe, 0 : AlliÈs, 1 : Ennemis)
         /// </summary>
-        public int ReservedTeamID { get; private set; }
+        public int ReservedTeamID => _vm.ReservedTeamID;
 
         /// <summary>
-        /// Indique quelle √©quipe porte la balle.
-        /// (-1 : Aucune √©quipe, 0 : Alli√©s, 1 : Ennemis)
+        /// Indique quelle Èquipe porte la balle.
+        /// (-1 : Aucune Èquipe, 0 : AlliÈs, 1 : Ennemis)
         /// </summary>
-        public int ActiveTeamID { get; set; }
+        public int ActiveTeamID
+        {
+            get => _vm.ActiveTeamID;
+            set => _vm.ActiveTeamID = value;
+        }
 
         #endregion
 
@@ -42,15 +50,15 @@ namespace Assets.Scripts.Match
         private Transform _haloParent;
 
         [SerializeField]
-        [Tooltip("Halo de la balle si port√©e par un alli√©")]
+        [Tooltip("Halo de la balle si portÈe par un alliÈ")]
         private GameObject _haloAlly;
 
         [SerializeField]
-        [Tooltip("Halo de la balle si port√©e par aucun joueur")]
+        [Tooltip("Halo de la balle si portÈe par aucun joueur")]
         private GameObject _haloNeutral;
 
         [SerializeField]
-        [Tooltip("Halo de la balle si port√©e par un ennemi")]
+        [Tooltip("Halo de la balle si portÈe par un ennemi")]
         private GameObject _haloEnemy;
 
         [SerializeField]
@@ -70,6 +78,11 @@ namespace Assets.Scripts.Match
         #region Instance
 
         /// <summary>
+        /// Le ViewModel
+        /// </summary>
+        private BallViewModel _vm;
+
+        /// <summary>
         /// Transform
         /// </summary>
         private Transform _t;
@@ -85,13 +98,13 @@ namespace Assets.Scripts.Match
         private SphereCollider _col;
 
         /// <summary>
-        /// La vitesse de la balle √† la frame pr√©c√©dente
+        /// La vitesse de la balle ‡ la frame prÈcÈdente
         /// </summary>
         private Vector3 _lastLinearVelocity;
 
         #endregion
 
-        #region M√©thodes Unity
+        #region MÈthodes Unity
 
         /// <summary>
         /// Init
@@ -101,10 +114,11 @@ namespace Assets.Scripts.Match
             _t = transform;
             _rb = GetComponent<Rigidbody>();
             _col = GetComponent<SphereCollider>();
+            _vm = GetComponent<BallViewModel>();
         }
 
         /// <summary>
-        /// M√†j √† chaque frame
+        /// M‡j ‡ chaque frame
         /// </summary>
         private void Update()
         {
@@ -123,14 +137,14 @@ namespace Assets.Scripts.Match
 
             _lastLinearVelocity = _rb.linearVelocity;
 
-            // D√©place manuellement les halos avec le ballon, vu que le ballon roule
+            // DÈplace manuellement les halos avec le ballon, vu que le ballon roule
             Vector3 y = _t.transform.position + new Vector3(0f, -_t.lossyScale.y / 2f, 0f);
             _haloParent.transform.position = y;
             _haloParent.transform.eulerAngles = Vector3.zero;
         }
 
         /// <summary>
-        /// Appel√©e quand collision avec un autre objet
+        /// AppelÈe quand collision avec un autre objet
         /// </summary>
         /// <param name="collision">Infos sur la collision</param>
         private void OnCollisionEnter(Collision collision)
@@ -140,7 +154,7 @@ namespace Assets.Scripts.Match
 
             GameObject go = collision.gameObject;
 
-            // D√©sactive la balle si elle touche le sol ou un mur 
+            // DÈsactive la balle si elle touche le sol ou un mur 
             for (int i = 0; i < _obstacleTags.Length; ++i)
             {
                 if (go.CompareTag(_obstacleTags[i]))
@@ -159,35 +173,32 @@ namespace Assets.Scripts.Match
 
         #endregion
 
-        #region M√©thodes internes
+        #region MÈthodes internes
 
         /// <summary>
-        /// R√©initialise la balle pour la prochaine manche
+        /// RÈinitialise la balle pour la prochaine manche
         /// </summary>
-        /// <param name="index">L'ordre d'instantiation de la balle sur le terrain. Permet de d√©terminer l'√©quipe √† laquelle elle est r√©serv√©e.</param>
+        /// <param name="index">L'ordre d'instantiation de la balle sur le terrain. Permet de dÈterminer l'Èquipe ‡ laquelle elle est rÈservÈe.</param>
         /// <param name="nbBalls">Nombre total de balles sur le terrain</param>
         internal void ResetBall(int index, int nbBalls)
         {
-            IsLive = false;
-            ActiveTeamID = -1;
-            ReservedTeamID = GetBallTeamID(index, nbBalls);
+            _vm.ResetBall(index, nbBalls);
 
             DisplayHalo(true);
 
             _rb.linearVelocity = _rb.angularVelocity = Vector3.zero;
-            _t.SetParent(null); // Si la balle est attach√©e √† un joueur, on la lib√®re
+            _t.SetParent(null); // Si la balle est attachÈe ‡ un joueur, on la libËre
             EnablePhysics(true);
         }
 
         /// <summary>
-        /// Change l'√©tat de la balle pour indiquer qu'elle a √©t√© ramass√©e
+        /// Change l'Ètat de la balle pour indiquer qu'elle a ÈtÈ ramassÈe
         /// </summary>
-        /// <param name="isAlly">true si r√©cup√©r√©e par un membre de l'√©quipe du joueur, false pour l'√©quipe adverse</param>
+        /// <param name="isAlly">true si rÈcupÈrÈe par un membre de l'Èquipe du joueur, false pour l'Èquipe adverse</param>
         internal void PickUp(bool isAlly)
         {
-            IsLive = false;
-            ReservedTeamID = -1;    //Une fois la balle r√©cup√©r√©e, cette variable passe √† -1 pour permettre √† toutes les √©quipes de la ramasser.
-            ActiveTeamID = isAlly ? 0 : 1;
+            _vm.PickUp(isAlly);
+
             _t.localPosition = Vector3.zero;
             EnablePhysics(false);
             DisplayHalo(false);
@@ -213,36 +224,10 @@ namespace Assets.Scripts.Match
 
         #endregion
 
-        #region M√©thodes priv√©es
+        #region MÈthodes privÈes
 
         /// <summary>
-        /// Calcule l'ID d'√©quipe de la balle
-        /// </summary>
-        /// <param name="index">L'ordre d'instantiation de la balle sur le terrain. Permet de d√©terminer l'√©quipe √† laquelle elle est r√©serv√©e.</param>
-        /// <param name="nbBalls">Nombre total de balles sur le terrain</param>
-        private int GetBallTeamID(int index, int nbBalls)
-        {
-            // Selon les r√®gles du dodgeball avec balles en tissu, il y a par d√©faut 5 balles ;
-            // Les 2 balles les plus √† gauche sont r√©serv√©es √† l'ennemi,
-            // les 2 √† droite sont aux alli√©s, celles au centre sont neutres.
-            // Comme on peut changer le nombre de balles avant chaque match,
-            // on essaye de calculer automatiquement le nb de balles √† r√©server √† chaque √©quipe.
-
-            if (nbBalls == 1)
-                return -1;  // Neutre
-
-            int nbReserved = Mathf.CeilToInt(nbBalls / 3f);
-
-            if (index < nbReserved)
-                return 1;   // Ennemi
-            else if (index >= nbBalls - nbReserved)
-                return 0;   // Alli√©
-            else
-                return -1; // Neutre
-        }
-
-        /// <summary>
-        /// Affiche le halo de la balle en fonction de son √©quipe
+        /// Affiche le halo de la balle en fonction de son Èquipe
         /// </summary>
         private void DisplayHalo(bool show)
         {

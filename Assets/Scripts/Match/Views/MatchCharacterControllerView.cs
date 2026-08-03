@@ -7,7 +7,7 @@ namespace Assets.Scripts.Match
     /// <summary>
     /// Gère le déplacement des joueurs et ballons
     /// </summary>
-    [RequireComponent(typeof(MatchAIInput), typeof(Rigidbody))]
+    [RequireComponent(typeof(MatchAIInput), typeof(Rigidbody), typeof(MatchCharacterControllerViewModel))]
     internal sealed class MatchCharacterControllerView : MonoBehaviour
     {
         #region Evénements
@@ -167,7 +167,7 @@ namespace Assets.Scripts.Match
 
             if (go.CompareTag(_ballTag))
             {
-                Ball ball = go.GetComponent<Ball>();
+                BallView ball = go.GetComponent<BallView>();
 
                 if (!ball.IsLive)
                 {
@@ -305,7 +305,7 @@ namespace Assets.Scripts.Match
             float force = math.lerp(MovementData.FireForceInterval.y, MovementData.FireForceInterval.x, Energy);
 
             // Libère la balle et lui applique une force
-            Ball ball = ReleaseBall();
+            BallView ball = ReleaseBall();
             ball.ApplyImpulseForce(dir, force);
 
             _vm.Shoot();
@@ -315,9 +315,9 @@ namespace Assets.Scripts.Match
         /// Force le joueur à relâcher le ballon
         /// </summary>
         /// <returns>La Transform du ballon</returns>
-        internal Ball ReleaseBall()
+        internal BallView ReleaseBall()
         {
-            Ball ball = _ballHolder.GetChild(0).GetComponent<Ball>();
+            BallView ball = _ballHolder.GetChild(0).GetComponent<BallView>();
             ball.transform.SetParent(null);
             ball.EnablePhysics(true);
             return ball;
@@ -331,7 +331,7 @@ namespace Assets.Scripts.Match
         /// Récupère le ballon
         /// </summary>
         /// <param name="ball">Le ballon</param>
-        private void PickUpBall(Ball ball)
+        private void PickUpBall(BallView ball)
         {
             // Si le perso détient déjà un ballon
             // ou qu'il tente de récupérer une balle réservée à l'ennemi,

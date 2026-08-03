@@ -34,7 +34,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Les ballons
         /// </summary>
-        internal List<Ball> Balls { get; private set; } = new();
+        internal List<BallView> Balls { get; private set; } = new();
 
         /// <summary>
         /// true si le joueur est en cours de changement de personnage
@@ -279,7 +279,7 @@ namespace Assets.Scripts.Match
 
             for (int i = 0; i < ballsT.Count; ++i)
             {
-                Balls.Add(ballsT[i].GetComponent<Ball>());
+                Balls.Add(ballsT[i].GetComponent<BallView>());
             }
         }
 
