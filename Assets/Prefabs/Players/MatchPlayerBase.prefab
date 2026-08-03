@@ -104,6 +104,7 @@ GameObject:
   - component: {fileID: 7187157857969334345}
   - component: {fileID: 4250687827361344137}
   - component: {fileID: 4610676096796686571}
+  - component: {fileID: 1992062384856865717}
   m_Layer: 6
   m_Name: MatchPlayerBase
   m_TagString: Match/Character
@@ -203,18 +204,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee955e977c625434abf80ab050ea7b95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assets.Scripts.Match::CharacterController
+--- !u!114 &1992062384856865717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1930855978471140891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc1fcf8c18ef76f4398f17ab5612fb7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assets.Scripts.Match::Assets.Scripts.Match.MatchCharacterControllerView
   _ballTag: Match/Ball
   _ballHolder: {fileID: 226849027909941257}
   _meshHolder: {fileID: 1953135120897825709}
   _haloAlly: {fileID: 8374289026815825141}
   _haloEnemy: {fileID: 9043345476396980252}
   MovementData:
-    MoveSpeed: 5
-    DodgeSpeed: 10
-    JumpForceInterval: {x: 3, y: 7}
+    MoveSpeed: 7
+    DodgeSpeed: 12
+    JumpForceInterval: {x: 5, y: 10}
     FireForceInterval: {x: 10, y: 20}
     DodgeDuration: 0.5
-    BlockDuration: 0.25
+    BlockDuration: 0.2
     DodgeEnergyCost: 0.5
     BlockEnergyCost: 0.5
     JumpChargeSpeed: 0.33

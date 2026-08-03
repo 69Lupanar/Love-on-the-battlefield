@@ -5,21 +5,21 @@ using UnityEngine;
 namespace Assets.Scripts.Match
 {
     /// <summary>
-    /// G√®re les d√©placements du personnage
+    /// GËre le dÈplacement des joueurs et ballons
     /// </summary>
     [RequireComponent(typeof(MatchAIInput), typeof(Rigidbody))]
-    internal sealed class MatchCharacterController : MonoBehaviour
+    internal sealed class MatchCharacterControllerView : MonoBehaviour
     {
-        #region Ev√©nements
+        #region EvÈnements
 
         /// <summary>
-        /// Appel√©e quand l'√©nergie du joueur change
+        /// AppelÈe quand l'Ènergie du joueur change
         /// </summary>
         internal Action<float> OnEnergyValueChanged { get; set; }
 
         #endregion
 
-        #region Propri√©t√©s
+        #region PropriÈtÈs
 
         /// <summary>
         /// Commandes actives du personnage
@@ -27,36 +27,52 @@ namespace Assets.Scripts.Match
         internal IMatchCharacterInput ActiveInput => _activeInput;
 
         /// <summary>
-        /// true si c'est un alli√© du joueur
+        /// true si c'est un alliÈ du joueur
         /// </summary>
-        internal bool IsAlly { get; set; }
+        internal bool IsAlly
+        {
+            get => _vm.IsAlly;
+            set => _vm.IsAlly = value;
+        }
 
         /// <summary>
         /// true si le perso porte un ballon
         /// </summary>
-        internal bool IsHoldingABall => _ballHolder.childCount > 0;
+        internal bool IsHoldingABall
+        {
+            get => _vm.IsHoldingABall;
+            set => _vm.IsHoldingABall = value;
+        }
 
         /// <summary>
-        /// true si le perso est √©limin√©
+        /// true si le perso est ÈliminÈ
         /// </summary>
-        internal bool IsEliminated { get; set; }
+        internal bool IsEliminated
+        {
+            get => _vm.IsEliminated;
+            set => _vm.IsEliminated = value;
+        }
 
         /// <summary>
-        /// Le dernier adversaire cibl√© par le joueur
+        /// Le dernier adversaire ciblÈ par le joueur
         /// </summary>
-        internal int LastOpponentTargetIndex { get; set; }
+        internal int LastOpponentTargetIndex
+        {
+            get => _vm.LastOpponentTargetIndex;
+            set => _vm.LastOpponentTargetIndex = value;
+        }
 
         /// <summary>
         /// Energie du joueur
         /// </summary>
         internal float Energy
         {
-            get => _energy;
-            private set
+            get => _vm.Energy;
+            set
             {
-                if (_energy != value)
+                if (_vm.Energy != value)
                 {
-                    _energy = value;
+                    _vm.Energy = value;
                     OnEnergyValueChanged?.Invoke(value);
                 }
             }
@@ -82,7 +98,7 @@ namespace Assets.Scripts.Match
         private Transform _meshHolder;
 
         [SerializeField]
-        [Tooltip("Halo du perso s'il est un alli√©")]
+        [Tooltip("Halo du perso s'il est un alliÈ")]
         private GameObject _haloAlly;
 
         [SerializeField]
@@ -94,12 +110,17 @@ namespace Assets.Scripts.Match
         [Space(10)]
 
         [SerializeField]
-        [Tooltip("Donn√©es de mouvement d'un personnage lors d'un match")]
+        [Tooltip("DonnÈes de mouvement d'un personnage lors d'un match")]
         internal MatchCharacterMovementData MovementData;
 
         #endregion
 
         #region Instance
+
+        /// <summary>
+        /// Le ViewModel
+        /// </summary>
+        private MatchCharacterControllerViewModel _vm;
 
         /// <summary>
         /// Commandes du joueur
@@ -121,27 +142,23 @@ namespace Assets.Scripts.Match
         /// </summary>
         private Rigidbody _rb;
 
-        /// <summary>
-        /// Energie du joueur
-        /// </summary>
-        private float _energy;
-
         #endregion
 
-        #region M√©thodes Unity
+        #region MÈthodes Unity
 
         /// <summary>
         /// Init
         /// </summary>
         private void Awake()
         {
+            _vm = GetComponent<MatchCharacterControllerViewModel>();
             _rb = GetComponent<Rigidbody>();
             _playerInput = FindAnyObjectByType<MatchPlayerInput>();
             _aiInput = GetComponent<MatchAIInput>();
         }
 
         /// <summary>
-        /// Appel√©e quand collision avec un autre objet
+        /// AppelÈe quand collision avec un autre objet
         /// </summary>
         /// <param name="collision">Infos sur la collision</param>
         private void OnCollisionEnter(Collision collision)
@@ -164,26 +181,26 @@ namespace Assets.Scripts.Match
                         case 0:
                             if (IsAlly)
                             {
-                                // TAF : Balle alli√©e, c'est une passe donc le perso la r√©cup√®re
+                                // TAF : Balle alliÈe, c'est une passe donc le perso la rÈcupËre
                                 PickUpBall(ball);
 
                             }
                             else
                             {
-                                // TAF : Balle ennemie, le perso est √©limin√©
+                                // TAF : Balle ennemie, le perso est ÈliminÈ
 
                             }
                             break;
                         case 1:
                             if (!IsAlly)
                             {
-                                // TAF : Balle alli√©e, c'est une passe donc le perso la r√©cup√®re
+                                // TAF : Balle alliÈe, c'est une passe donc le perso la rÈcupËre
                                 PickUpBall(ball);
 
                             }
                             else
                             {
-                                // TAF : Balle ennemie, le perso est √©limin√©
+                                // TAF : Balle ennemie, le perso est ÈliminÈ
 
                             }
                             break;
@@ -194,10 +211,10 @@ namespace Assets.Scripts.Match
 
         #endregion
 
-        #region M√©thodes internes
+        #region MÈthodes internes
 
         /// <summary>
-        /// Donne le contr√¥le du perso au joueur
+        /// Donne le contrÙle du perso au joueur
         /// </summary>
         internal void GiveControlToPlayer()
         {
@@ -205,7 +222,7 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
-        /// Donne le contr√¥le du perso √† l'IA
+        /// Donne le contrÙle du perso ‡ l'IA
         /// </summary>
         internal void GiveControlToAI()
         {
@@ -228,20 +245,19 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
-        /// R√©initialise le perso pour une nouvelle manche
+        /// RÈinitialise le perso pour une nouvelle manche
         /// </summary>
         internal void ResetPlayer()
         {
-            IsEliminated = false;
-            Energy = 1f;
+            _vm.ResetPlayer();
+
             _rb.linearVelocity = Vector3.zero;
             _meshHolder.localEulerAngles = Vector3.zero;
-            LastOpponentTargetIndex = -1;
             DislayHalo(false);
         }
 
         /// <summary>
-        /// D√©place le personnage
+        /// DÈplace le personnage
         /// </summary>
         /// <param name="moveDir">Direction du mouvement</param>
         internal void Move(Vector2 moveDir)
@@ -263,7 +279,7 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
-        /// Affiche le halo du perso comme √©tant celui d'un alli√© ou d'un ennemi
+        /// Affiche le halo du perso comme Ètant celui d'un alliÈ ou d'un ennemi
         /// </summary>
         internal void DislayHalo(bool show)
         {
@@ -276,10 +292,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal void ChargeShot()
         {
-            if (Energy > 0f)
-            {
-                Energy -= Time.deltaTime * MovementData.FireChargeSpeed;
-            }
+            _vm.ChargeShot(MovementData.FireChargeSpeed, Time.deltaTime);
         }
 
         /// <summary>
@@ -288,17 +301,18 @@ namespace Assets.Scripts.Match
         internal void Shoot()
         {
             // Plus le joueur charge longtemps, plus son tir sera puissant
-            Energy = 1f;
             Vector3 dir = _meshHolder.forward;
             float force = math.lerp(MovementData.FireForceInterval.y, MovementData.FireForceInterval.x, Energy);
 
-            // Lib√®re la balle et lui applique une force
+            // LibËre la balle et lui applique une force
             Ball ball = ReleaseBall();
             ball.ApplyImpulseForce(dir, force);
+
+            _vm.Shoot();
         }
 
         /// <summary>
-        /// Force le joueur √† rel√¢cher le ballon
+        /// Force le joueur ‡ rel‚cher le ballon
         /// </summary>
         /// <returns>La Transform du ballon</returns>
         internal Ball ReleaseBall()
@@ -311,21 +325,22 @@ namespace Assets.Scripts.Match
 
         #endregion
 
-        #region M√©thodes priv√©es
+        #region MÈthodes privÈes
 
         /// <summary>
-        /// R√©cup√®re le ballon
+        /// RÈcupËre le ballon
         /// </summary>
         /// <param name="ball">Le ballon</param>
         private void PickUpBall(Ball ball)
         {
-            // Si le perso d√©tient d√©j√† un ballon
-            // ou qu'il tente de r√©cup√©rer une balle r√©serv√©e √† l'ennemi,
+            // Si le perso dÈtient dÈj‡ un ballon
+            // ou qu'il tente de rÈcupÈrer une balle rÈservÈe ‡ l'ennemi,
             // il ne peut pas en ramasser une nouvelle
 
             if (IsHoldingABall || (IsAlly && ball.ReservedTeamID == 1) || (!IsAlly && ball.ReservedTeamID == 0))
                 return;
 
+            _vm.PickUpBall();
             ball.transform.SetParent(_ballHolder);
             ball.PickUp(IsAlly);
         }

@@ -47,11 +47,11 @@ namespace Assets.Scripts.Match
         {
             if (!_matchV.MatchIsOver)
             {
-                MatchCharacterController activePlayer = _playerV.Allies[_playerV.ActivePlayerIndex];
+                MatchCharacterControllerView activePlayer = _playerV.Allies[_playerV.ActivePlayerIndex];
 
                 if (_playerV.CurAllyTargetForSwapIndex > -1)
                 {
-                    MatchCharacterController curAllyTargetForSwap = _playerV.Allies[_playerV.CurAllyTargetForSwapIndex];
+                    MatchCharacterControllerView curAllyTargetForSwap = _playerV.Allies[_playerV.CurAllyTargetForSwapIndex];
 
                     Vector3 avg = (activePlayer.transform.position + curAllyTargetForSwap.transform.position) / 2f;
                     _cameraTarget.position = new Vector3(avg.x, _cameraTarget.position.y, avg.z);

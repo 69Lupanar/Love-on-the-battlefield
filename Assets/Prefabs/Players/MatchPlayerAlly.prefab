@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 326827863985421855, guid: 8a8ce81442faaf14b92bd58dd9f59b65, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.94105
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 326827863985421855, guid: 8a8ce81442faaf14b92bd58dd9f59b65, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 326827863985421855, guid: 8a8ce81442faaf14b92bd58dd9f59b65, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.58798
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 326827863985421855, guid: 8a8ce81442faaf14b92bd58dd9f59b65, type: 3}
       propertyPath: m_LocalRotation.w
@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1930855978471140891, guid: 8a8ce81442faaf14b92bd58dd9f59b65, type: 3}
       propertyPath: m_Name
-      value: PlayerBase Variant
+      value: MatchPlayerAlly
       objectReference: {fileID: 0}
     - target: {fileID: 5145615507409215045, guid: 8a8ce81442faaf14b92bd58dd9f59b65, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'

@@ -35,7 +35,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Perso contrôlé par le joueur
         /// </summary>
-        private MatchCharacterController _activeCharacter;
+        private MatchCharacterControllerView _activeCharacter;
 
         #endregion
 
