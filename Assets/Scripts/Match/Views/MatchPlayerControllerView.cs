@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Assets.Scripts.Match
 {
     /// <summary>
-    /// Gère le déplacement des joueurs et ballons
+    /// Gère le comportement des joueurs et ballons
     /// </summary>
     [RequireComponent(typeof(MatchPlayerInput), typeof(MatchPlayerControllerViewModel))]
     public class MatchPlayerControllerView : MonoBehaviour
@@ -30,11 +30,6 @@ namespace Assets.Scripts.Match
         /// Les persos ennemis
         /// </summary>
         internal List<MatchCharacterControllerView> Enemies { get; private set; } = new();
-
-        /// <summary>
-        /// Les ballons
-        /// </summary>
-        internal List<BallView> Balls { get; private set; } = new();
 
         /// <summary>
         /// true si le joueur est en cours de changement de personnage
@@ -256,16 +251,16 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
-        /// Assigne les persos et ballons
+        /// Assigne les persos
         /// </summary>
         /// <param name="alliesT">Transforms des persos alliés</param>
         /// <param name="enemiesT">Transforms des persos ennemis</param>
-        /// <param name="ballsT">Transforms des ballons</param>
-        internal void SetEntities(List<Transform> alliesT, List<Transform> enemiesT, List<Transform> ballsT)
+        internal void SetEntities(List<Transform> alliesT, List<Transform> enemiesT)
         {
+            _vm.SetEntities(alliesT.Count, enemiesT.Count);
+
             Allies.Clear();
             Enemies.Clear();
-            Balls.Clear();
 
             for (int i = 0; i < alliesT.Count; ++i)
             {
@@ -275,11 +270,6 @@ namespace Assets.Scripts.Match
             for (int i = 0; i < enemiesT.Count; ++i)
             {
                 Enemies.Add(enemiesT[i].GetComponent<MatchCharacterControllerView>());
-            }
-
-            for (int i = 0; i < ballsT.Count; ++i)
-            {
-                Balls.Add(ballsT[i].GetComponent<BallView>());
             }
         }
 
@@ -305,8 +295,10 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal void ResetController()
         {
-            _lastSwapCharacterTarget = null;
             _vm.ResetController();
+
+            _lastSwapCharacterTarget = null;
+            CancelSwap();
 
             for (int i = 0; i < Allies.Count; ++i)
             {
@@ -316,11 +308,6 @@ namespace Assets.Scripts.Match
             for (int i = 0; i < Enemies.Count; ++i)
             {
                 Enemies[i].ResetPlayer();
-            }
-
-            for (int i = 0; i < Balls.Count; ++i)
-            {
-                Balls[i].ResetBall(i, Balls.Count);
             }
         }
 
@@ -342,7 +329,7 @@ namespace Assets.Scripts.Match
                 UnsubscribeEntities();
             }
 
-            SetEntities(_spawnerV.AlliesT, _spawnerV.EnemiesT, _spawnerV.BallsT);
+            SetEntities(_spawnerV.AlliesT, _spawnerV.EnemiesT);
             SetTeams();
             SubscribeEntities();
         }
@@ -421,7 +408,7 @@ namespace Assets.Scripts.Match
         /// <param name="swapCharacterSpherecastLength">Longueur du raycast du changement de contrôle</param>
         /// <param name="swapCharacterSpherecastRadius">Distance d'un allié au rayon pour que celui-ci soit considéré éligible pour le changement de contrôle</param>
         /// <param name="swapCharacterLayerMask">Layermask utilisé pour le changement de contrôle</param>
-        internal void ComputePlayerInput(MatchCharacterControllerView activePlayer, MatchPlayerInput playerInput, float swapCharacterSpherecastLength, float swapCharacterSpherecastRadius, LayerMask swapCharacterLayerMask)
+        private void ComputePlayerInput(MatchCharacterControllerView activePlayer, MatchPlayerInput playerInput, float swapCharacterSpherecastLength, float swapCharacterSpherecastRadius, LayerMask swapCharacterLayerMask)
         {
             if (_lastSwapCharacterAxis == Vector2.zero && playerInput.SwapCharacterAxis != Vector2.zero)
             {

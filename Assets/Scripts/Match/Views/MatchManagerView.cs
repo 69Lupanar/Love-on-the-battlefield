@@ -75,18 +75,12 @@ namespace Assets.Scripts.Match
         {
             _vm.MatchIsOver = false;
             OnNewMatchStarted?.Invoke(matchSettings);
-
-            StartNewSet();
         }
-
-        #endregion
-
-        #region Méthodes privées
 
         /// <summary>
         /// Démarre une nouvelle manche
         /// </summary>
-        private void StartNewSet()
+        internal void StartNewSet()
         {
             OnNewSetStarted?.Invoke();
 

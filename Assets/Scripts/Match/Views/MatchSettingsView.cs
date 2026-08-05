@@ -88,6 +88,7 @@ namespace Assets.Scripts.Match
         public void OnStartNewMatchBtnClick()
         {
             _managerV.StartNewMatch(_matchSettings);
+            _managerV.StartNewSet();
         }
 
         #endregion

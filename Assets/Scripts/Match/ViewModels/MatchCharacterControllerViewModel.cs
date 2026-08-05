@@ -43,6 +43,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal void ResetPlayer()
         {
+            IsHoldingABall = false;
             IsEliminated = false;
             Energy = 1f;
             LastOpponentTargetIndex = -1;

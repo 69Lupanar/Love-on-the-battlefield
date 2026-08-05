@@ -1721,7 +1721,7 @@ GameObject:
   - component: {fileID: 1414609350}
   - component: {fileID: 1414609352}
   m_Layer: 0
-  m_Name: Match Player Controller
+  m_Name: Match Character Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1953,8 +1953,9 @@ Transform:
   - {fileID: 1831745583}
   - {fileID: 196672273}
   - {fileID: 45480996}
-  - {fileID: 1414609349}
   - {fileID: 839325766}
+  - {fileID: 1414609349}
+  - {fileID: 2055119899}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1527947728
@@ -2578,6 +2579,76 @@ MonoBehaviour:
     Time: 0
     Smoothing: 0
     IgnoreY: 0
+--- !u!1 &2055119898
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2055119899}
+  - component: {fileID: 2055119901}
+  - component: {fileID: 2055119900}
+  - component: {fileID: 2055119902}
+  m_Layer: 0
+  m_Name: Match Ball Controller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2055119899
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2055119898}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1527388465}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2055119900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2055119898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39972ee91b91ef3459b2a5cd0c86f3b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assets.Scripts.Match::MatchBallManagerView
+--- !u!114 &2055119901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2055119898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 986fb9a437f1dfe44a28761faae60540, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assets.Scripts.Match::MatchBallManagerViewModel
+--- !u!114 &2055119902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2055119898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32d94ea0ea985cc4aaa2302a6dd2f98d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assets.Scripts.Match::Assets.Scripts.Match.MatchPlayerInput
 --- !u!114 &2082154323 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6701598416432370036, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}

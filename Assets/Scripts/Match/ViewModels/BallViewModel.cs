@@ -28,6 +28,11 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal int ActiveTeamID { get; set; }
 
+        /// <summary>
+        /// ID du dernier joueur ayant porté le ballon dans son équipe
+        /// </summary>
+        internal int LastHoldingPlayerID { get; set; }
+
         #endregion
 
         #region Méthodes internes

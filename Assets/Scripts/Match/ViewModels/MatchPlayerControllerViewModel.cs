@@ -1,13 +1,24 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.Match
 {
     /// <summary>
-    /// Gère le déplacement des joueurs et ballons
+    /// Gère le comportement des joueurs et ballons
     /// </summary>
     internal sealed class MatchPlayerControllerViewModel : MonoBehaviour
     {
         #region Propriétés
+
+        /// <summary>
+        /// Les persos du joueur
+        /// </summary>
+        internal List<MatchCharacterData> Allies { get; private set; } = new();
+
+        /// <summary>
+        /// Les persos ennemis
+        /// </summary>
+        internal List<MatchCharacterData> Enemies { get; private set; } = new();
 
         /// <summary>
         /// L'ID du perso contrôlé par le joueur
@@ -31,11 +42,43 @@ namespace Assets.Scripts.Match
         #region Méthodes internes
 
         /// <summary>
-        /// Réinitialise les données du contrôleur pour une nouvelle manche
+        /// Crée les données des entités en jeu
+        /// </summary>
+        /// <param name="nbAllies">Nb d'alliés à instancier</param>
+        /// <param name="nbEnemies">Nb d'ennemis à instancier</param>
+        internal void SetEntities(int nbAllies, int nbEnemies)
+        {
+            Allies.Clear();
+            Enemies.Clear();
+
+            for (int i = 0; i < nbAllies; ++i)
+            {
+                Allies.Add(new MatchCharacterData());
+            }
+
+            for (int i = 0; i < nbEnemies; ++i)
+            {
+                Enemies.Add(new MatchCharacterData());
+            }
+
+        }
+
+        /// <summary>
+        /// Réinitialise les données des persos pour une nouvelle manche
         /// </summary>
         internal void ResetController()
         {
-            CurAllyTargetForSwapIndex = -1;
+            CancelSwap();
+
+            for (int i = 0; i < Allies.Count; ++i)
+            {
+                Allies[i] = ResetPlayer(Allies[i]);
+            }
+
+            for (int i = 0; i < Enemies.Count; ++i)
+            {
+                Enemies[i] = ResetPlayer(Enemies[i]);
+            }
         }
 
         /// <summary>
@@ -74,6 +117,18 @@ namespace Assets.Scripts.Match
         {
             IsSwappingCharacter = false;
             CurAllyTargetForSwapIndex = -1;
+        }
+
+        #endregion
+
+        #region Méthodes privées
+
+        /// <summary>
+        /// Réinitialise les données du perso pour une nouvelle manche
+        /// </summary>
+        private MatchCharacterData ResetPlayer(MatchCharacterData matchCharacterData)
+        {
+            return matchCharacterData;
         }
 
         #endregion
