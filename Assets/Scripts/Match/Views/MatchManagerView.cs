@@ -14,12 +14,12 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Appelée quand un nouveau match commence
         /// </summary>
-        internal Action<MatchSettingsData> OnNewMatchStarted { get; set; }
+        internal Action<MatchSettingsData> OnNewMatchStartedEvent;
 
         /// <summary>
         /// Appelée quand une nouvelle manche commence
         /// </summary>
-        internal Action OnNewSetStarted { get; set; }
+        internal Action OnNewSetStartedEvent;
 
         #endregion
 
@@ -47,7 +47,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Le contrôleur des persos
         /// </summary>
-        private MatchPlayerControllerView _playerV;
+        private MatchCharacterManagerView _playerV;
 
         #endregion
 
@@ -60,7 +60,7 @@ namespace Assets.Scripts.Match
         {
             _vm = GetComponent<MatchManagerViewModel>();
             _spawnerV = FindAnyObjectByType<MatchSpawnerView>();
-            _playerV = FindAnyObjectByType<MatchPlayerControllerView>();
+            _playerV = FindAnyObjectByType<MatchCharacterManagerView>();
         }
 
         #endregion
@@ -74,7 +74,7 @@ namespace Assets.Scripts.Match
         internal void StartNewMatch(MatchSettingsData matchSettings)
         {
             _vm.MatchIsOver = false;
-            OnNewMatchStarted?.Invoke(matchSettings);
+            OnNewMatchStartedEvent?.Invoke(matchSettings);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal void StartNewSet()
         {
-            OnNewSetStarted?.Invoke();
+            OnNewSetStartedEvent?.Invoke();
 
             // TAF: Démarrer le décompte avant de rendre le contrôle aux persos
         }

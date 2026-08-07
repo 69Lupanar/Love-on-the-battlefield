@@ -58,8 +58,8 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void Start()
         {
-            _matchV.OnNewMatchStarted += OnNewMatchStarted;
-            _matchV.OnNewSetStarted += OnNewSetStarted;
+            _matchV.OnNewMatchStartedEvent += OnNewMatchStarted;
+            _matchV.OnNewSetStartedEvent += OnNewSetStarted;
         }
 
         /// <summary>
@@ -67,8 +67,8 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void OnDestroy()
         {
-            _matchV.OnNewMatchStarted -= OnNewMatchStarted;
-            _matchV.OnNewSetStarted -= OnNewSetStarted;
+            _matchV.OnNewMatchStartedEvent -= OnNewMatchStarted;
+            _matchV.OnNewSetStartedEvent -= OnNewSetStarted;
         }
 
         #endregion

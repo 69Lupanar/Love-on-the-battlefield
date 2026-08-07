@@ -1721,7 +1721,7 @@ GameObject:
   - component: {fileID: 1414609350}
   - component: {fileID: 1414609352}
   m_Layer: 0
-  m_Name: Match Character Controller
+  m_Name: Match Character Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2592,7 +2592,7 @@ GameObject:
   - component: {fileID: 2055119900}
   - component: {fileID: 2055119902}
   m_Layer: 0
-  m_Name: Match Ball Controller
+  m_Name: Match Ball Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

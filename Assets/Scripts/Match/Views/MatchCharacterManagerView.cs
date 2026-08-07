@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UnityEngine;
 
 namespace Assets.Scripts.Match
@@ -7,8 +8,8 @@ namespace Assets.Scripts.Match
     /// <summary>
     /// Gère le comportement des joueurs et ballons
     /// </summary>
-    [RequireComponent(typeof(MatchPlayerInput), typeof(MatchPlayerControllerViewModel))]
-    public class MatchPlayerControllerView : MonoBehaviour
+    [RequireComponent(typeof(MatchPlayerInput), typeof(MatchCharacterManagerViewModel))]
+    public class MatchCharacterManagerView : MonoBehaviour
     {
         #region Evénements
 
@@ -16,6 +17,11 @@ namespace Assets.Scripts.Match
         /// Appelée quand le joueur actif change
         /// </summary>
         internal Action<int> OnActivePlayerChanged { get; set; }
+
+        /// <summary>
+        /// Appelée quand un ballon est ramassé par un joueur
+        /// </summary>
+        internal EventHandler<BallPickedUpEventArgs> OnBallPickedupEvent { get; set; }
 
         #endregion
 
@@ -30,6 +36,16 @@ namespace Assets.Scripts.Match
         /// Les persos ennemis
         /// </summary>
         internal List<MatchCharacterControllerView> Enemies { get; private set; } = new();
+
+        /// <summary>
+        /// Les données de l'état des persos du joueur
+        /// </summary>
+        internal ReadOnlyCollection<MatchCharacterControllerState> AllyStates => _vm.AllyStates.AsReadOnly();
+
+        /// <summary>
+        /// Les données de l'état des persos ennemis
+        /// </summary>
+        internal ReadOnlyCollection<MatchCharacterControllerState> EnemyStates => _vm.EnemyStates.AsReadOnly();
 
         /// <summary>
         /// true si le joueur est en cours de changement de personnage
@@ -66,6 +82,7 @@ namespace Assets.Scripts.Match
             get => _vm.CurAllyTargetForSwapIndex;
             private set => _vm.CurAllyTargetForSwapIndex = value;
         }
+        internal Action<object, BallPickedUpEventArgs> OnBallPickedUpEvent { get; set; }
 
         #endregion
 
@@ -73,6 +90,10 @@ namespace Assets.Scripts.Match
 
         [Header("Swap Characters")]
         [Space(10)]
+
+        [SerializeField]
+        [Tooltip("True si le perso contrôlé par le joueur doit changer après une passe")]
+        private bool _shouldSwapControlAfterPass = true;
 
         [SerializeField]
         [Tooltip("Longueur du raycast du changement de contrôle")]
@@ -93,7 +114,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Le ViewModel
         /// </summary>
-        private MatchPlayerControllerViewModel _vm;
+        private MatchCharacterManagerViewModel _vm;
 
         /// <summary>
         /// Commandes du joueur
@@ -109,6 +130,11 @@ namespace Assets.Scripts.Match
         /// Le MatchSpawnerView
         /// </summary>
         private MatchSpawnerView _spawnerV;
+
+        /// <summary>
+        /// Le MatchBallManagerView
+        /// </summary>
+        private MatchBallManagerView _ballManagerV;
 
         /// <summary>
         /// la dernière cible du changement de contrôle
@@ -129,10 +155,11 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void Awake()
         {
-            _vm = GetComponent<MatchPlayerControllerViewModel>();
+            _vm = GetComponent<MatchCharacterManagerViewModel>();
             _playerInput = GetComponent<MatchPlayerInput>();
             _matchV = FindAnyObjectByType<MatchManagerView>();
             _spawnerV = FindAnyObjectByType<MatchSpawnerView>();
+            _ballManagerV = FindAnyObjectByType<MatchBallManagerView>();
         }
 
         /// <summary>
@@ -140,8 +167,8 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void Start()
         {
-            _matchV.OnNewMatchStarted += OnNewMatchStarted;
-            _matchV.OnNewSetStarted += OnNewSetStarted;
+            _matchV.OnNewMatchStartedEvent += OnNewMatchStarted;
+            _matchV.OnNewSetStartedEvent += OnNewSetStarted;
         }
 
         /// <summary>
@@ -149,8 +176,8 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void OnDestroy()
         {
-            _matchV.OnNewMatchStarted -= OnNewMatchStarted;
-            _matchV.OnNewSetStarted -= OnNewSetStarted;
+            _matchV.OnNewMatchStartedEvent -= OnNewMatchStarted;
+            _matchV.OnNewSetStartedEvent -= OnNewSetStarted;
         }
 
         /// <summary>
@@ -202,7 +229,17 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal void SubscribeEntities()
         {
+            for (int i = 0; i < Allies.Count; ++i)
+            {
+                MatchCharacterControllerView ally = Allies[i];
+                ally.OnBallCollisionEnterEvent += OnBallCollisionEnter;
+            }
 
+            for (int i = 0; i < Enemies.Count; ++i)
+            {
+                MatchCharacterControllerView enemy = Enemies[i];
+                enemy.OnBallCollisionEnterEvent += OnBallCollisionEnter;
+            }
         }
 
         /// <summary>
@@ -210,7 +247,17 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal void UnsubscribeEntities()
         {
+            for (int i = 0; i < Allies.Count; ++i)
+            {
+                MatchCharacterControllerView ally = Allies[i];
+                ally.OnBallCollisionEnterEvent -= OnBallCollisionEnter;
+            }
 
+            for (int i = 0; i < Enemies.Count; ++i)
+            {
+                MatchCharacterControllerView enemy = Enemies[i];
+                enemy.OnBallCollisionEnterEvent -= OnBallCollisionEnter;
+            }
         }
 
         /// <summary>
@@ -278,14 +325,10 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal void SetTeams()
         {
-            for (int i = 0; i < Allies.Count; ++i)
-            {
-                Allies[i].IsAlly = true;
-            }
+            _vm.SetTeams();
 
             for (int i = 0; i < Enemies.Count; ++i)
             {
-                Enemies[i].IsAlly = false;
                 Enemies[i].GiveControlToAI();
             }
         }
@@ -345,6 +388,61 @@ namespace Assets.Scripts.Match
 
             // A retirer une fois les tests finis
             EnablePlayersInput(true);
+        }
+
+        /// <summary>
+        /// Appelée quand le perso entre en collision avec un ballon
+        /// </summary>
+        /// <param name="sender">Le perso</param>
+        /// <param name="ball">Le ballon</param>
+        private void OnBallCollisionEnter(object sender, BallView ball)
+        {
+            MatchCharacterControllerView character = sender as MatchCharacterControllerView;
+            bool characterIsAlly = Allies.Contains(character);
+            int characterIndex = characterIsAlly ? Allies.IndexOf(character) : Enemies.IndexOf(character);
+            int ballIndex = _ballManagerV.Balls.IndexOf(ball);
+            MatchCharacterControllerState characterState = characterIsAlly ? AllyStates[characterIndex] : EnemyStates[characterIndex];
+            BallState ballState = _ballManagerV.BallStates[ballIndex];
+
+            if (!ballState.IsLive)
+            {
+                // TAF: Ramasser la balle
+                PickUpBall(characterIndex, ballIndex, character, ball, in characterState, in ballState);
+            }
+            else
+            {
+                switch (ballState.ActiveTeamID)
+                {
+                    case 0:
+                        if (characterState.IsAlly)
+                        {
+                            // TAF : Balle alliée, c'est une passe donc le perso la récupère
+                            PickUpBall(characterIndex, ballIndex, character, ball, in characterState, in ballState);
+                            //TAF : Changer le contrôle du joueur pour contrôler le receveur
+
+                        }
+                        else
+                        {
+                            // TAF : Balle ennemie, le perso est éliminé
+
+                        }
+                        break;
+                    case 1:
+                        if (!characterState.IsAlly)
+                        {
+                            // TAF : Balle alliée, c'est une passe donc le perso la récupère
+                            PickUpBall(characterIndex, ballIndex, character, ball, in characterState, in ballState);
+                            //TAF : Changer le contrôle du joueur pour contrôler le receveur
+
+                        }
+                        else
+                        {
+                            // TAF : Balle ennemie, le perso est éliminé
+
+                        }
+                        break;
+                }
+            }
         }
 
         /// <summary>
@@ -564,6 +662,31 @@ namespace Assets.Scripts.Match
             }
 
             character.LastOpponentTargetIndex = -1;
+        }
+
+        /// <summary>
+        /// Récupère le ballon
+        /// </summary>
+        /// <param name="characterIndex">L'ID du perso</param>
+        /// <param name="ballIndex">L'ID du ballon</param>
+        /// <param name="character">Le perso</param>
+        /// <param name="ball">Le ballon</param>
+        /// <param name="characterState">L'état du perso</param>
+        /// <param name="ballState">L'état du ballon</param>
+        private void PickUpBall(int characterIndex, int ballIndex, MatchCharacterControllerView character, BallView ball, in MatchCharacterControllerState characterState, in BallState ballState)
+        {
+            // Si le perso détient déjà un ballon
+            // ou qu'il tente de récupérer une balle réservée à l'ennemi,
+            // il ne peut pas en ramasser une nouvelle
+
+            if (characterState.IsHoldingABall || (characterState.IsAlly && ballState.ReservedTeamID == 1) || (!characterState.IsAlly && ballState.ReservedTeamID == 0))
+                return;
+
+            _vm.PickUpBall(characterIndex, characterState.IsAlly);
+
+            character.PickUpBall(ball);
+
+            OnBallPickedupEvent?.Invoke(null, new BallPickedUpEventArgs(characterIndex, characterState.IsAlly, ballIndex));
         }
 
         #endregion

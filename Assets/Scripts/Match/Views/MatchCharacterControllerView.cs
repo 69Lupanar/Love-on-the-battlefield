@@ -7,7 +7,7 @@ namespace Assets.Scripts.Match
     /// <summary>
     /// Gère le déplacement des joueurs et ballons
     /// </summary>
-    [RequireComponent(typeof(MatchAIInput), typeof(Rigidbody), typeof(MatchCharacterControllerViewModel))]
+    [RequireComponent(typeof(MatchAIInput), typeof(Rigidbody))]
     internal sealed class MatchCharacterControllerView : MonoBehaviour
     {
         #region Evénements
@@ -15,7 +15,12 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Appelée quand l'énergie du joueur change
         /// </summary>
-        internal Action<float> OnEnergyValueChanged { get; set; }
+        internal EventHandler<float> OnEnergyValueChanged { get; set; }
+
+        /// <summary>
+        /// Appelée quand le perso entre en collision avec un ballon
+        /// </summary>
+        internal EventHandler<BallView> OnBallCollisionEnterEvent { get; set; }
 
         #endregion
 
@@ -25,58 +30,6 @@ namespace Assets.Scripts.Match
         /// Commandes actives du personnage
         /// </summary>
         internal IMatchCharacterInput ActiveInput => _activeInput;
-
-        /// <summary>
-        /// true si c'est un allié du joueur
-        /// </summary>
-        internal bool IsAlly
-        {
-            get => _vm.IsAlly;
-            set => _vm.IsAlly = value;
-        }
-
-        /// <summary>
-        /// true si le perso porte un ballon
-        /// </summary>
-        internal bool IsHoldingABall
-        {
-            get => _vm.IsHoldingABall;
-            set => _vm.IsHoldingABall = value;
-        }
-
-        /// <summary>
-        /// true si le perso est éliminé
-        /// </summary>
-        internal bool IsEliminated
-        {
-            get => _vm.IsEliminated;
-            set => _vm.IsEliminated = value;
-        }
-
-        /// <summary>
-        /// Le dernier adversaire ciblé par le joueur
-        /// </summary>
-        internal int LastOpponentTargetIndex
-        {
-            get => _vm.LastOpponentTargetIndex;
-            set => _vm.LastOpponentTargetIndex = value;
-        }
-
-        /// <summary>
-        /// Energie du joueur
-        /// </summary>
-        internal float Energy
-        {
-            get => _vm.Energy;
-            set
-            {
-                if (_vm.Energy != value)
-                {
-                    _vm.Energy = value;
-                    OnEnergyValueChanged?.Invoke(value);
-                }
-            }
-        }
 
         #endregion
 
@@ -118,11 +71,6 @@ namespace Assets.Scripts.Match
         #region Instance
 
         /// <summary>
-        /// Le ViewModel
-        /// </summary>
-        private MatchCharacterControllerViewModel _vm;
-
-        /// <summary>
         /// Commandes du joueur
         /// </summary>
         private MatchPlayerInput _playerInput;
@@ -151,7 +99,6 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void Awake()
         {
-            _vm = GetComponent<MatchCharacterControllerViewModel>();
             _rb = GetComponent<Rigidbody>();
             _playerInput = FindAnyObjectByType<MatchPlayerInput>();
             _aiInput = GetComponent<MatchAIInput>();
@@ -167,45 +114,7 @@ namespace Assets.Scripts.Match
 
             if (go.CompareTag(_ballTag))
             {
-                BallView ball = go.GetComponent<BallView>();
-
-                if (!ball.IsLive)
-                {
-                    // TAF: Ramasser la balle
-                    PickUpBall(ball);
-                }
-                else
-                {
-                    switch (ball.ActiveTeamID)
-                    {
-                        case 0:
-                            if (IsAlly)
-                            {
-                                // TAF : Balle alliée, c'est une passe donc le perso la récupère
-                                PickUpBall(ball);
-
-                            }
-                            else
-                            {
-                                // TAF : Balle ennemie, le perso est éliminé
-
-                            }
-                            break;
-                        case 1:
-                            if (!IsAlly)
-                            {
-                                // TAF : Balle alliée, c'est une passe donc le perso la récupère
-                                PickUpBall(ball);
-
-                            }
-                            else
-                            {
-                                // TAF : Balle ennemie, le perso est éliminé
-
-                            }
-                            break;
-                    }
-                }
+                OnBallCollisionEnterEvent?.Invoke(this, go.GetComponent<BallView>());
             }
         }
 
@@ -249,8 +158,6 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal void ResetPlayer()
         {
-            _vm.ResetPlayer();
-
             _rb.linearVelocity = Vector3.zero;
             _meshHolder.localEulerAngles = Vector3.zero;
             DislayHalo(false);
@@ -323,26 +230,13 @@ namespace Assets.Scripts.Match
             return ball;
         }
 
-        #endregion
-
-        #region Méthodes privées
-
         /// <summary>
         /// Récupère le ballon
         /// </summary>
         /// <param name="ball">Le ballon</param>
-        private void PickUpBall(BallView ball)
+        internal void PickUpBall(BallView ball)
         {
-            // Si le perso détient déjà un ballon
-            // ou qu'il tente de récupérer une balle réservée à l'ennemi,
-            // il ne peut pas en ramasser une nouvelle
-
-            if (IsHoldingABall || (IsAlly && ball.ReservedTeamID == 1) || (!IsAlly && ball.ReservedTeamID == 0))
-                return;
-
-            _vm.PickUpBall();
             ball.transform.SetParent(_ballHolder);
-            ball.PickUp(IsAlly);
         }
 
         #endregion

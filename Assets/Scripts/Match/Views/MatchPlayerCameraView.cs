@@ -20,7 +20,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Le MatchPlayerControllerViewModel
         /// </summary>
-        private MatchPlayerControllerView _playerV;
+        private MatchCharacterManagerView _playerV;
 
         /// <summary>
         /// Le MatchManagerViewModel
@@ -36,7 +36,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void Awake()
         {
-            _playerV = FindAnyObjectByType<MatchPlayerControllerView>();
+            _playerV = FindAnyObjectByType<MatchCharacterManagerView>();
             _matchV = FindAnyObjectByType<MatchManagerView>();
         }
 

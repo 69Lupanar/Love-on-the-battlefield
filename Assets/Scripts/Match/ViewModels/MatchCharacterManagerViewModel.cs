@@ -6,19 +6,19 @@ namespace Assets.Scripts.Match
     /// <summary>
     /// Gère le comportement des joueurs et ballons
     /// </summary>
-    internal sealed class MatchPlayerControllerViewModel : MonoBehaviour
+    internal sealed class MatchCharacterManagerViewModel : MonoBehaviour
     {
         #region Propriétés
 
         /// <summary>
         /// Les persos du joueur
         /// </summary>
-        internal List<MatchCharacterData> Allies { get; private set; } = new();
+        internal List<MatchCharacterControllerState> AllyStates { get; private set; } = new();
 
         /// <summary>
         /// Les persos ennemis
         /// </summary>
-        internal List<MatchCharacterData> Enemies { get; private set; } = new();
+        internal List<MatchCharacterControllerState> EnemyStates { get; private set; } = new();
 
         /// <summary>
         /// L'ID du perso contrôlé par le joueur
@@ -48,19 +48,39 @@ namespace Assets.Scripts.Match
         /// <param name="nbEnemies">Nb d'ennemis à instancier</param>
         internal void SetEntities(int nbAllies, int nbEnemies)
         {
-            Allies.Clear();
-            Enemies.Clear();
+            AllyStates.Clear();
+            EnemyStates.Clear();
 
             for (int i = 0; i < nbAllies; ++i)
             {
-                Allies.Add(new MatchCharacterData());
+                AllyStates.Add(new MatchCharacterControllerState());
             }
 
             for (int i = 0; i < nbEnemies; ++i)
             {
-                Enemies.Add(new MatchCharacterData());
+                EnemyStates.Add(new MatchCharacterControllerState());
             }
 
+        }
+
+        /// <summary>
+        /// Assigne les équipes à chaque perso
+        /// </summary>
+        internal void SetTeams()
+        {
+            for (int i = 0; i < AllyStates.Count; ++i)
+            {
+                MatchCharacterControllerState ally = AllyStates[i];
+                ally.IsAlly = true;
+                AllyStates[i] = ally;
+            }
+
+            for (int i = 0; i < EnemyStates.Count; ++i)
+            {
+                MatchCharacterControllerState enemy = EnemyStates[i];
+                enemy.IsAlly = false;
+                EnemyStates[i] = enemy;
+            }
         }
 
         /// <summary>
@@ -70,14 +90,14 @@ namespace Assets.Scripts.Match
         {
             CancelSwap();
 
-            for (int i = 0; i < Allies.Count; ++i)
+            for (int i = 0; i < AllyStates.Count; ++i)
             {
-                Allies[i] = ResetPlayer(Allies[i]);
+                AllyStates[i] = ResetPlayer(AllyStates[i]);
             }
 
-            for (int i = 0; i < Enemies.Count; ++i)
+            for (int i = 0; i < EnemyStates.Count; ++i)
             {
-                Enemies[i] = ResetPlayer(Enemies[i]);
+                EnemyStates[i] = ResetPlayer(EnemyStates[i]);
             }
         }
 
@@ -119,6 +139,54 @@ namespace Assets.Scripts.Match
             CurAllyTargetForSwapIndex = -1;
         }
 
+        /// <summary>
+        /// Charge un tir
+        /// </summary>
+        /// <param name="characterState">Le personnage concerné</param>
+        /// <param name="fireChargeSpeed">Vitesse de charge du tir</param>
+        /// <param name="deltaTime">Durée d'une frame</param>
+        internal MatchCharacterControllerState ChargeShot(MatchCharacterControllerState characterState, float fireChargeSpeed, float deltaTime)
+        {
+            if (characterState.Energy > 0f)
+            {
+                characterState.Energy -= deltaTime * fireChargeSpeed;
+            }
+
+            return characterState;
+        }
+
+        /// <summary>
+        /// Tire le ballon
+        /// </summary>
+        /// <param name="characterState">Le personnage concerné</param>
+        internal MatchCharacterControllerState Shoot(MatchCharacterControllerState characterState)
+        {
+            characterState.IsHoldingABall = false;
+            characterState.Energy = 1f;
+            return characterState;
+        }
+
+        /// <summary>
+        /// Récupère le ballon
+        /// </summary>
+        /// <param name="characterIndex">L'ID du personnage concerné</param>
+        /// <param name="isAlly">true si le perso est un allié</param>
+        internal void PickUpBall(int characterIndex, bool isAlly)
+        {
+            if (isAlly)
+            {
+                MatchCharacterControllerState characterState = AllyStates[characterIndex];
+                characterState.IsHoldingABall = true;
+                AllyStates[characterIndex] = characterState;
+            }
+            else
+            {
+                MatchCharacterControllerState characterState = EnemyStates[characterIndex];
+                characterState.IsHoldingABall = true;
+                EnemyStates[characterIndex] = characterState;
+            }
+        }
+
         #endregion
 
         #region Méthodes privées
@@ -126,8 +194,12 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Réinitialise les données du perso pour une nouvelle manche
         /// </summary>
-        private MatchCharacterData ResetPlayer(MatchCharacterData matchCharacterData)
+        private MatchCharacterControllerState ResetPlayer(MatchCharacterControllerState matchCharacterData)
         {
+            matchCharacterData.IsHoldingABall = false;
+            matchCharacterData.IsEliminated = false;
+            matchCharacterData.Energy = 1f;
+            matchCharacterData.LastOpponentTargetIndex = -1;
             return matchCharacterData;
         }
 

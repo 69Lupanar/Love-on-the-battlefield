@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Assets.Scripts.Match
@@ -5,37 +6,15 @@ namespace Assets.Scripts.Match
     /// <summary>
     /// Logique du ballon
     /// </summary>
-    [RequireComponent(typeof(Rigidbody), typeof(SphereCollider), typeof(BallViewModel))]
+    [RequireComponent(typeof(Rigidbody), typeof(SphereCollider))]
     internal sealed class BallView : MonoBehaviour
     {
-        #region Propriétés
+        #region Evénements
 
         /// <summary>
-        /// true si le ballon est actif
+        /// Appelé quand le ballon heurte un objet
         /// </summary>
-        public bool IsLive
-        {
-            get => _vm.IsLive;
-            set => _vm.IsLive = value;
-        }
-
-        /// <summary>
-        /// Indique l'équipe à laquelle la balle est réservée.
-        /// Utilisé au début du match avant lorsque les joueurs partent récupérer la balle.
-        /// Une fois la balle récupérée, cette variable passe à -1 pour permettre à toutes les équipes de la ramasser.
-        /// (-1 : Aucune équipe, 0 : Alliés, 1 : Ennemis)
-        /// </summary>
-        public int ReservedTeamID => _vm.ReservedTeamID;
-
-        /// <summary>
-        /// Indique quelle équipe porte la balle.
-        /// (-1 : Aucune équipe, 0 : Alliés, 1 : Ennemis)
-        /// </summary>
-        public int ActiveTeamID
-        {
-            get => _vm.ActiveTeamID;
-            set => _vm.ActiveTeamID = value;
-        }
+        internal EventHandler<Collision> OnCollisionEnterEvent;
 
         #endregion
 
@@ -61,26 +40,9 @@ namespace Assets.Scripts.Match
         [Tooltip("Halo de la balle si portée par un ennemi")]
         private GameObject _haloEnemy;
 
-        [SerializeField]
-        [Tooltip("Tags des surfaces rendant la balle inactive")]
-        private string[] _obstacleTags;
-
-        [SerializeField]
-        [Tooltip("Tag de la zone hors-terrain")]
-        private string _outOfFieldTag;
-
-        [SerializeField]
-        [Tooltip("Tag des persos")]
-        private string _characterTag;
-
         #endregion
 
         #region Instance
-
-        /// <summary>
-        /// Le ViewModel
-        /// </summary>
-        private BallViewModel _vm;
 
         /// <summary>
         /// Transform
@@ -114,25 +76,38 @@ namespace Assets.Scripts.Match
             _t = transform;
             _rb = GetComponent<Rigidbody>();
             _col = GetComponent<SphereCollider>();
-            _vm = GetComponent<BallViewModel>();
         }
+
+        /// <summary>
+        /// Appelée quand collision avec un autre objet
+        /// </summary>
+        /// <param name="collision">Infos sur la collision</param>
+        private void OnCollisionEnter(Collision collision)
+        {
+            OnCollisionEnterEvent?.Invoke(this, collision);
+        }
+
+        #endregion
+
+        #region Méthodes internes
 
         /// <summary>
         /// Màj à chaque frame
         /// </summary>
-        private void Update()
+        /// <param name="ballData">Les données du ballon</param>
+        internal void UpdateView(BallState ballData)
         {
             if (_rb.linearVelocity.sqrMagnitude < _displayHaloSpeedThreshold * _displayHaloSpeedThreshold &&
                 _lastLinearVelocity.sqrMagnitude > _displayHaloSpeedThreshold * _displayHaloSpeedThreshold)
             {
                 // Si la balle ralentit assez, on affiche son halo
-                DisplayHalo(true);
+                DisplayHalo(true, ballData);
             }
             if (_rb.linearVelocity.sqrMagnitude > _displayHaloSpeedThreshold * _displayHaloSpeedThreshold &&
                 _lastLinearVelocity.sqrMagnitude < _displayHaloSpeedThreshold * _displayHaloSpeedThreshold)
             {
                 // Si la balle n'est plus statique, on masque son halo
-                DisplayHalo(false);
+                HideHalo();
             }
 
             _lastLinearVelocity = _rb.linearVelocity;
@@ -144,47 +119,12 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
-        /// Appelée quand collision avec un autre objet
-        /// </summary>
-        /// <param name="collision">Infos sur la collision</param>
-        private void OnCollisionEnter(Collision collision)
-        {
-            if (ActiveTeamID == -1)
-                return;
-
-            GameObject go = collision.gameObject;
-
-            // Désactive la balle si elle touche le sol ou un mur 
-            for (int i = 0; i < _obstacleTags.Length; ++i)
-            {
-                if (go.CompareTag(_obstacleTags[i]))
-                {
-                    IsLive = false;
-                    ActiveTeamID = -1;
-                }
-            }
-
-            if (go.CompareTag(_outOfFieldTag))
-            {
-                //TAF : Ramaner la balle en jeu par les receveurs
-                IsLive = false;
-            }
-        }
-
-        #endregion
-
-        #region Méthodes internes
-
-        /// <summary>
         /// Réinitialise la balle pour la prochaine manche
         /// </summary>
-        /// <param name="index">L'ordre d'instantiation de la balle sur le terrain. Permet de déterminer l'équipe à laquelle elle est réservée.</param>
-        /// <param name="nbBalls">Nombre total de balles sur le terrain</param>
-        internal void ResetBall(int index, int nbBalls)
+        /// <param name="ballData">Les données du ballon</param>
+        internal void ResetBall(BallState ballData)
         {
-            _vm.ResetBall(index, nbBalls);
-
-            DisplayHalo(true);
+            DisplayHalo(true, ballData);
 
             _rb.linearVelocity = _rb.angularVelocity = Vector3.zero;
             _t.SetParent(null); // Si la balle est attachée à un joueur, on la libère
@@ -194,14 +134,11 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Change l'état de la balle pour indiquer qu'elle a été ramassée
         /// </summary>
-        /// <param name="isAlly">true si récupérée par un membre de l'équipe du joueur, false pour l'équipe adverse</param>
-        internal void PickUp(bool isAlly)
+        internal void SetAsPickedUp()
         {
-            _vm.PickUp(isAlly);
-
             _t.localPosition = Vector3.zero;
             EnablePhysics(false);
-            DisplayHalo(false);
+            HideHalo();
         }
 
         /// <summary>
@@ -229,11 +166,22 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Affiche le halo de la balle en fonction de son équipe
         /// </summary>
-        private void DisplayHalo(bool show)
+        /// <param name="ballData">Les données du ballon</param>
+        private void DisplayHalo(bool show, BallState ballData)
         {
-            _haloAlly.SetActive(show && ReservedTeamID == 0 && ActiveTeamID == -1 && !IsLive);
-            _haloNeutral.SetActive(show && ReservedTeamID == -1 && ActiveTeamID == -1 && !IsLive);
-            _haloEnemy.SetActive(show && ReservedTeamID == 1 && ActiveTeamID == -1 && !IsLive);
+            _haloAlly.SetActive(show && ballData.ReservedTeamID == 0 && ballData.ActiveTeamID == -1 && !ballData.IsLive);
+            _haloNeutral.SetActive(show && ballData.ReservedTeamID == -1 && ballData.ActiveTeamID == -1 && !ballData.IsLive);
+            _haloEnemy.SetActive(show && ballData.ReservedTeamID == 1 && ballData.ActiveTeamID == -1 && !ballData.IsLive);
+        }
+
+        /// <summary>
+        /// Masque le halo de la balle
+        /// </summary>
+        private void HideHalo()
+        {
+            _haloAlly.SetActive(false);
+            _haloNeutral.SetActive(false);
+            _haloEnemy.SetActive(false);
         }
 
         #endregion

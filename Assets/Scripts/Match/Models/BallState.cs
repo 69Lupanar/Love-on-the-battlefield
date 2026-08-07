@@ -3,7 +3,7 @@ namespace Assets.Scripts.Match
     /// <summary>
     /// Données représentant l'état d'un ballon
     /// </summary>
-    public struct BallData
+    public struct BallState
     {
         #region Propriétés
 
