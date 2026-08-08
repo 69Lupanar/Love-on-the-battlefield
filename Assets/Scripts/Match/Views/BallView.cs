@@ -57,7 +57,12 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Le SphereCollider
         /// </summary>
-        private SphereCollider _col;
+        private SphereCollider _collisionCol;
+
+        /// <summary>
+        /// Le SphereCollider
+        /// </summary>
+        private SphereCollider _triggerCol;
 
         /// <summary>
         /// La vitesse de la balle à la frame précédente
@@ -75,7 +80,9 @@ namespace Assets.Scripts.Match
         {
             _t = transform;
             _rb = GetComponent<Rigidbody>();
-            _col = GetComponent<SphereCollider>();
+            SphereCollider[] cols = GetComponents<SphereCollider>();
+            _collisionCol = cols[0];
+            _triggerCol = cols[1];
         }
 
         /// <summary>
@@ -101,7 +108,7 @@ namespace Assets.Scripts.Match
                 _lastLinearVelocity.sqrMagnitude > _displayHaloSpeedThreshold * _displayHaloSpeedThreshold)
             {
                 // Si la balle ralentit assez, on affiche son halo
-                DisplayHalo(true, ballData);
+                DisplayHalo(ballData);
             }
             if (_rb.linearVelocity.sqrMagnitude > _displayHaloSpeedThreshold * _displayHaloSpeedThreshold &&
                 _lastLinearVelocity.sqrMagnitude < _displayHaloSpeedThreshold * _displayHaloSpeedThreshold)
@@ -124,7 +131,7 @@ namespace Assets.Scripts.Match
         /// <param name="ballData">Les données du ballon</param>
         internal void ResetBall(BallState ballData)
         {
-            DisplayHalo(true, ballData);
+            DisplayHalo(ballData);
 
             _rb.linearVelocity = _rb.angularVelocity = Vector3.zero;
             _t.SetParent(null); // Si la balle est attachée à un joueur, on la libère
@@ -148,7 +155,8 @@ namespace Assets.Scripts.Match
         {
             _rb.isKinematic = !enable;
             _rb.useGravity = enable;
-            _col.enabled = enable;
+            _collisionCol.enabled = enable;
+            _triggerCol.enabled = enable;
         }
 
         /// <summary>
@@ -167,11 +175,11 @@ namespace Assets.Scripts.Match
         /// Affiche le halo de la balle en fonction de son équipe
         /// </summary>
         /// <param name="ballData">Les données du ballon</param>
-        private void DisplayHalo(bool show, BallState ballData)
+        private void DisplayHalo(BallState ballData)
         {
-            _haloAlly.SetActive(show && ballData.ReservedTeamID == 0 && ballData.ActiveTeamID == -1 && !ballData.IsLive);
-            _haloNeutral.SetActive(show && ballData.ReservedTeamID == -1 && ballData.ActiveTeamID == -1 && !ballData.IsLive);
-            _haloEnemy.SetActive(show && ballData.ReservedTeamID == 1 && ballData.ActiveTeamID == -1 && !ballData.IsLive);
+            _haloAlly.SetActive(ballData.ReservedTeamID == TeamID.Ally && ballData.ActiveTeamID == TeamID.None && !ballData.IsLive);
+            _haloNeutral.SetActive(ballData.ReservedTeamID == TeamID.None && ballData.ActiveTeamID == TeamID.None && !ballData.IsLive);
+            _haloEnemy.SetActive(ballData.ReservedTeamID == TeamID.Enemy && ballData.ActiveTeamID == TeamID.None && !ballData.IsLive);
         }
 
         /// <summary>

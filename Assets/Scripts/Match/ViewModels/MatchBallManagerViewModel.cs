@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -34,9 +35,9 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
-        /// Réinitialise les données du contrôleur pour une nouvelle manche
+        /// Réinitialise les données du gestionnaire pour une nouvelle manche
         /// </summary>
-        internal void ResetController()
+        internal void ResetManager()
         {
             for (int i = 0; i < BallStates.Count; ++i)
             {
@@ -52,7 +53,7 @@ namespace Assets.Scripts.Match
         {
             BallState ballData = BallStates[ballIndex];
             ballData.IsLive = false;
-            ballData.ActiveTeamID = -1;
+            ballData.ActiveTeamID = TeamID.None;
             BallStates[ballIndex] = ballData;
         }
 
@@ -66,9 +67,9 @@ namespace Assets.Scripts.Match
         {
             BallState ballState = BallStates[ballIndex];
             ballState.IsLive = false;
-            ballState.ActiveTeamID = characterIsAlly ? 0 : 1;
+            ballState.ActiveTeamID = characterIsAlly ? TeamID.Ally : TeamID.Enemy;
             ballState.LastHoldingPlayerID = characterIndex;
-            ballState.ReservedTeamID = -1;    //Une fois la balle récupérée, cette variable passe à -1 pour permettre à toutes les équipes de la ramasser.
+            ballState.ReservedTeamID = TeamID.None;    //Une fois la balle récupérée, cette variable passe à None pour permettre à toutes les équipes de la ramasser.
             BallStates[ballIndex] = ballState;
         }
 
@@ -80,6 +81,25 @@ namespace Assets.Scripts.Match
         internal bool GetIsBallLive(int ballIndex)
         {
             return BallStates[ballIndex].IsLive;
+        }
+
+        /// <summary>
+        /// Indiq
+        /// </summary>
+        /// <param name="characterIndex"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        internal void SetBallAsLive(int characterIndex)
+        {
+            for (int i = 0; i < BallStates.Count; ++i)
+            {
+                BallState ballState = BallStates[i];
+                if (ballState.LastHoldingPlayerID == characterIndex)
+                {
+                    ballState.IsLive = true;
+                    BallStates[i] = ballState;
+                    break;
+                }
+            }
         }
 
         #endregion
@@ -95,7 +115,7 @@ namespace Assets.Scripts.Match
         private BallState ResetBall(BallState ballState, int index, int nbBalls)
         {
             ballState.IsLive = false;
-            ballState.ActiveTeamID = -1;
+            ballState.ActiveTeamID = TeamID.None;
             ballState.LastHoldingPlayerID = -1;
             ballState.ReservedTeamID = GetBallTeamID(index, nbBalls);
             return ballState;
@@ -106,7 +126,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         /// <param name="index">L'ordre d'instantiation de la balle sur le terrain. Permet de déterminer l'équipe à laquelle elle est réservée.</param>
         /// <param name="nbBalls">Nombre total de balles sur le terrain</param>
-        private int GetBallTeamID(int index, int nbBalls)
+        private TeamID GetBallTeamID(int index, int nbBalls)
         {
             // Selon les règles du dodgeball avec balles en tissu, il y a par défaut 5 balles ;
             // Les 2 balles les plus à gauche sont réservées à l'ennemi,
@@ -115,16 +135,16 @@ namespace Assets.Scripts.Match
             // on essaye de calculer automatiquement le nb de balles à réserver à chaque équipe.
 
             if (nbBalls == 1)
-                return -1;  // Neutre
+                return TeamID.None;
 
             int nbReserved = Mathf.CeilToInt(nbBalls / 3f);
 
             if (index < nbReserved)
-                return 1;   // Ennemi
+                return TeamID.Enemy;
             else if (index >= nbBalls - nbReserved)
-                return 0;   // Allié
+                return TeamID.Ally;
             else
-                return -1; // Neutre
+                return TeamID.None;
         }
 
         #endregion

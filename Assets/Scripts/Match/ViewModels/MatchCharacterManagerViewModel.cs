@@ -13,12 +13,12 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Les persos du joueur
         /// </summary>
-        internal List<MatchCharacterControllerState> AllyStates { get; private set; } = new();
+        internal List<MatchCharacterState> AllyStates { get; private set; } = new();
 
         /// <summary>
         /// Les persos ennemis
         /// </summary>
-        internal List<MatchCharacterControllerState> EnemyStates { get; private set; } = new();
+        internal List<MatchCharacterState> EnemyStates { get; private set; } = new();
 
         /// <summary>
         /// L'ID du perso contrôlé par le joueur
@@ -46,19 +46,22 @@ namespace Assets.Scripts.Match
         /// </summary>
         /// <param name="nbAllies">Nb d'alliés à instancier</param>
         /// <param name="nbEnemies">Nb d'ennemis à instancier</param>
-        internal void SetEntities(int nbAllies, int nbEnemies)
+        /// <param name="baseMovementData">Données de base du mouvement des persos</param>
+        internal void SetEntities(int nbAllies, int nbEnemies, MatchCharacterMovementData baseMovementData)
         {
             AllyStates.Clear();
             EnemyStates.Clear();
 
+            // TAF : Changer le mouvementData en fonction des stats du joueur
+
             for (int i = 0; i < nbAllies; ++i)
             {
-                AllyStates.Add(new MatchCharacterControllerState());
+                AllyStates.Add(new MatchCharacterState() { MovementData = baseMovementData });
             }
 
             for (int i = 0; i < nbEnemies; ++i)
             {
-                EnemyStates.Add(new MatchCharacterControllerState());
+                EnemyStates.Add(new MatchCharacterState() { MovementData = baseMovementData });
             }
 
         }
@@ -70,23 +73,23 @@ namespace Assets.Scripts.Match
         {
             for (int i = 0; i < AllyStates.Count; ++i)
             {
-                MatchCharacterControllerState ally = AllyStates[i];
+                MatchCharacterState ally = AllyStates[i];
                 ally.IsAlly = true;
                 AllyStates[i] = ally;
             }
 
             for (int i = 0; i < EnemyStates.Count; ++i)
             {
-                MatchCharacterControllerState enemy = EnemyStates[i];
+                MatchCharacterState enemy = EnemyStates[i];
                 enemy.IsAlly = false;
                 EnemyStates[i] = enemy;
             }
         }
 
         /// <summary>
-        /// Réinitialise les données des persos pour une nouvelle manche
+        /// Réinitialise les données du gestionnaire pour une nouvelle manche
         /// </summary>
-        internal void ResetController()
+        internal void ResetManager()
         {
             CancelSwap();
 
@@ -120,14 +123,9 @@ namespace Assets.Scripts.Match
         /// <param name="newActivePlayerIndex">Index du nouveau joueur actif (-1 si aucun)</param>
         internal void SwapControl(int newActivePlayerIndex)
         {
-            // On passe le contrôle à l'allié sélectionné
             IsSwappingCharacter = false;
-
-            if (newActivePlayerIndex > -1)
-            {
-                ActivePlayerIndex = newActivePlayerIndex;
-                CurAllyTargetForSwapIndex = -1;
-            }
+            ActivePlayerIndex = newActivePlayerIndex;
+            CurAllyTargetForSwapIndex = -1;
         }
 
         /// <summary>
@@ -140,30 +138,93 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
+        /// Sélectionne une nouvelle cible pour le perso
+        /// </summary>
+        /// <param name="characterIndex">L'ID du perso</param>
+        /// <param name="increment">Position si suivant, négatif si précédent</param>
+        /// <param name="characterIsAlly">true si c'est un allié</param>
+        internal void SelectNewOpponentTarget(int characterIndex, int increment, bool characterIsAlly)
+        {
+            MatchCharacterState characterState = characterIsAlly ? AllyStates[characterIndex] : EnemyStates[characterIndex];
+
+            // On choisit la cible adverse.
+            // Si la cible est déjà éliminée, on passe à la suivante.
+
+            do
+            {
+                characterState.OpponentTargetIndex += increment;
+
+                if (characterState.OpponentTargetIndex < 0)
+                    characterState.OpponentTargetIndex = characterState.IsAlly ? EnemyStates.Count - 1 : AllyStates.Count - 1;
+                if (characterState.IsAlly && characterState.OpponentTargetIndex == EnemyStates.Count || !characterState.IsAlly && characterState.OpponentTargetIndex == AllyStates.Count)
+                    characterState.OpponentTargetIndex = 0;
+            }
+            while (characterState.IsAlly ? EnemyStates[characterState.OpponentTargetIndex].IsEliminated : AllyStates[characterState.OpponentTargetIndex].IsEliminated);
+
+            if (characterIsAlly)
+            {
+                AllyStates[characterIndex] = characterState;
+            }
+            else
+            {
+                EnemyStates[characterIndex] = characterState;
+            }
+        }
+
+        /// <summary>
         /// Charge un tir
         /// </summary>
-        /// <param name="characterState">Le personnage concerné</param>
+        /// <param name="characterIndex">L'ID du personnage concerné</param>
+        /// <param name="characterIsAlly">true si le perso est un allié</param>
         /// <param name="fireChargeSpeed">Vitesse de charge du tir</param>
         /// <param name="deltaTime">Durée d'une frame</param>
-        internal MatchCharacterControllerState ChargeShot(MatchCharacterControllerState characterState, float fireChargeSpeed, float deltaTime)
+        internal void ChargeShot(int characterIndex, bool characterIsAlly, float fireChargeSpeed, float deltaTime)
         {
-            if (characterState.Energy > 0f)
+            if (characterIsAlly)
             {
-                characterState.Energy -= deltaTime * fireChargeSpeed;
-            }
+                MatchCharacterState characterState = AllyStates[characterIndex];
 
-            return characterState;
+                if (characterState.Energy > 0f)
+                {
+                    characterState.Energy -= deltaTime * fireChargeSpeed;
+                }
+
+                AllyStates[characterIndex] = characterState;
+            }
+            else
+            {
+                MatchCharacterState characterState = EnemyStates[characterIndex];
+
+                if (characterState.Energy > 0f)
+                {
+                    characterState.Energy -= deltaTime * fireChargeSpeed;
+                }
+
+                EnemyStates[characterIndex] = characterState;
+            }
         }
 
         /// <summary>
         /// Tire le ballon
         /// </summary>
-        /// <param name="characterState">Le personnage concerné</param>
-        internal MatchCharacterControllerState Shoot(MatchCharacterControllerState characterState)
+        /// <param name="characterIndex">L'ID du personnage concerné</param>
+        /// <param name="characterIsAlly">true si le perso est un allié</param>
+        internal void Shoot(int characterIndex, bool characterIsAlly)
         {
-            characterState.IsHoldingABall = false;
-            characterState.Energy = 1f;
-            return characterState;
+            if (characterIsAlly)
+            {
+                MatchCharacterState characterState = AllyStates[characterIndex];
+                characterState.IsHoldingABall = false;
+                characterState.Energy = 1f;
+                AllyStates[characterIndex] = characterState;
+            }
+            else
+            {
+                MatchCharacterState characterState = EnemyStates[characterIndex];
+                characterState.IsHoldingABall = false;
+                characterState.Energy = 1f;
+                EnemyStates[characterIndex] = characterState;
+            }
         }
 
         /// <summary>
@@ -175,13 +236,13 @@ namespace Assets.Scripts.Match
         {
             if (isAlly)
             {
-                MatchCharacterControllerState characterState = AllyStates[characterIndex];
+                MatchCharacterState characterState = AllyStates[characterIndex];
                 characterState.IsHoldingABall = true;
                 AllyStates[characterIndex] = characterState;
             }
             else
             {
-                MatchCharacterControllerState characterState = EnemyStates[characterIndex];
+                MatchCharacterState characterState = EnemyStates[characterIndex];
                 characterState.IsHoldingABall = true;
                 EnemyStates[characterIndex] = characterState;
             }
@@ -194,13 +255,33 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Réinitialise les données du perso pour une nouvelle manche
         /// </summary>
-        private MatchCharacterControllerState ResetPlayer(MatchCharacterControllerState matchCharacterData)
+        private MatchCharacterState ResetPlayer(MatchCharacterState matchCharacterData)
         {
             matchCharacterData.IsHoldingABall = false;
             matchCharacterData.IsEliminated = false;
             matchCharacterData.Energy = 1f;
-            matchCharacterData.LastOpponentTargetIndex = -1;
+            matchCharacterData.OpponentTargetIndex = -1;
             return matchCharacterData;
+        }
+
+        /// <summary>
+        /// Retire au perso les infos sur sa cible. Utilisée quand la cible se fait éliminer
+        /// </summary>
+        /// <param name="characterIndex">L'ID perso concerné</param>
+        /// <param name="isAlly">true si le perso est un allié</param>
+        internal void ClearTarget(int characterIndex, bool isAlly)
+        {
+            MatchCharacterState characterState = isAlly ? AllyStates[characterIndex] : EnemyStates[characterIndex];
+            characterState.OpponentTargetIndex = -1;
+
+            if (isAlly)
+            {
+                AllyStates[characterIndex] = characterState;
+            }
+            else
+            {
+                EnemyStates[characterIndex] = characterState;
+            }
         }
 
         #endregion

@@ -30,17 +30,12 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Le MatchPlayerControllerViewModel
         /// </summary>
-        private MatchCharacterManagerView _playerControllerV;
-
-        /// <summary>
-        /// Perso contrôlé par le joueur
-        /// </summary>
-        private MatchCharacterControllerState _activeCharacterState;
+        private MatchCharacterManagerView _playerManagerV;
 
         /// <summary>
         /// true si un perso est contrôlé par le joueur
         /// </summary>
-        private bool _hasActiveCharacter;
+        private int _activeCharacterIndex = -1;
 
         #endregion
 
@@ -52,7 +47,7 @@ namespace Assets.Scripts.Match
         private void Awake()
         {
             _matchManagerV = FindAnyObjectByType<MatchManagerView>();
-            _playerControllerV = FindAnyObjectByType<MatchCharacterManagerView>();
+            _playerManagerV = FindAnyObjectByType<MatchCharacterManagerView>();
         }
 
         /// <summary>
@@ -61,7 +56,7 @@ namespace Assets.Scripts.Match
         private void Start()
         {
             _matchManagerV.OnNewMatchStartedEvent += OnNewMatchStarted;
-            _playerControllerV.OnActivePlayerChanged += OnActivePlayerChanged;
+            _playerManagerV.OnActivePlayerChanged += OnActivePlayerChanged;
             _playerEnegyBarParent.gameObject.SetActive(false);
         }
 
@@ -71,7 +66,7 @@ namespace Assets.Scripts.Match
         private void OnDisable()
         {
             _matchManagerV.OnNewMatchStartedEvent -= OnNewMatchStarted;
-            _playerControllerV.OnActivePlayerChanged -= OnActivePlayerChanged;
+            _playerManagerV.OnActivePlayerChanged -= OnActivePlayerChanged;
         }
 
         /// <summary>
@@ -79,7 +74,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void Update()
         {
-            bool showUI = _hasActiveCharacter && _activeCharacterState.Energy < 1f;
+            bool showUI = _activeCharacterIndex > -1 && _playerManagerV.AllyStates[_activeCharacterIndex].Energy < 1f;
             _playerEnegyBarParent.gameObject.SetActive(showUI);
 
             if (showUI)
@@ -97,15 +92,18 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void OnNewMatchStarted(MatchSettingsData _)
         {
-            GetActivePlayer();
+            _activeCharacterIndex = 0;
+            GetActivePlayer(0);
         }
 
         /// <summary>
         /// Appelé quand le perso actif du joueur change
         /// </summary>
-        private void OnActivePlayerChanged(int _)
+        /// <param name="activeCharacterIndex">L'ID du perso actif</param>
+        private void OnActivePlayerChanged(object _, int activeCharacterIndex)
         {
-            GetActivePlayer();
+            _activeCharacterIndex = activeCharacterIndex;
+            GetActivePlayer(activeCharacterIndex);
         }
 
         /// <summary>
@@ -113,7 +111,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         public void HideUI()
         {
-            _hasActiveCharacter = false;
+            _activeCharacterIndex = -1;
             _playerEnegyBarParent.SetParent(null);
         }
 
@@ -124,12 +122,11 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Obtient le perso contrôlé par le joueur
         /// </summary>
-        private void GetActivePlayer()
+        /// <param name="activePlayerIndex">L'ID du perso actif</param>
+        private void GetActivePlayer(int activePlayerIndex)
         {
-            _activeCharacterState = _playerControllerV.AllyStates[_playerControllerV.ActivePlayerIndex];
-            _playerEnegyBarParent.SetParent(_playerControllerV.Allies[_playerControllerV.ActivePlayerIndex].transform);
+            _playerEnegyBarParent.SetParent(_playerManagerV.Allies[activePlayerIndex].transform);
             _playerEnegyBarParent.localPosition = Vector3.zero;
-            _hasActiveCharacter = true;
         }
 
         /// <summary>
@@ -137,7 +134,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void UpdateUI()
         {
-            _energyBarImg.fillAmount = _activeCharacterState.Energy;
+            _energyBarImg.fillAmount = _playerManagerV.AllyStates[_activeCharacterIndex].Energy;
         }
 
         #endregion

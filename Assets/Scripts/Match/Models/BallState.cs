@@ -15,16 +15,14 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Indique l'équipe à laquelle la balle est réservée.
         /// Utilisé au début du match avant lorsque les joueurs partent récupérer la balle.
-        /// Une fois la balle récupérée, cette variable passe à -1 pour permettre à toutes les équipes de la ramasser.
-        /// (-1 : Aucune équipe, 0 : Alliés, 1 : Ennemis)
+        /// Une fois la balle récupérée, cette variable passe à None pour permettre à toutes les équipes de la ramasser.
         /// </summary>
-        internal int ReservedTeamID;
+        internal TeamID ReservedTeamID;
 
         /// <summary>
         /// Indique quelle équipe porte la balle.
-        /// (-1 : Aucune équipe, 0 : Alliés, 1 : Ennemis)
         /// </summary>
-        internal int ActiveTeamID;
+        internal TeamID ActiveTeamID;
 
         /// <summary>
         /// ID du dernier joueur ayant porté le ballon dans son équipe

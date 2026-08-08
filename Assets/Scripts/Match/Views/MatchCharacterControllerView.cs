@@ -13,14 +13,14 @@ namespace Assets.Scripts.Match
         #region Evénements
 
         /// <summary>
-        /// Appelée quand l'énergie du joueur change
-        /// </summary>
-        internal EventHandler<float> OnEnergyValueChanged { get; set; }
-
-        /// <summary>
         /// Appelée quand le perso entre en collision avec un ballon
         /// </summary>
-        internal EventHandler<BallView> OnBallCollisionEnterEvent { get; set; }
+        internal EventHandler<Collision> OnCollisionEnterEvent;
+
+        /// <summary>
+        /// Appelé quand le ballon heurte un objet
+        /// </summary>
+        internal EventHandler<Collider> OnTriggerEnterEvent;
 
         #endregion
 
@@ -39,10 +39,6 @@ namespace Assets.Scripts.Match
         [Space(10)]
 
         [SerializeField]
-        [Tooltip("Tag du ballon")]
-        private string _ballTag;
-
-        [SerializeField]
         [Tooltip("Emplacement de la balle quand tenue par le joueur")]
         private Transform _ballHolder;
 
@@ -57,14 +53,6 @@ namespace Assets.Scripts.Match
         [SerializeField]
         [Tooltip("Halo du perso s'il est un ennemi")]
         private GameObject _haloEnemy;
-
-        [Space(10)]
-        [Header("Physics")]
-        [Space(10)]
-
-        [SerializeField]
-        [Tooltip("Données de mouvement d'un personnage lors d'un match")]
-        internal MatchCharacterMovementData MovementData;
 
         #endregion
 
@@ -110,12 +98,16 @@ namespace Assets.Scripts.Match
         /// <param name="collision">Infos sur la collision</param>
         private void OnCollisionEnter(Collision collision)
         {
-            GameObject go = collision.gameObject;
+            OnCollisionEnterEvent?.Invoke(this, collision);
+        }
 
-            if (go.CompareTag(_ballTag))
-            {
-                OnBallCollisionEnterEvent?.Invoke(this, go.GetComponent<BallView>());
-            }
+        /// <summary>
+        /// Appelée quand collision avec un autre objet
+        /// </summary>
+        /// <param name="other">L'objet entré en collision</param>
+        private void OnTriggerEnter(Collider other)
+        {
+            OnTriggerEnterEvent?.Invoke(this, other);
         }
 
         #endregion
@@ -160,17 +152,18 @@ namespace Assets.Scripts.Match
         {
             _rb.linearVelocity = Vector3.zero;
             _meshHolder.localEulerAngles = Vector3.zero;
-            DislayHalo(false);
+            HideHalo();
         }
 
         /// <summary>
         /// Déplace le personnage
         /// </summary>
         /// <param name="moveDir">Direction du mouvement</param>
-        internal void Move(Vector2 moveDir)
+        /// <param name="moveSpeed">Vitesse de déplacement</param>
+        internal void Move(Vector2 moveDir, float moveSpeed)
         {
             Vector3 moveXZ = new(moveDir.x, 0f, moveDir.y);
-            _rb.MovePosition(_rb.position + MovementData.MoveSpeed * Time.deltaTime * moveXZ);
+            _rb.MovePosition(_rb.position + moveSpeed * Time.deltaTime * moveXZ);
         }
 
         /// <summary>
@@ -188,34 +181,36 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Affiche le halo du perso comme étant celui d'un allié ou d'un ennemi
         /// </summary>
-        internal void DislayHalo(bool show)
+        /// <param name="characterIsAlly">true si le perso est dans l'équipe du joueur</param>
+        internal void DislayHalo(bool characterIsAlly)
         {
-            _haloAlly.SetActive(show && IsAlly);
-            _haloEnemy.SetActive(show && !IsAlly);
+            _haloAlly.SetActive(characterIsAlly);
+            _haloEnemy.SetActive(!characterIsAlly);
         }
 
         /// <summary>
-        /// Charge un tir
+        /// Masque le halo du perso
         /// </summary>
-        internal void ChargeShot()
+        internal void HideHalo()
         {
-            _vm.ChargeShot(MovementData.FireChargeSpeed, Time.deltaTime);
+            _haloAlly.SetActive(false);
+            _haloEnemy.SetActive(false);
         }
 
         /// <summary>
         /// Tire le ballon
         /// </summary>
-        internal void Shoot()
+        /// <param name="fireForceInterval">Intervale de force du tir</param>
+        /// <param name="energy">Energie du perso au moment du tir</param>
+        internal void Shoot(Vector2 fireForceInterval, float energy)
         {
             // Plus le joueur charge longtemps, plus son tir sera puissant
             Vector3 dir = _meshHolder.forward;
-            float force = math.lerp(MovementData.FireForceInterval.y, MovementData.FireForceInterval.x, Energy);
+            float force = math.lerp(fireForceInterval.y, fireForceInterval.x, energy);
 
             // Libère la balle et lui applique une force
             BallView ball = ReleaseBall();
             ball.ApplyImpulseForce(dir, force);
-
-            _vm.Shoot();
         }
 
         /// <summary>

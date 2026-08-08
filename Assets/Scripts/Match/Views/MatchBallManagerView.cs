@@ -85,6 +85,7 @@ namespace Assets.Scripts.Match
             _matchV.OnNewMatchStartedEvent += OnNewMatchStarted;
             _matchV.OnNewSetStartedEvent += OnNewSetStarted;
             _characterManagerV.OnBallPickedUpEvent += OnBallPickedUp;
+            _characterManagerV.OnShootEvent += OnShoot;
         }
 
         /// <summary>
@@ -95,6 +96,7 @@ namespace Assets.Scripts.Match
             _matchV.OnNewMatchStartedEvent -= OnNewMatchStarted;
             _matchV.OnNewSetStartedEvent -= OnNewSetStarted;
             _characterManagerV.OnBallPickedUpEvent -= OnBallPickedUp;
+            _characterManagerV.OnShootEvent += OnShoot;
         }
 
         /// <summary>
@@ -156,11 +158,11 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
-        /// Réinitialise les données du contrôleur pour une nouvelle manche
+        /// Réinitialise les données du gestionnaire pour une nouvelle manche
         /// </summary>
-        internal void ResetController()
+        internal void ResetManager()
         {
-            _vm.ResetController();
+            _vm.ResetManager();
 
             for (int i = 0; i < Balls.Count; ++i)
             {
@@ -202,7 +204,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void OnNewSetStarted()
         {
-            ResetController();
+            ResetManager();
         }
 
         /// <summary>
@@ -214,7 +216,7 @@ namespace Assets.Scripts.Match
             int ballIndex = Balls.IndexOf(sender as BallView);
             BallState ballState = BallStates[ballIndex];
 
-            if (ballState.ActiveTeamID == -1)
+            if (ballState.ActiveTeamID == TeamID.None)
                 return;
 
             GameObject go = collision.gameObject;
@@ -231,7 +233,6 @@ namespace Assets.Scripts.Match
             if (go.CompareTag(_outOfFieldTag))
             {
                 //TAF : Ramaner la balle en jeu par les receveurs
-                _vm.SetBallAsDead(ballIndex);
             }
         }
 
@@ -244,6 +245,15 @@ namespace Assets.Scripts.Match
         {
             _vm.SetBallAsPickedUp(e.BallIndex, e.CharacterIndex, e.CharacterIsAlly);
             Balls[e.BallIndex].SetAsPickedUp();
+        }
+
+        /// <summary>
+        /// Appelée quand un ballon est lancé par un joueur
+        /// </summary>
+        /// <param name="characterIndex">L'ID du tireur</param>
+        private void OnShoot(object _, int characterIndex)
+        {
+            _vm.SetBallAsLive(characterIndex);
         }
 
         #endregion

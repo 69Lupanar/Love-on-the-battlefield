@@ -1778,11 +1778,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 053b2559bab9bd84d8d8efae6a275b9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assets.Scripts.Match::Assets.Scripts.Match.MatchPlayerControllerView
+  _shouldSwapControlAfterPass: 1
   _swapCharacterSpherecastLength: 20
   _swapCharacterSpherecastRadius: 1
   _swapCharacterLayerMask:
     serializedVersion: 2
     m_Bits: 64
+  _ballTag: Match/Ball
+  BaseMovementData:
+    MoveSpeed: 2.5
+    DodgeSpeed: 10
+    JumpForceInterval: {x: 3, y: 7.5}
+    FireForceInterval: {x: 10, y: 20}
+    DodgeDuration: 0.5
+    BlockDuration: 0.2
+    DodgeEnergyCost: 0.5
+    BlockEnergyCost: 0.5
+    JumpChargeSpeed: 0.33
+    FireChargeSpeed: 0.33
 --- !u!1 &1424629499
 GameObject:
   m_ObjectHideFlags: 0
@@ -2625,6 +2638,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39972ee91b91ef3459b2a5cd0c86f3b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assets.Scripts.Match::MatchBallManagerView
+  _obstacleTags:
+  - Obstacles/Field
+  - Obstacles/Wall
+  - Obstacles/OutOfField
+  _outOfFieldTag: Obstacles/OutOfField
+  _characterTag: Match/Character
 --- !u!114 &2055119901
 MonoBehaviour:
   m_ObjectHideFlags: 0

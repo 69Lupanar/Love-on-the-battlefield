@@ -16,12 +16,17 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Appelée quand le joueur actif change
         /// </summary>
-        internal Action<int> OnActivePlayerChanged { get; set; }
+        internal EventHandler<int> OnActivePlayerChanged { get; set; }
 
         /// <summary>
         /// Appelée quand un ballon est ramassé par un joueur
         /// </summary>
-        internal EventHandler<BallPickedUpEventArgs> OnBallPickedupEvent { get; set; }
+        internal EventHandler<BallPickedUpEventArgs> OnBallPickedUpEvent { get; set; }
+
+        /// <summary>
+        /// Appelée quand un ballon est lancé par un joueur
+        /// </summary>
+        internal EventHandler<int> OnShootEvent { get; set; }
 
         #endregion
 
@@ -30,22 +35,22 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Les persos du joueur
         /// </summary>
-        internal List<MatchCharacterControllerView> Allies { get; private set; } = new();
+        internal ReadOnlyCollection<MatchCharacterControllerView> Allies => _allies.AsReadOnly();
 
         /// <summary>
         /// Les persos ennemis
         /// </summary>
-        internal List<MatchCharacterControllerView> Enemies { get; private set; } = new();
+        internal ReadOnlyCollection<MatchCharacterControllerView> Enemies => _allies.AsReadOnly();
 
         /// <summary>
         /// Les données de l'état des persos du joueur
         /// </summary>
-        internal ReadOnlyCollection<MatchCharacterControllerState> AllyStates => _vm.AllyStates.AsReadOnly();
+        internal ReadOnlyCollection<MatchCharacterState> AllyStates => _vm.AllyStates.AsReadOnly();
 
         /// <summary>
         /// Les données de l'état des persos ennemis
         /// </summary>
-        internal ReadOnlyCollection<MatchCharacterControllerState> EnemyStates => _vm.EnemyStates.AsReadOnly();
+        internal ReadOnlyCollection<MatchCharacterState> EnemyStates => _vm.EnemyStates.AsReadOnly();
 
         /// <summary>
         /// true si le joueur est en cours de changement de personnage
@@ -59,18 +64,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// L'ID du perso contrôlé par le joueur
         /// </summary>
-        internal int ActivePlayerIndex
-        {
-            get => _vm.ActivePlayerIndex;
-            private set
-            {
-                if (_vm.ActivePlayerIndex != value)
-                {
-                    _vm.ActivePlayerIndex = value;
-                    OnActivePlayerChanged?.Invoke(value);
-                }
-            }
-        }
+        internal int ActivePlayerIndex => _vm.ActivePlayerIndex;
 
         /// <summary>
         /// L'ID du perso allié actuellement sélectionné comme cible
@@ -82,7 +76,6 @@ namespace Assets.Scripts.Match
             get => _vm.CurAllyTargetForSwapIndex;
             private set => _vm.CurAllyTargetForSwapIndex = value;
         }
-        internal Action<object, BallPickedUpEventArgs> OnBallPickedUpEvent { get; set; }
 
         #endregion
 
@@ -107,9 +100,31 @@ namespace Assets.Scripts.Match
         [Tooltip("Layermask utilisé pour le changement de contrôle")]
         private LayerMask _swapCharacterLayerMask;
 
+        [Space(10)]
+        [Header("Physics")]
+        [Space(10)]
+
+        [SerializeField]
+        [Tooltip("Tag du ballon")]
+        private string _ballTag;
+
+        [SerializeField]
+        [Tooltip("Données de base de mouvement d'un personnage lors d'un match")]
+        internal MatchCharacterMovementData BaseMovementData;
+
         #endregion
 
         #region Instance
+
+        /// <summary>
+        /// Les persos du joueur
+        /// </summary>
+        private readonly List<MatchCharacterControllerView> _allies = new();
+
+        /// <summary>
+        /// Les persos ennemis
+        /// </summary>
+        private readonly List<MatchCharacterControllerView> _enemies = new();
 
         /// <summary>
         /// Le ViewModel
@@ -135,11 +150,6 @@ namespace Assets.Scripts.Match
         /// Le MatchBallManagerView
         /// </summary>
         private MatchBallManagerView _ballManagerV;
-
-        /// <summary>
-        /// la dernière cible du changement de contrôle
-        /// </summary>
-        private MatchCharacterControllerView _lastSwapCharacterTarget;
 
         /// <summary>
         /// la dernière position du joystick droit
@@ -190,12 +200,12 @@ namespace Assets.Scripts.Match
 
             for (int i = 0; i < Allies.Count; ++i)
             {
-                ComputeCommonInput(Allies[i]);
+                ComputeCommonInput(i, true);
             }
 
             for (int i = 0; i < Enemies.Count; ++i)
             {
-                ComputeCommonInput(Enemies[i]);
+                ComputeCommonInput(i, false);
             }
 
             ComputePlayerInput(Allies[ActivePlayerIndex], _playerInput, _swapCharacterSpherecastLength, _swapCharacterSpherecastRadius, _swapCharacterLayerMask);
@@ -211,12 +221,12 @@ namespace Assets.Scripts.Match
 
             for (int i = 0; i < Allies.Count; ++i)
             {
-                ComputeCommonInputFixed(Allies[i]);
+                ComputeCommonInputFixed(Allies[i], AllyStates[i]);
             }
 
             for (int i = 0; i < Enemies.Count; ++i)
             {
-                ComputeCommonInputFixed(Enemies[i]);
+                ComputeCommonInputFixed(Enemies[i], EnemyStates[i]);
             }
         }
 
@@ -232,13 +242,15 @@ namespace Assets.Scripts.Match
             for (int i = 0; i < Allies.Count; ++i)
             {
                 MatchCharacterControllerView ally = Allies[i];
-                ally.OnBallCollisionEnterEvent += OnBallCollisionEnter;
+                ally.OnCollisionEnterEvent += OnCharacterCollisionEnter;
+                ally.OnTriggerEnterEvent += OnCharacterTriggerEnter;
             }
 
             for (int i = 0; i < Enemies.Count; ++i)
             {
                 MatchCharacterControllerView enemy = Enemies[i];
-                enemy.OnBallCollisionEnterEvent += OnBallCollisionEnter;
+                enemy.OnCollisionEnterEvent += OnCharacterCollisionEnter;
+                enemy.OnTriggerEnterEvent += OnCharacterTriggerEnter;
             }
         }
 
@@ -250,13 +262,15 @@ namespace Assets.Scripts.Match
             for (int i = 0; i < Allies.Count; ++i)
             {
                 MatchCharacterControllerView ally = Allies[i];
-                ally.OnBallCollisionEnterEvent -= OnBallCollisionEnter;
+                ally.OnCollisionEnterEvent -= OnCharacterCollisionEnter;
+                ally.OnTriggerEnterEvent -= OnCharacterTriggerEnter;
             }
 
             for (int i = 0; i < Enemies.Count; ++i)
             {
                 MatchCharacterControllerView enemy = Enemies[i];
-                enemy.OnBallCollisionEnterEvent -= OnBallCollisionEnter;
+                enemy.OnCollisionEnterEvent -= OnCharacterCollisionEnter;
+                enemy.OnTriggerEnterEvent -= OnCharacterTriggerEnter;
             }
         }
 
@@ -276,7 +290,7 @@ namespace Assets.Scripts.Match
                 else
                 {
                     Allies[i].GiveControlToAI();
-                    Allies[i].DislayHalo(false);
+                    Allies[i].HideHalo();
                 }
             }
         }
@@ -304,19 +318,19 @@ namespace Assets.Scripts.Match
         /// <param name="enemiesT">Transforms des persos ennemis</param>
         internal void SetEntities(List<Transform> alliesT, List<Transform> enemiesT)
         {
-            _vm.SetEntities(alliesT.Count, enemiesT.Count);
+            _vm.SetEntities(alliesT.Count, enemiesT.Count, BaseMovementData);
 
-            Allies.Clear();
-            Enemies.Clear();
+            _allies.Clear();
+            _enemies.Clear();
 
             for (int i = 0; i < alliesT.Count; ++i)
             {
-                Allies.Add(alliesT[i].GetComponent<MatchCharacterControllerView>());
+                _allies.Add(alliesT[i].GetComponent<MatchCharacterControllerView>());
             }
 
             for (int i = 0; i < enemiesT.Count; ++i)
             {
-                Enemies.Add(enemiesT[i].GetComponent<MatchCharacterControllerView>());
+                _enemies.Add(enemiesT[i].GetComponent<MatchCharacterControllerView>());
             }
         }
 
@@ -334,14 +348,11 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
-        /// Réinitialise les données du contrôleur pour une nouvelle manche
+        /// Réinitialise les données du gestionnaire pour une nouvelle manche
         /// </summary>
-        internal void ResetController()
+        internal void ResetManager()
         {
-            _vm.ResetController();
-
-            _lastSwapCharacterTarget = null;
-            CancelSwap();
+            _vm.ResetManager();
 
             for (int i = 0; i < Allies.Count; ++i)
             {
@@ -382,7 +393,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void OnNewSetStarted()
         {
-            ResetController();
+            ResetManager();
             SetActivePlayer(ActivePlayerIndex);
             EnablePlayersInput(false);
 
@@ -395,50 +406,95 @@ namespace Assets.Scripts.Match
         /// </summary>
         /// <param name="sender">Le perso</param>
         /// <param name="ball">Le ballon</param>
-        private void OnBallCollisionEnter(object sender, BallView ball)
+        private void OnCharacterCollisionEnter(object sender, Collision other)
         {
+            if (!other.gameObject.CompareTag(_ballTag))
+            {
+                return;
+            }
+
+            BallView ball = other.gameObject.GetComponent<BallView>();
+            int ballIndex = _ballManagerV.Balls.IndexOf(ball);
+            BallState ballState = _ballManagerV.BallStates[ballIndex];
+
+            if (ballState.IsLive)
+            {
+                MatchCharacterControllerView character = sender as MatchCharacterControllerView;
+                bool characterIsAlly = Allies.Contains(character);
+                int characterIndex = characterIsAlly ? Allies.IndexOf(character) : Enemies.IndexOf(character);
+                MatchCharacterState characterState = characterIsAlly ? AllyStates[characterIndex] : EnemyStates[characterIndex];
+
+                switch (ballState.ActiveTeamID)
+                {
+                    case TeamID.Ally:
+                        if (!characterState.IsAlly)
+                        {
+                            // TAF : Balle adverse, le perso est éliminé
+
+                        }
+                        break;
+                    case TeamID.Enemy:
+                        if (characterState.IsAlly)
+                        {
+                            // TAF : Balle adverse, le perso est éliminé
+
+                        }
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Appelée quand le perso entre en collision avec un ballon
+        /// </summary>
+        /// <param name="sender">Le perso</param>
+        /// <param name="ball">Le ballon</param>
+        private void OnCharacterTriggerEnter(object sender, Collider other)
+        {
+            if (!other.CompareTag(_ballTag))
+            {
+                return;
+            }
+
+            BallView ball = other.GetComponent<BallView>();
             MatchCharacterControllerView character = sender as MatchCharacterControllerView;
             bool characterIsAlly = Allies.Contains(character);
             int characterIndex = characterIsAlly ? Allies.IndexOf(character) : Enemies.IndexOf(character);
             int ballIndex = _ballManagerV.Balls.IndexOf(ball);
-            MatchCharacterControllerState characterState = characterIsAlly ? AllyStates[characterIndex] : EnemyStates[characterIndex];
+            MatchCharacterState characterState = characterIsAlly ? AllyStates[characterIndex] : EnemyStates[characterIndex];
             BallState ballState = _ballManagerV.BallStates[ballIndex];
 
             if (!ballState.IsLive)
             {
-                // TAF: Ramasser la balle
                 PickUpBall(characterIndex, ballIndex, character, ball, in characterState, in ballState);
             }
             else
             {
                 switch (ballState.ActiveTeamID)
                 {
-                    case 0:
+                    case TeamID.Ally:
                         if (characterState.IsAlly)
                         {
-                            // TAF : Balle alliée, c'est une passe donc le perso la récupère
+                            // Balle alliée, c'est une passe donc le perso la récupère
                             PickUpBall(characterIndex, ballIndex, character, ball, in characterState, in ballState);
-                            //TAF : Changer le contrôle du joueur pour contrôler le receveur
 
-                        }
-                        else
-                        {
-                            // TAF : Balle ennemie, le perso est éliminé
-
+                            if (_shouldSwapControlAfterPass)
+                            {
+                                //TAF : Changer le contrôle du joueur pour contrôler le receveur
+                            }
                         }
                         break;
-                    case 1:
+
+                    case TeamID.Enemy:
                         if (!characterState.IsAlly)
                         {
-                            // TAF : Balle alliée, c'est une passe donc le perso la récupère
+                            // Balle alliée, c'est une passe donc le perso la récupère
                             PickUpBall(characterIndex, ballIndex, character, ball, in characterState, in ballState);
-                            //TAF : Changer le contrôle du joueur pour contrôler le receveur
 
-                        }
-                        else
-                        {
-                            // TAF : Balle ennemie, le perso est éliminé
-
+                            if (_shouldSwapControlAfterPass)
+                            {
+                                //TAF : Changer le contrôle du joueur pour contrôler le receveur
+                            }
                         }
                         break;
                 }
@@ -448,24 +504,27 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Execute les actions en fonction des commandes actives du perso
         /// </summary>
-        /// <param name="character">Le perso</param>
-        private void ComputeCommonInputFixed(MatchCharacterControllerView character)
+        /// <param name="characterView">Le perso</param>
+        /// <param name="characterState">L'état du perso</param>
+        private void ComputeCommonInputFixed(MatchCharacterControllerView characterView, MatchCharacterState characterState)
         {
-            IMatchCharacterInput activeInput = character.ActiveInput;
+            IMatchCharacterInput activeInput = characterView.ActiveInput;
 
             // Translation + Rotation
             if (activeInput.MoveAxis != Vector2.zero)
             {
-                character.Move(activeInput.MoveAxis);
+                characterView.Move(activeInput.MoveAxis, characterState.MovementData.MoveSpeed);
             }
         }
 
         /// <summary>
         /// Execute les actions en fonction des commandes actives du perso
         /// </summary>
-        /// <param name="character">Le perso</param>
-        private void ComputeCommonInput(MatchCharacterControllerView character)
+        /// <param name="characterIndex">ID du perso</param>
+        /// <param name="characterIsAlly">true si le perso est un allié</param>
+        private void ComputeCommonInput(int characterIndex, bool characterIsAlly)
         {
+            MatchCharacterControllerView character = characterIsAlly ? Allies[characterIndex] : Enemies[characterIndex];
             IMatchCharacterInput activeInput = character.ActiveInput;
 
             // Translation + Rotation
@@ -475,27 +534,45 @@ namespace Assets.Scripts.Match
             }
 
             // Changement de cible
+            int previousTargetIndex = characterIsAlly ? AllyStates[characterIndex].OpponentTargetIndex : EnemyStates[characterIndex].OpponentTargetIndex;
+
             if (activeInput.PreviousTargetTrigger)
             {
-                SelectNewOpponentTarget(character, -1);
+                SelectNewOpponentTarget(characterIndex, -1, previousTargetIndex, characterIsAlly);
             }
             if (activeInput.NextTargetTrigger)
             {
-                SelectNewOpponentTarget(character, 1);
+                SelectNewOpponentTarget(characterIndex, 1, previousTargetIndex, characterIsAlly);
             }
 
+            // L'état du perso a été màj, on doit le récupérer à nouveau
+            MatchCharacterState characterState = characterIsAlly ? AllyStates[characterIndex] : EnemyStates[characterIndex];
+
             // Tir
-            if (character.IsHoldingABall && !_vm.IsSwappingCharacter)
+            if (characterState.IsHoldingABall && !_vm.IsSwappingCharacter)
             {
                 if (activeInput.IsHoldingFire)
                 {
-                    character.ChargeShot();
+                    _vm.ChargeShot(characterIndex, characterState.IsAlly, characterState.MovementData.FireChargeSpeed, Time.deltaTime);
                 }
-                if (activeInput.HasReleasedFire && character.Energy < 1f)
+                if (activeInput.HasReleasedFire && characterState.Energy < 1f)
                 {
-                    character.Shoot();
+                    Shoot(characterIndex, character, characterState);
                 }
             }
+        }
+
+        /// <summary>
+        /// Tire le ballon
+        /// </summary>
+        /// <param name="characterIndex">ID du tireur</param>
+        /// <param name="character">Le perso</param>
+        /// <param name="characterState">Etat du tireur</param>
+        private void Shoot(int characterIndex, MatchCharacterControllerView character, MatchCharacterState characterState)
+        {
+            _vm.Shoot(characterIndex, characterState.IsAlly);
+            character.Shoot(characterState.MovementData.FireForceInterval, characterState.Energy);
+            OnShootEvent?.Invoke(null, characterIndex);
         }
 
         /// <summary>
@@ -516,24 +593,37 @@ namespace Assets.Scripts.Match
             // Changement d'allié contrôlé par le joueur
             if (IsSwappingCharacter)
             {
-                MatchCharacterControllerView target = GetClosestAllyInDirection(activePlayer, playerInput.SwapCharacterAxis, swapCharacterSpherecastLength, swapCharacterSpherecastRadius, swapCharacterLayerMask);
+                int targetIndex = GetClosestAllyInDirection(activePlayer, playerInput.SwapCharacterAxis, swapCharacterSpherecastLength, swapCharacterSpherecastRadius, swapCharacterLayerMask);
 
-                if (target && target.IsAlly)
+                if (targetIndex > -1)
                 {
-                    DisplayHaloes(_lastSwapCharacterTarget, target);
-                    _lastSwapCharacterTarget = target;
-                    CurAllyTargetForSwapIndex = Allies.IndexOf(target);
+                    MatchCharacterControllerView target = Allies[targetIndex];
+                    MatchCharacterState targetState = AllyStates[targetIndex];
+
+                    if (targetState.IsAlly)
+                    {
+                        if (CurAllyTargetForSwapIndex > -1)
+                        {
+                            // Fait disparaître le halo de la cible précédente
+                            Enemies[CurAllyTargetForSwapIndex].HideHalo();
+                        }
+
+                        //Affiche le halo de la nouvelle cible
+                        target.DislayHalo(true);
+
+                        CurAllyTargetForSwapIndex = targetIndex;
+                    }
                 }
             }
 
             // On passe le contrôle à l'allié sélectionné
-            if (IsSwappingCharacter && playerInput.FireTrigger)
+            if (IsSwappingCharacter && CurAllyTargetForSwapIndex > -1 && playerInput.FireTrigger)
             {
-                SwapControl(activePlayer, _lastSwapCharacterTarget);
+                SwapControl(ActivePlayerIndex, CurAllyTargetForSwapIndex);
+                SetActivePlayer(ActivePlayerIndex);
 
-                // Pour empêcher le nouveau perso de tirer
-                playerInput.IsHoldingFire = false;
-                playerInput.HasReleasedFire = false;
+                // Pour empêcher le nouveau perso d'agir à la même frame où il devient actif
+                LockInputs(playerInput);
             }
 
             // On annule le changement de perso
@@ -546,32 +636,37 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
+        /// Pour empêcher le nouveau perso d'agir à la même frame où il devient actif
+        /// </summary>
+        /// <param name="playerInput">Les commandes du joueur</param>
+        private static void LockInputs(MatchPlayerInput playerInput)
+        {
+            // TAF : Bloquer aussi les commandes pour le saut, l'esquive et le blocage
+            playerInput.IsHoldingFire = false;
+            playerInput.HasReleasedFire = false;
+        }
+
+        /// <summary>
         /// Sélectionne une nouvelle cible pour le perso
         /// </summary>
-        /// <param name="character">Le perso concerné</param>
+        /// <param name="characterIndex">L'ID du perso</param>
         /// <param name="increment">Position si suivant, négatif si précédent</param>
-        private void SelectNewOpponentTarget(MatchCharacterControllerView character, int increment)
+        /// <param name="previousTargetIndex">L'ID de la cible précédente</param>
+        /// <param name="characterIsAlly">true si c'est un allié</param>
+        private void SelectNewOpponentTarget(int characterIndex, int increment, int previousTargetIndex, bool characterIsAlly)
         {
-            int previousTargetIndex = character.LastOpponentTargetIndex;
-
-            // On choisit la cible adverse
-            character.LastOpponentTargetIndex += increment;
-
-            if (character.LastOpponentTargetIndex < 0)
-                character.LastOpponentTargetIndex = character.IsAlly ? Enemies.Count - 1 : Allies.Count - 1;
-            if (character.IsAlly && character.LastOpponentTargetIndex == Enemies.Count || !character.IsAlly && character.LastOpponentTargetIndex == Allies.Count)
-                character.LastOpponentTargetIndex = 0;
+            _vm.SelectNewOpponentTarget(characterIndex, increment, characterIsAlly);
 
             // Si le perso est celui du joueur, on affiche le halo de sa cible parmi les ennemis
             // et on masque celle de la cible précédente s'il y en a une
-            if (Allies.Contains(character) && Allies.IndexOf(character) == ActivePlayerIndex)
+            if (characterIsAlly && characterIndex == ActivePlayerIndex)
             {
                 if (previousTargetIndex > -1)
                 {
-                    Enemies[previousTargetIndex].DislayHalo(false);
+                    Enemies[previousTargetIndex].HideHalo();
                 }
 
-                Enemies[character.LastOpponentTargetIndex].DislayHalo(true);
+                Enemies[EnemyStates[characterIndex].OpponentTargetIndex].DislayHalo(true);
             }
         }
 
@@ -583,34 +678,17 @@ namespace Assets.Scripts.Match
         /// <param name="swapCharacterSpherecastLength">Longueur du raycast du changement de contrôle</param>
         /// <param name="swapCharacterSpherecastRadius">Distance d'un allié au rayon pour que celui-ci soit considéré éligible pour le changement de contrôle</param>
         /// <param name="swapCharacterLayerMask">Layermask utilisé pour le changement de contrôle</param>
-        /// <returns>L'allié le plus près du joueur et de ce rayon</returns>
-        private MatchCharacterControllerView GetClosestAllyInDirection(MatchCharacterControllerView activePlayer, Vector2 swapCharacterAxis, float swapCharacterSpherecastLength, float swapCharacterSpherecastRadius, LayerMask swapCharacterLayerMask)
+        /// <returns>L'ID de l'allié le plus proche du joueur</returns>
+        private int GetClosestAllyInDirection(MatchCharacterControllerView activePlayer, Vector2 swapCharacterAxis, float swapCharacterSpherecastLength, float swapCharacterSpherecastRadius, LayerMask swapCharacterLayerMask)
         {
             _vm.GetSwapDirectionXZ(activePlayer.transform.position, swapCharacterAxis, out Vector3 origin, out Vector3 dir);
 
             if (Physics.SphereCast(origin, swapCharacterSpherecastRadius, dir, out RaycastHit hit, swapCharacterSpherecastLength, swapCharacterLayerMask))
             {
-                return hit.collider.GetComponent<MatchCharacterControllerView>();
+                return Allies.IndexOf(hit.collider.GetComponent<MatchCharacterControllerView>());
             }
 
-            return null;
-        }
-
-        /// <summary>
-        /// Affiche les halos des persos dont on doit échanger le contrôle
-        /// </summary>
-        /// <param name="lastTarget">Le perso précédent</param>
-        /// <param name="newTarget">Le nouveau perso du joueru</param>
-        private void DisplayHaloes(MatchCharacterControllerView lastTarget, MatchCharacterControllerView newTarget)
-        {
-            if (lastTarget != null && lastTarget != newTarget)
-            {
-                // Fait disparaître le halo de la cible précédente
-                lastTarget.DislayHalo(false);
-            }
-
-            //Affiche le halo de la nouvelle cible
-            newTarget.DislayHalo(true);
+            return -1;
         }
 
         /// <summary>
@@ -618,19 +696,25 @@ namespace Assets.Scripts.Match
         /// </summary>
         /// <param name="activePlayer">Le perso contrôlé par le joueur</param>
         /// <param name="target">La cible à contrôler</param>
-        private void SwapControl(MatchCharacterControllerView activePlayer, MatchCharacterControllerView target)
+        private void SwapControl(int previousActivePlayerIndex, int newActivePlayerIndex)
         {
-            // On passe le contrôle à l'allié sélectionné
-            int index = _lastSwapCharacterTarget != null ? Allies.IndexOf(target) : -1;
-            _vm.SwapControl(index);
-            SetActivePlayer(index);
-            _lastSwapCharacterTarget = null;
+            // On masque le halo de la cible ennemie s'il y en avait une
+            MatchCharacterState previousActivePlayerState = AllyStates[previousActivePlayerIndex];
 
-            // On masque également le halo de la cible ennemi s'il y en a une
-            if (activePlayer.LastOpponentTargetIndex > -1)
-            {
-                Enemies[activePlayer.LastOpponentTargetIndex].DislayHalo(false);
-            }
+            if (previousActivePlayerState.OpponentTargetIndex > -1)
+                Enemies[previousActivePlayerState.OpponentTargetIndex].HideHalo();
+
+            // On passe le contrôle à l'allié sélectionné
+            _vm.SwapControl(newActivePlayerIndex);
+
+            // On active le halo de la nouvelle cible s'il y en a une, vu qu'on change de perso
+
+            MatchCharacterState targetState = AllyStates[newActivePlayerIndex];
+
+            if (targetState.OpponentTargetIndex > -1)
+                Enemies[targetState.OpponentTargetIndex].DislayHalo(false);
+
+            OnActivePlayerChanged?.Invoke(this, newActivePlayerIndex);
         }
 
         /// <summary>
@@ -638,30 +722,31 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void CancelSwap()
         {
-            _vm.CancelSwap();
-
-            if (_lastSwapCharacterTarget != null)
+            if (CurAllyTargetForSwapIndex > -1)
             {
                 // Fait disparaître le halo de la cible précédente
-                _lastSwapCharacterTarget.DislayHalo(false);
+                Enemies[CurAllyTargetForSwapIndex].HideHalo();
             }
 
-            _lastSwapCharacterTarget = null;
+            _vm.CancelSwap();
         }
 
         /// <summary>
         /// Retire au perso les infos sur sa cible. Utilisée quand la cible se fait éliminer
         /// </summary>
-        /// <param name="character">Le perso concerné</param>>
-        private void ClearTarget(MatchCharacterControllerView character)
+        /// <param name="characterIndex">L'ID perso concerné</param>
+        /// <param name="characterIsAlly">true si le perso est un allié</param>
+        private void ClearTarget(int characterIndex, bool characterIsAlly)
         {
+            MatchCharacterState characterState = characterIsAlly ? AllyStates[characterIndex] : EnemyStates[characterIndex];
+
             // Si le perso est celui du joueur, on masque le halo de sa cible
-            if (character.LastOpponentTargetIndex > -1 && Allies.Contains(character) && Allies.IndexOf(character) == ActivePlayerIndex)
+            if (characterState.OpponentTargetIndex > -1 && characterIsAlly && characterIndex == ActivePlayerIndex)
             {
-                Enemies[character.LastOpponentTargetIndex].DislayHalo(false);
+                Enemies[characterState.OpponentTargetIndex].HideHalo();
             }
 
-            character.LastOpponentTargetIndex = -1;
+            _vm.ClearTarget(characterIndex, characterIsAlly);
         }
 
         /// <summary>
@@ -673,20 +758,20 @@ namespace Assets.Scripts.Match
         /// <param name="ball">Le ballon</param>
         /// <param name="characterState">L'état du perso</param>
         /// <param name="ballState">L'état du ballon</param>
-        private void PickUpBall(int characterIndex, int ballIndex, MatchCharacterControllerView character, BallView ball, in MatchCharacterControllerState characterState, in BallState ballState)
+        private void PickUpBall(int characterIndex, int ballIndex, MatchCharacterControllerView character, BallView ball, in MatchCharacterState characterState, in BallState ballState)
         {
             // Si le perso détient déjà un ballon
             // ou qu'il tente de récupérer une balle réservée à l'ennemi,
             // il ne peut pas en ramasser une nouvelle
 
-            if (characterState.IsHoldingABall || (characterState.IsAlly && ballState.ReservedTeamID == 1) || (!characterState.IsAlly && ballState.ReservedTeamID == 0))
+            if (characterState.IsHoldingABall || (characterState.IsAlly && ballState.ReservedTeamID == TeamID.Enemy) || (!characterState.IsAlly && ballState.ReservedTeamID == TeamID.Ally))
                 return;
 
             _vm.PickUpBall(characterIndex, characterState.IsAlly);
 
             character.PickUpBall(ball);
 
-            OnBallPickedupEvent?.Invoke(null, new BallPickedUpEventArgs(characterIndex, characterState.IsAlly, ballIndex));
+            OnBallPickedUpEvent?.Invoke(null, new BallPickedUpEventArgs(characterIndex, characterState.IsAlly, ballIndex));
         }
 
         #endregion
