@@ -1786,7 +1786,7 @@ MonoBehaviour:
     m_Bits: 64
   _ballTag: Match/Ball
   BaseMovementData:
-    MoveSpeed: 2.5
+    MoveSpeed: 5
     DodgeSpeed: 10
     JumpForceInterval: {x: 3, y: 7.5}
     FireForceInterval: {x: 10, y: 20}

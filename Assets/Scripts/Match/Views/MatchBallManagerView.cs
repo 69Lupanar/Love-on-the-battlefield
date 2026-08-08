@@ -189,11 +189,8 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void OnNewMatchStarted(MatchSettingsData _)
         {
-            if (Balls != null)
-            {
-                // Détache les callbacks des anciennes instances
-                UnsubscribeEntities();
-            }
+            // Détache les callbacks des anciennes instances
+            UnsubscribeEntities();
 
             SetEntities(_spawnerV.BallsT);
             SubscribeEntities();

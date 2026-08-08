@@ -40,7 +40,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Les persos ennemis
         /// </summary>
-        internal ReadOnlyCollection<MatchCharacterControllerView> Enemies => _allies.AsReadOnly();
+        internal ReadOnlyCollection<MatchCharacterControllerView> Enemies => _enemies.AsReadOnly();
 
         /// <summary>
         /// Les données de l'état des persos du joueur
@@ -374,14 +374,11 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void OnNewMatchStarted(MatchSettingsData _)
         {
-            if (Allies != null)
-            {
-                // Désactive les inputs des joueurs déjà présents avant de les retirer
-                EnablePlayersInput(false);
+            // Désactive les inputs des joueurs déjà présents avant de les retirer
+            EnablePlayersInput(false);
 
-                // Détache les callbacks des anciennes instances
-                UnsubscribeEntities();
-            }
+            // Détache les callbacks des anciennes instances
+            UnsubscribeEntities();
 
             SetEntities(_spawnerV.AlliesT, _spawnerV.EnemiesT);
             SetTeams();
