@@ -210,7 +210,6 @@ namespace Assets.Scripts.Match
 
             // Libère la balle et lui applique une force
             BallView ball = ReleaseBall();
-            ball.AddImpulseForce(_rb.linearVelocity);
             ball.AddImpulseForce(dir, force);
         }
 

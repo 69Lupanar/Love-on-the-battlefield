@@ -53,6 +53,16 @@ namespace Assets.Scripts.Match
         internal ReadOnlyCollection<MatchCharacterState> EnemyStates => _vm.EnemyStates.AsReadOnly();
 
         /// <summary>
+        /// Les données de mouvement des persos du joueur
+        /// </summary>
+        internal ReadOnlyCollection<MatchCharacterMovementData> AllyMovementDatas => _vm.AllyMovementDatas.AsReadOnly();
+
+        /// <summary>
+        /// Les données de mouvement des persos ennemis
+        /// </summary>
+        internal ReadOnlyCollection<MatchCharacterMovementData> EnemyMovementDatas => _vm.EnemyMovementDatas.AsReadOnly();
+
+        /// <summary>
         /// true si le joueur est en cours de changement de personnage
         /// </summary>
         internal bool IsSwappingCharacter
@@ -200,12 +210,12 @@ namespace Assets.Scripts.Match
 
             for (int i = 0; i < Allies.Count; ++i)
             {
-                ComputeCommonInput(i, true);
+                ComputeCommonInput(i, true, Allies[i], AllyMovementDatas[i]);
             }
 
             for (int i = 0; i < Enemies.Count; ++i)
             {
-                ComputeCommonInput(i, false);
+                ComputeCommonInput(i, false, Enemies[i], EnemyMovementDatas[i]);
             }
 
             ComputePlayerInput(Allies[ActivePlayerIndex], _playerInput, _swapCharacterSpherecastLength, _swapCharacterSpherecastRadius, _swapCharacterLayerMask);
@@ -221,12 +231,12 @@ namespace Assets.Scripts.Match
 
             for (int i = 0; i < Allies.Count; ++i)
             {
-                ComputeCommonInputFixed(Allies[i], AllyStates[i]);
+                ComputeCommonInputFixed(Allies[i], AllyStates[i], AllyMovementDatas[i]);
             }
 
             for (int i = 0; i < Enemies.Count; ++i)
             {
-                ComputeCommonInputFixed(Enemies[i], EnemyStates[i]);
+                ComputeCommonInputFixed(Enemies[i], EnemyStates[i], EnemyMovementDatas[i]);
             }
         }
 
@@ -509,9 +519,10 @@ namespace Assets.Scripts.Match
         /// </summary>
         /// <param name="characterIndex">ID du perso</param>
         /// <param name="characterIsAlly">true si le perso est un allié</param>
-        private void ComputeCommonInput(int characterIndex, bool characterIsAlly)
+        /// <param name="character">Le perso</param>
+        /// <param name="movementData">Données de mouvement</param>
+        private void ComputeCommonInput(int characterIndex, bool characterIsAlly, MatchCharacterControllerView character, MatchCharacterMovementData movementData)
         {
-            MatchCharacterControllerView character = characterIsAlly ? Allies[characterIndex] : Enemies[characterIndex];
             IMatchCharacterInput activeInput = character.ActiveInput;
 
             // Translation + Rotation
@@ -540,11 +551,11 @@ namespace Assets.Scripts.Match
             {
                 if (activeInput.IsHoldingFire)
                 {
-                    _vm.ChargeShot(characterIndex, characterState.IsAlly, characterState.MovementData.FireChargeSpeed, Time.deltaTime);
+                    _vm.ChargeShot(characterIndex, characterState.IsAlly, movementData.FireChargeSpeed, Time.deltaTime);
                 }
                 if (activeInput.HasReleasedFire && characterState.Energy < 1f)
                 {
-                    Shoot(characterIndex, character, characterState);
+                    Shoot(characterIndex, character, characterState, movementData);
                 }
             }
         }
@@ -554,14 +565,15 @@ namespace Assets.Scripts.Match
         /// </summary>
         /// <param name="characterView">Le perso</param>
         /// <param name="characterState">L'état du perso</param>
-        private void ComputeCommonInputFixed(MatchCharacterControllerView characterView, MatchCharacterState characterState)
+        /// <param name="movementData">Les données de mouvement du joueur</param>
+        private void ComputeCommonInputFixed(MatchCharacterControllerView characterView, MatchCharacterState characterState, MatchCharacterMovementData movementData)
         {
             IMatchCharacterInput activeInput = characterView.ActiveInput;
 
             // Translation + Rotation
             if (activeInput.MoveAxis != Vector2.zero)
             {
-                characterView.Move(activeInput.MoveAxis, characterState.MovementData.MoveSpeed);
+                characterView.Move(activeInput.MoveAxis, movementData.MoveSpeed);
             }
         }
 
@@ -575,6 +587,7 @@ namespace Assets.Scripts.Match
         /// <param name="swapCharacterLayerMask">Layermask utilisé pour le changement de contrôle</param>
         private void ComputePlayerInput(MatchCharacterControllerView activePlayer, MatchPlayerInput playerInput, float swapCharacterSpherecastLength, float swapCharacterSpherecastRadius, LayerMask swapCharacterLayerMask)
         {
+            print(playerInput.SwapCharacterAxis);
             if (!playerInput.IsHoldingFire && _lastSwapCharacterAxis == Vector2.zero && playerInput.SwapCharacterAxis != Vector2.zero)
             {
                 IsSwappingCharacter = true;
@@ -762,10 +775,11 @@ namespace Assets.Scripts.Match
         /// <param name="characterIndex">ID du tireur</param>
         /// <param name="character">Le perso</param>
         /// <param name="characterState">Etat du tireur</param>
-        private void Shoot(int characterIndex, MatchCharacterControllerView character, MatchCharacterState characterState)
+        /// <param name="movementData">Données de mouvement</param>
+        private void Shoot(int characterIndex, MatchCharacterControllerView character, MatchCharacterState characterState, MatchCharacterMovementData movementData)
         {
             _vm.Shoot(characterIndex, characterState.IsAlly);
-            character.Shoot(characterState.MovementData.FireForceInterval, characterState.Energy);
+            character.Shoot(movementData.FireForceInterval, characterState.Energy);
             OnShootEvent?.Invoke(null, new ShootEventArgs(characterIndex, characterState.BallIndex));
         }
 

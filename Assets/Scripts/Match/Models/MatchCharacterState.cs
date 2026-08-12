@@ -37,11 +37,6 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal float Energy;
 
-        /// <summary>
-        /// Données de mouvement d'un personnage lors d'un match
-        /// </summary>
-        internal MatchCharacterMovementData MovementData;
-
         #endregion
     }
 }

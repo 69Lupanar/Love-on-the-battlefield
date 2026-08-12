@@ -21,6 +21,16 @@ namespace Assets.Scripts.Match
         internal List<MatchCharacterState> EnemyStates { get; private set; } = new();
 
         /// <summary>
+        /// Données de mouvement des personnages lors d'un match
+        /// </summary>
+        internal List<MatchCharacterMovementData> AllyMovementDatas { get; private set; } = new();
+
+        /// <summary>
+        /// Données de mouvement des personnages lors d'un match
+        /// </summary>
+        internal List<MatchCharacterMovementData> EnemyMovementDatas { get; private set; } = new();
+
+        /// <summary>
         /// L'ID du perso contrôlé par le joueur
         /// </summary>
         internal int ActivePlayerIndex { get; set; }
@@ -56,12 +66,14 @@ namespace Assets.Scripts.Match
 
             for (int i = 0; i < nbAllies; ++i)
             {
-                AllyStates.Add(new MatchCharacterState() { MovementData = baseMovementData });
+                AllyStates.Add(new MatchCharacterState());
+                AllyMovementDatas.Add(baseMovementData);
             }
 
             for (int i = 0; i < nbEnemies; ++i)
             {
-                EnemyStates.Add(new MatchCharacterState() { MovementData = baseMovementData });
+                EnemyStates.Add(new MatchCharacterState());
+                EnemyMovementDatas.Add(baseMovementData);
             }
 
         }
