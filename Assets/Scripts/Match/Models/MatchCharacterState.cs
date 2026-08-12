@@ -15,12 +15,17 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// true si le perso porte un ballon
         /// </summary>
-        internal bool IsHoldingABall;
+        internal readonly bool IsHoldingABall => BallIndex > -1;
 
         /// <summary>
         /// true si le perso est éliminé
         /// </summary>
         internal bool IsEliminated;
+
+        /// <summary>
+        /// L'ID du ballon porté par ce joueur
+        /// </summary>
+        internal int BallIndex;
 
         /// <summary>
         /// Le dernier adversaire ciblé par le joueur

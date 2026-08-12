@@ -101,14 +101,14 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Màj à chaque frame
         /// </summary>
-        /// <param name="ballData">Les données du ballon</param>
-        internal void UpdateView(BallState ballData)
+        /// <param name="ballState">Les données du ballon</param>
+        internal void UpdateView(BallState ballState)
         {
             if (_rb.linearVelocity.sqrMagnitude < _displayHaloSpeedThreshold * _displayHaloSpeedThreshold &&
                 _lastLinearVelocity.sqrMagnitude > _displayHaloSpeedThreshold * _displayHaloSpeedThreshold)
             {
                 // Si la balle ralentit assez, on affiche son halo
-                DisplayHalo(ballData);
+                DisplayHalo(ballState);
             }
             if (_rb.linearVelocity.sqrMagnitude > _displayHaloSpeedThreshold * _displayHaloSpeedThreshold &&
                 _lastLinearVelocity.sqrMagnitude < _displayHaloSpeedThreshold * _displayHaloSpeedThreshold)
@@ -162,7 +162,15 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Applique une impulsion au ballon
         /// </summary>
-        internal void ApplyImpulseForce(Vector3 direction, float force)
+        internal void AddImpulseForce(Vector3 force)
+        {
+            _rb.AddForce(force, ForceMode.Impulse);
+        }
+
+        /// <summary>
+        /// Applique une impulsion au ballon
+        /// </summary>
+        internal void AddImpulseForce(Vector3 direction, float force)
         {
             _rb.AddForce(direction * force, ForceMode.Impulse);
         }

@@ -26,7 +26,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Appelée quand un ballon est lancé par un joueur
         /// </summary>
-        internal EventHandler<int> OnShootEvent { get; set; }
+        internal EventHandler<ShootEventArgs> OnShootEvent { get; set; }
 
         #endregion
 
@@ -461,9 +461,16 @@ namespace Assets.Scripts.Match
             MatchCharacterState characterState = characterIsAlly ? AllyStates[characterIndex] : EnemyStates[characterIndex];
             BallState ballState = _ballManagerV.BallStates[ballIndex];
 
+            // Si le perso détient déjà un ballon
+            // ou qu'il tente de récupérer une balle réservée à l'ennemi,
+            // il ne peut pas en ramasser une nouvelle
+
+            if (characterState.IsHoldingABall || (characterState.IsAlly && ballState.ReservedTeamID == TeamID.Enemy) || (!characterState.IsAlly && ballState.ReservedTeamID == TeamID.Ally))
+                return;
+
             if (!ballState.IsLive)
             {
-                PickUpBall(characterIndex, ballIndex, character, ball, in characterState, in ballState);
+                PickUpBall(characterIndex, ballIndex, character, ball, in characterState);
             }
             else
             {
@@ -473,11 +480,15 @@ namespace Assets.Scripts.Match
                         if (characterState.IsAlly)
                         {
                             // Balle alliée, c'est une passe donc le perso la récupère
-                            PickUpBall(characterIndex, ballIndex, character, ball, in characterState, in ballState);
+                            PickUpBall(characterIndex, ballIndex, character, ball, in characterState);
 
-                            if (_shouldSwapControlAfterPass)
+                            if (_shouldSwapControlAfterPass && !IsSwappingCharacter && ballState.LastHoldingPlayerID == ActivePlayerIndex)
                             {
-                                //TAF : Changer le contrôle du joueur pour contrôler le receveur
+                                // Si le lanceur est le joueur,
+                                // on change le contrôle des persos pour contrôler le receveur
+                                SwapControl(ActivePlayerIndex, characterIndex);
+                                SetActivePlayer(ActivePlayerIndex);
+                                LockInputs(character.ActiveInput);
                             }
                         }
                         break;
@@ -486,31 +497,10 @@ namespace Assets.Scripts.Match
                         if (!characterState.IsAlly)
                         {
                             // Balle alliée, c'est une passe donc le perso la récupère
-                            PickUpBall(characterIndex, ballIndex, character, ball, in characterState, in ballState);
-
-                            if (_shouldSwapControlAfterPass)
-                            {
-                                //TAF : Changer le contrôle du joueur pour contrôler le receveur
-                            }
+                            PickUpBall(characterIndex, ballIndex, character, ball, in characterState);
                         }
                         break;
                 }
-            }
-        }
-
-        /// <summary>
-        /// Execute les actions en fonction des commandes actives du perso
-        /// </summary>
-        /// <param name="characterView">Le perso</param>
-        /// <param name="characterState">L'état du perso</param>
-        private void ComputeCommonInputFixed(MatchCharacterControllerView characterView, MatchCharacterState characterState)
-        {
-            IMatchCharacterInput activeInput = characterView.ActiveInput;
-
-            // Translation + Rotation
-            if (activeInput.MoveAxis != Vector2.zero)
-            {
-                characterView.Move(activeInput.MoveAxis, characterState.MovementData.MoveSpeed);
             }
         }
 
@@ -546,7 +536,7 @@ namespace Assets.Scripts.Match
             MatchCharacterState characterState = characterIsAlly ? AllyStates[characterIndex] : EnemyStates[characterIndex];
 
             // Tir
-            if (characterState.IsHoldingABall && !_vm.IsSwappingCharacter)
+            if (characterState.IsHoldingABall)
             {
                 if (activeInput.IsHoldingFire)
                 {
@@ -560,16 +550,19 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
-        /// Tire le ballon
+        /// Execute les actions en fonction des commandes actives du perso
         /// </summary>
-        /// <param name="characterIndex">ID du tireur</param>
-        /// <param name="character">Le perso</param>
-        /// <param name="characterState">Etat du tireur</param>
-        private void Shoot(int characterIndex, MatchCharacterControllerView character, MatchCharacterState characterState)
+        /// <param name="characterView">Le perso</param>
+        /// <param name="characterState">L'état du perso</param>
+        private void ComputeCommonInputFixed(MatchCharacterControllerView characterView, MatchCharacterState characterState)
         {
-            _vm.Shoot(characterIndex, characterState.IsAlly);
-            character.Shoot(characterState.MovementData.FireForceInterval, characterState.Energy);
-            OnShootEvent?.Invoke(null, characterIndex);
+            IMatchCharacterInput activeInput = characterView.ActiveInput;
+
+            // Translation + Rotation
+            if (activeInput.MoveAxis != Vector2.zero)
+            {
+                characterView.Move(activeInput.MoveAxis, characterState.MovementData.MoveSpeed);
+            }
         }
 
         /// <summary>
@@ -582,7 +575,7 @@ namespace Assets.Scripts.Match
         /// <param name="swapCharacterLayerMask">Layermask utilisé pour le changement de contrôle</param>
         private void ComputePlayerInput(MatchCharacterControllerView activePlayer, MatchPlayerInput playerInput, float swapCharacterSpherecastLength, float swapCharacterSpherecastRadius, LayerMask swapCharacterLayerMask)
         {
-            if (_lastSwapCharacterAxis == Vector2.zero && playerInput.SwapCharacterAxis != Vector2.zero)
+            if (!playerInput.IsHoldingFire && _lastSwapCharacterAxis == Vector2.zero && playerInput.SwapCharacterAxis != Vector2.zero)
             {
                 IsSwappingCharacter = true;
             }
@@ -597,12 +590,14 @@ namespace Assets.Scripts.Match
                     MatchCharacterControllerView target = Allies[targetIndex];
                     MatchCharacterState targetState = AllyStates[targetIndex];
 
-                    if (targetState.IsAlly)
+                    // La cible n'est valide que si elle est alliée
+                    // et qu'elle ne charge pas de tir
+                    if (targetState.IsAlly && !target.ActiveInput.IsHoldingFire)
                     {
                         if (CurAllyTargetForSwapIndex > -1)
                         {
                             // Fait disparaître le halo de la cible précédente
-                            Enemies[CurAllyTargetForSwapIndex].HideHalo();
+                            Allies[CurAllyTargetForSwapIndex].HideHalo();
                         }
 
                         //Affiche le halo de la nouvelle cible
@@ -618,8 +613,6 @@ namespace Assets.Scripts.Match
             {
                 SwapControl(ActivePlayerIndex, CurAllyTargetForSwapIndex);
                 SetActivePlayer(ActivePlayerIndex);
-
-                // Pour empêcher le nouveau perso d'agir à la même frame où il devient actif
                 LockInputs(playerInput);
             }
 
@@ -636,7 +629,7 @@ namespace Assets.Scripts.Match
         /// Pour empêcher le nouveau perso d'agir à la même frame où il devient actif
         /// </summary>
         /// <param name="playerInput">Les commandes du joueur</param>
-        private static void LockInputs(MatchPlayerInput playerInput)
+        private static void LockInputs(IMatchCharacterInput playerInput)
         {
             // TAF : Bloquer aussi les commandes pour le saut, l'esquive et le blocage
             playerInput.IsHoldingFire = false;
@@ -754,21 +747,26 @@ namespace Assets.Scripts.Match
         /// <param name="character">Le perso</param>
         /// <param name="ball">Le ballon</param>
         /// <param name="characterState">L'état du perso</param>
-        /// <param name="ballState">L'état du ballon</param>
-        private void PickUpBall(int characterIndex, int ballIndex, MatchCharacterControllerView character, BallView ball, in MatchCharacterState characterState, in BallState ballState)
+        private void PickUpBall(int characterIndex, int ballIndex, MatchCharacterControllerView character, BallView ball, in MatchCharacterState characterState)
         {
-            // Si le perso détient déjà un ballon
-            // ou qu'il tente de récupérer une balle réservée à l'ennemi,
-            // il ne peut pas en ramasser une nouvelle
-
-            if (characterState.IsHoldingABall || (characterState.IsAlly && ballState.ReservedTeamID == TeamID.Enemy) || (!characterState.IsAlly && ballState.ReservedTeamID == TeamID.Ally))
-                return;
-
-            _vm.PickUpBall(characterIndex, characterState.IsAlly);
+            _vm.PickUpBall(characterIndex, ballIndex, characterState.IsAlly);
 
             character.PickUpBall(ball);
 
             OnBallPickedUpEvent?.Invoke(null, new BallPickedUpEventArgs(characterIndex, characterState.IsAlly, ballIndex));
+        }
+
+        /// <summary>
+        /// Tire le ballon
+        /// </summary>
+        /// <param name="characterIndex">ID du tireur</param>
+        /// <param name="character">Le perso</param>
+        /// <param name="characterState">Etat du tireur</param>
+        private void Shoot(int characterIndex, MatchCharacterControllerView character, MatchCharacterState characterState)
+        {
+            _vm.Shoot(characterIndex, characterState.IsAlly);
+            character.Shoot(characterState.MovementData.FireForceInterval, characterState.Energy);
+            OnShootEvent?.Invoke(null, new ShootEventArgs(characterIndex, characterState.BallIndex));
         }
 
         #endregion

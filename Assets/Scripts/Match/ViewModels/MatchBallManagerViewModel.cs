@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -51,10 +50,11 @@ namespace Assets.Scripts.Match
         /// <param name="ballIndex">La position du ballon dans la liste</param>
         internal void SetBallAsDead(int ballIndex)
         {
-            BallState ballData = BallStates[ballIndex];
-            ballData.IsLive = false;
-            ballData.ActiveTeamID = TeamID.None;
-            BallStates[ballIndex] = ballData;
+            BallState ballState = BallStates[ballIndex];
+            ballState.IsLive = false;
+            ballState.ActiveTeamID = TeamID.None;
+            ballState.LastHoldingPlayerID = -1;
+            BallStates[ballIndex] = ballState;
         }
 
         /// <summary>
@@ -84,22 +84,14 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
-        /// Indiq
+        /// Réactive la balle
         /// </summary>
-        /// <param name="characterIndex"></param>
-        /// <exception cref="NotImplementedException"></exception>
-        internal void SetBallAsLive(int characterIndex)
+        /// <param name="ballIndex">L'ID de la balle</param>
+        internal void SetBallAsLive(int ballIndex)
         {
-            for (int i = 0; i < BallStates.Count; ++i)
-            {
-                BallState ballState = BallStates[i];
-                if (ballState.LastHoldingPlayerID == characterIndex)
-                {
-                    ballState.IsLive = true;
-                    BallStates[i] = ballState;
-                    break;
-                }
-            }
+            BallState ballState = BallStates[ballIndex];
+            ballState.IsLive = true;
+            BallStates[ballIndex] = ballState;
         }
 
         #endregion

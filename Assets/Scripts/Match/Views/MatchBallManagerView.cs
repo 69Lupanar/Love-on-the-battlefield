@@ -96,7 +96,7 @@ namespace Assets.Scripts.Match
             _matchV.OnNewMatchStartedEvent -= OnNewMatchStarted;
             _matchV.OnNewSetStartedEvent -= OnNewSetStarted;
             _characterManagerV.OnBallPickedUpEvent -= OnBallPickedUp;
-            _characterManagerV.OnShootEvent += OnShoot;
+            _characterManagerV.OnShootEvent -= OnShoot;
         }
 
         /// <summary>
@@ -211,11 +211,6 @@ namespace Assets.Scripts.Match
         private void OnBallCollisionEnter(object sender, Collision collision)
         {
             int ballIndex = Balls.IndexOf(sender as BallView);
-            BallState ballState = BallStates[ballIndex];
-
-            if (ballState.ActiveTeamID == TeamID.None)
-                return;
-
             GameObject go = collision.gameObject;
 
             // Désactive la balle si elle touche le sol ou un mur 
@@ -229,7 +224,7 @@ namespace Assets.Scripts.Match
 
             if (go.CompareTag(_outOfFieldTag))
             {
-                //TAF : Ramaner la balle en jeu par les receveurs
+                //TAF : Ramener la balle en jeu par les receveurs
             }
         }
 
@@ -248,9 +243,9 @@ namespace Assets.Scripts.Match
         /// Appelée quand un ballon est lancé par un joueur
         /// </summary>
         /// <param name="characterIndex">L'ID du tireur</param>
-        private void OnShoot(object _, int characterIndex)
+        private void OnShoot(object _, ShootEventArgs e)
         {
-            _vm.SetBallAsLive(characterIndex);
+            _vm.SetBallAsLive(e.BallIndex);
         }
 
         #endregion

@@ -214,14 +214,14 @@ namespace Assets.Scripts.Match
             if (characterIsAlly)
             {
                 MatchCharacterState characterState = AllyStates[characterIndex];
-                characterState.IsHoldingABall = false;
+                characterState.BallIndex = -1;
                 characterState.Energy = 1f;
                 AllyStates[characterIndex] = characterState;
             }
             else
             {
                 MatchCharacterState characterState = EnemyStates[characterIndex];
-                characterState.IsHoldingABall = false;
+                characterState.BallIndex = -1;
                 characterState.Energy = 1f;
                 EnemyStates[characterIndex] = characterState;
             }
@@ -231,19 +231,20 @@ namespace Assets.Scripts.Match
         /// Récupère le ballon
         /// </summary>
         /// <param name="characterIndex">L'ID du personnage concerné</param>
+        /// <param name="ballIndex">L'ID de la balle portée par ce perso</param>
         /// <param name="isAlly">true si le perso est un allié</param>
-        internal void PickUpBall(int characterIndex, bool isAlly)
+        internal void PickUpBall(int characterIndex, int ballIndex, bool isAlly)
         {
             if (isAlly)
             {
                 MatchCharacterState characterState = AllyStates[characterIndex];
-                characterState.IsHoldingABall = true;
+                characterState.BallIndex = ballIndex;
                 AllyStates[characterIndex] = characterState;
             }
             else
             {
                 MatchCharacterState characterState = EnemyStates[characterIndex];
-                characterState.IsHoldingABall = true;
+                characterState.BallIndex = ballIndex;
                 EnemyStates[characterIndex] = characterState;
             }
         }
@@ -255,13 +256,13 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Réinitialise les données du perso pour une nouvelle manche
         /// </summary>
-        private MatchCharacterState ResetPlayer(MatchCharacterState matchCharacterData)
+        private MatchCharacterState ResetPlayer(MatchCharacterState characterState)
         {
-            matchCharacterData.IsHoldingABall = false;
-            matchCharacterData.IsEliminated = false;
-            matchCharacterData.Energy = 1f;
-            matchCharacterData.OpponentTargetIndex = -1;
-            return matchCharacterData;
+            characterState.BallIndex = -1;
+            characterState.IsEliminated = false;
+            characterState.Energy = 1f;
+            characterState.OpponentTargetIndex = -1;
+            return characterState;
         }
 
         /// <summary>

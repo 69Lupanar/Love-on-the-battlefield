@@ -1789,7 +1789,7 @@ MonoBehaviour:
     MoveSpeed: 5
     DodgeSpeed: 10
     JumpForceInterval: {x: 3, y: 7.5}
-    FireForceInterval: {x: 10, y: 20}
+    FireForceInterval: {x: 5, y: 15}
     DodgeDuration: 0.5
     BlockDuration: 0.2
     DodgeEnergyCost: 0.5
