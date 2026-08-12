@@ -7,7 +7,7 @@ namespace Assets.Scripts.Match
     /// <summary>
     /// Gère le comportement des ballons
     /// </summary>
-    [RequireComponent(typeof(MatchPlayerInput), typeof(MatchBallManagerViewModel))]
+    [RequireComponent(typeof(MatchBallManagerViewModel))]
     public class MatchBallManagerView : MonoBehaviour
     {
         #region Propriétés

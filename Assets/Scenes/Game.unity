@@ -2603,7 +2603,6 @@ GameObject:
   - component: {fileID: 2055119899}
   - component: {fileID: 2055119901}
   - component: {fileID: 2055119900}
-  - component: {fileID: 2055119902}
   m_Layer: 0
   m_Name: Match Ball Manager
   m_TagString: Untagged
@@ -2656,18 +2655,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 986fb9a437f1dfe44a28761faae60540, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assets.Scripts.Match::MatchBallManagerViewModel
---- !u!114 &2055119902
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2055119898}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32d94ea0ea985cc4aaa2302a6dd2f98d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assets.Scripts.Match::Assets.Scripts.Match.MatchPlayerInput
 --- !u!114 &2082154323 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6701598416432370036, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}

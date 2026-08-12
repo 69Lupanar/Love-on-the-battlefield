@@ -231,12 +231,12 @@ namespace Assets.Scripts.Match
 
             for (int i = 0; i < Allies.Count; ++i)
             {
-                ComputeCommonInputFixed(Allies[i], AllyStates[i], AllyMovementDatas[i]);
+                ComputeCommonInputFixed(Allies[i], AllyMovementDatas[i]);
             }
 
             for (int i = 0; i < Enemies.Count; ++i)
             {
-                ComputeCommonInputFixed(Enemies[i], EnemyStates[i], EnemyMovementDatas[i]);
+                ComputeCommonInputFixed(Enemies[i], EnemyMovementDatas[i]);
             }
         }
 
@@ -566,7 +566,7 @@ namespace Assets.Scripts.Match
         /// <param name="characterView">Le perso</param>
         /// <param name="characterState">L'état du perso</param>
         /// <param name="movementData">Les données de mouvement du joueur</param>
-        private void ComputeCommonInputFixed(MatchCharacterControllerView characterView, MatchCharacterState characterState, MatchCharacterMovementData movementData)
+        private void ComputeCommonInputFixed(MatchCharacterControllerView characterView, MatchCharacterMovementData movementData)
         {
             IMatchCharacterInput activeInput = characterView.ActiveInput;
 
@@ -587,7 +587,6 @@ namespace Assets.Scripts.Match
         /// <param name="swapCharacterLayerMask">Layermask utilisé pour le changement de contrôle</param>
         private void ComputePlayerInput(MatchCharacterControllerView activePlayer, MatchPlayerInput playerInput, float swapCharacterSpherecastLength, float swapCharacterSpherecastRadius, LayerMask swapCharacterLayerMask)
         {
-            print(playerInput.SwapCharacterAxis);
             if (!playerInput.IsHoldingFire && _lastSwapCharacterAxis == Vector2.zero && playerInput.SwapCharacterAxis != Vector2.zero)
             {
                 IsSwappingCharacter = true;
@@ -728,7 +727,7 @@ namespace Assets.Scripts.Match
             if (CurAllyTargetForSwapIndex > -1)
             {
                 // Fait disparaître le halo de la cible précédente
-                Enemies[CurAllyTargetForSwapIndex].HideHalo();
+                Allies[CurAllyTargetForSwapIndex].HideHalo();
             }
 
             _vm.CancelSwap();
