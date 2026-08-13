@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 
 namespace Assets.Scripts.Match
@@ -22,9 +23,14 @@ namespace Assets.Scripts.Match
         internal EventHandler OnNewSetStartedEvent;
 
         /// <summary>
-        /// Appelée quand un match est terminé
+        /// Appelée quand une partie est terminée
         /// </summary>
-        internal EventHandler<TeamID> OnMatchEndedEvent;
+        internal EventHandler OnMatchEndedEvent;
+
+        /// <summary>
+        /// Appelée quand une manche est terminée
+        /// </summary>
+        internal EventHandler<TeamID> OnSetEndedEvent;
 
         #endregion
 
@@ -34,6 +40,30 @@ namespace Assets.Scripts.Match
         /// true si aucun match n'est en cours
         /// </summary>
         internal bool MatchIsOngoing => _vm.MatchIsOngoing;
+
+        #endregion
+
+        #region Inspecteur
+
+        [SerializeField]
+        [Tooltip("Label affichant la durée de la partie")]
+        private TextMeshProUGUI _matchDurationField;
+
+        [SerializeField]
+        [Tooltip("Label affichant la durée de la manche en cours")]
+        private TextMeshProUGUI _setDurationField;
+
+        [SerializeField]
+        [Tooltip("Label affichant le nb de manches réalisées")]
+        private TextMeshProUGUI _currentSetField;
+
+        [SerializeField]
+        [Tooltip("Label affichant le score des alliés")]
+        private TextMeshProUGUI _alliesScoreField;
+
+        [SerializeField]
+        [Tooltip("Label affichant le score des ennemis")]
+        private TextMeshProUGUI _enemiesScoreField;
 
         #endregion
 
@@ -53,6 +83,11 @@ namespace Assets.Scripts.Match
         /// Le contrôleur des persos
         /// </summary>
         private MatchCharacterManagerView _playerV;
+
+        /// <summary>
+        /// Décompte
+        /// </summary>
+        private float _timer;
 
         #endregion
 
@@ -84,9 +119,33 @@ namespace Assets.Scripts.Match
             _playerV.OnCharacterEliminatedEvent -= OnCharacterEliminated;
         }
 
+        /// <summary>
+        /// Màj à chaque frame
+        /// </summary>
+        private void Update()
+        {
+            if (MatchIsOngoing)
+            {
+                _timer += Time.deltaTime;
+
+                if (_timer >= 1f)
+                {
+                    _timer = 0f;
+                    OnTick();
+
+                    if (_vm.SetDuration == _vm.MatchSettingsData.SetDuration && !_vm.SuddenDeath)
+                    {
+                        // Arrête la manche une fois son temps écoulé
+                        // si elle n'est pas en mort subite.
+                        EndSet(_vm.GetSetWinningTeam());
+                    }
+                }
+            }
+        }
+
         #endregion
 
-        #region Méthodes publiques
+        #region Méthodes internes
 
         /// <summary>
         /// Démarre un nouveau match
@@ -95,15 +154,26 @@ namespace Assets.Scripts.Match
         internal void StartNewMatch(MatchSettingsData matchSettings)
         {
             _vm.StartNewMatch(matchSettings);
+
+            _matchDurationField.SetText("0:00");
+            _currentSetField.SetText("0");
+
             OnNewMatchStartedEvent?.Invoke(this, matchSettings);
         }
 
         /// <summary>
         /// Démarre une nouvelle manche
         /// </summary>
-        internal void StartNewSet()
+        /// <param name="suddenDeath">true si la manche doit se jouer en mort subite</param>
+        internal void StartNewSet(bool suddenDeath = false)
         {
-            _vm.StartNewSet();
+            _vm.StartNewSet(suddenDeath);
+
+            _setDurationField.SetText("0:00");
+            _currentSetField.SetText(_vm.CurrentSet.ToString());
+            _alliesScoreField.SetText("0");
+            _enemiesScoreField.SetText("0");
+
             OnNewSetStartedEvent?.Invoke(this, EventArgs.Empty);
 
             // TAF: Démarrer le décompte avant de rendre le contrôle aux persos
@@ -114,6 +184,22 @@ namespace Assets.Scripts.Match
         #region Méthodes privées
 
         /// <summary>
+        /// Appelée à chaque seconde
+        /// </summary>
+        private void OnTick()
+        {
+            _vm.OnTick();
+            _setDurationField.SetText(_vm.SetDuration.ToString("0:00"));
+
+            if (_vm.MatchDuration <= _vm.MatchSettingsData.MatchDuration)
+                _matchDurationField.SetText(_vm.MatchDuration.ToString("0:00"));
+            else
+            {
+                _matchDurationField.SetText($"{_vm.MatchSettingsData.MatchDuration:0:00} (+{_vm.OvertimeDuration:0:00}");
+            }
+        }
+
+        /// <summary>
         /// Appelée quand un perso est éliminé
         /// </summary>
         /// <param name="e">Données de l'événement</param>
@@ -121,40 +207,68 @@ namespace Assets.Scripts.Match
         {
             _vm.OnCharacterEliminated(e.CharacterIsAlly);
 
-            // TAF : Vérifier les conditions de victoire
-
-            if (_vm.NbLiveAllies == 0)
+            if (_vm.SuddenDeath)
             {
-                // Victoire ennemie
-                EndMatch(TeamID.Enemy);
+                // Si on est en mort subite, le 1er perso éliminé
+                // détermine l'issue de la manche
+                switch (e.CharacterIsAlly)
+                {
+                    case true:
+                        EndSet(TeamID.Enemy);
+                        break;
+                    case false:
+                        EndSet(TeamID.Ally);
+                        break;
+                }
             }
-            else if (_vm.NbLiveEnemies == 0)
+            else
             {
-                // Victoire alliée
-                EndMatch(TeamID.Ally);
+                EndSet(_vm.GetSetWinningTeam());
             }
         }
 
         /// <summary>
-        /// Met fin au match
+        /// Met fin à la manche
         /// </summary>
-        /// <param name="victoriousTeamID">ID de l'équipe victorieuse</param>
-        private void EndMatch(TeamID victoriousTeamID)
+        /// <param name="setWinningTeamID">ID de l'équipe gagnante de la manche</param>
+        private void EndSet(TeamID setWinningTeamID)
         {
-            switch (victoriousTeamID)
-            {
-                case TeamID.Ally:
-                    // TAF : Victoire alliée
-                    break;
-                case TeamID.Enemy:
-                    // TAF : Victoire ennemie
-                    break;
-                case TeamID.None:
-                    // TAF : Match null, on lance une manche décisive
-                    break;
-            }
+            _vm.EndSet(setWinningTeamID);
 
-            OnMatchEndedEvent?.Invoke(this, victoriousTeamID);
+            _alliesScoreField.SetText(_vm.AlliesScore.ToString());
+            _enemiesScoreField.SetText(_vm.EnemiesScore.ToString());
+
+            OnSetEndedEvent?.Invoke(this, setWinningTeamID);
+
+            if (_vm.MatchDuration < _vm.MatchSettingsData.MatchDuration)
+            {
+                // S'il reste du temps, on lance une nouvelle manche
+                StartNewSet();
+            }
+            else
+            {
+                // Si le temps est écoulé, on détermine l'équipe gagnante
+
+                if (_vm.GetMatchWinningTeam() != TeamID.None)
+                {
+                    // Si une équipe a plus de points, on arrête le match.
+                    EndMatch();
+                }
+                else
+                {
+                    // Match nul, on lance une dernière manche en mort subite
+                    StartNewSet(true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Met fin à la partie
+        /// </summary>
+        private void EndMatch()
+        {
+            _vm.EndMatch();
+            OnMatchEndedEvent?.Invoke(this, EventArgs.Empty);
         }
 
         #endregion

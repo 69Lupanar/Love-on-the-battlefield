@@ -23,6 +23,14 @@ namespace Assets.Scripts.Match
         [Tooltip("Nombre de ballons à instancier")]
         internal int NbBalls;
 
+        [SerializeField]
+        [Tooltip("Durée d'une partie en secondes")]
+        internal int MatchDuration;
+
+        [SerializeField]
+        [Tooltip("Durée d'une manche en secondes")]
+        internal int SetDuration;
+
         #endregion
     }
 }

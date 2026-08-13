@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Assets.Scripts.Match
@@ -13,6 +14,11 @@ namespace Assets.Scripts.Match
         /// true si un match est en cours
         /// </summary>
         internal bool MatchIsOngoing { get; private set; }
+
+        /// <summary>
+        /// true si la manche en cours utilise la mort subite
+        /// </summary>
+        internal bool SuddenDeath { get; private set; }
 
         /// <summary>
         /// Paramètres du match en cours
@@ -35,14 +41,44 @@ namespace Assets.Scripts.Match
         internal int NbBalls => MatchSettingsData.NbAllies;
 
         /// <summary>
-        ///  Nb d'alliés encore en jeu
+        /// Nb d'alliés encore en jeu
         /// </summary>
         internal int NbLiveAllies { get; private set; }
 
         /// <summary>
-        ///  Nb d'ennemis encore en jeu
+        /// Nb d'ennemis encore en jeu
         /// </summary>
         internal int NbLiveEnemies { get; private set; }
+
+        /// <summary>
+        /// Temps écoulé depuis le début de la partie
+        /// </summary>
+        internal int MatchDuration { get; private set; }
+
+        /// <summary>
+        /// Temps écoulé depuis le début de la manche
+        /// </summary>
+        internal int SetDuration { get; private set; }
+
+        /// <summary>
+        /// Temps écoulé depuis le début des prolongations
+        /// </summary>
+        internal int OvertimeDuration => math.max(0, MatchDuration - MatchSettingsData.MatchDuration);
+
+        /// <summary>
+        /// Nb de sets démarrés
+        /// </summary>
+        internal int CurrentSet { get; private set; }
+
+        /// <summary>
+        /// Score des alliés
+        /// </summary>
+        internal int AlliesScore { get; private set; }
+
+        /// <summary>
+        /// Score des ennemis
+        /// </summary>
+        internal int EnemiesScore { get; private set; }
 
         #endregion
 
@@ -54,6 +90,8 @@ namespace Assets.Scripts.Match
         /// <param name="matchSettings">Paramètres d'un match</param>
         internal void StartNewMatch(MatchSettingsData matchSettings)
         {
+            MatchDuration = 0;
+            CurrentSet = 0;
             MatchIsOngoing = true;
             MatchSettingsData = matchSettings;
         }
@@ -61,10 +99,39 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Démarre une nouvelle manche
         /// </summary>
-        internal void StartNewSet()
+        /// <param name="suddenDeath">true si la manche doit se jouer en mort subite</param>
+        internal void StartNewSet(bool suddenDeath = false)
         {
+            SuddenDeath = suddenDeath;
+            SetDuration = 0;
+            ++CurrentSet;
             NbLiveAllies = NbAllies;
             NbLiveEnemies = NbEnemies;
+        }
+
+        /// <summary>
+        /// Pause la partie
+        /// </summary>
+        internal void PauseMatch()
+        {
+            MatchIsOngoing = false;
+        }
+
+        /// <summary>
+        /// Reprend la partie
+        /// </summary>
+        internal void ResumeMatch()
+        {
+            MatchIsOngoing = true;
+        }
+
+        /// <summary>
+        /// Appelé à chaque seconde
+        /// </summary>
+        internal void OnTick()
+        {
+            ++MatchDuration;
+            ++SetDuration;
         }
 
         /// <summary>
@@ -81,6 +148,59 @@ namespace Assets.Scripts.Match
             {
                 --NbLiveEnemies;
             }
+        }
+
+        /// <summary>
+        /// Vérifie les conditions de victoire pour déterminer l'équipe remportant la manche
+        /// </summary>
+        /// <returns>ID de l'équipe gagnante de la manche</returns>
+        internal TeamID GetSetWinningTeam()
+        {
+            if (NbLiveAllies == NbEnemies)
+                return TeamID.None;
+            else if (NbLiveAllies > NbEnemies)
+                return TeamID.Ally;
+            else
+                return TeamID.Enemy;
+        }
+
+        /// <summary>
+        /// Vérifie les conditions de victoire pour déterminer l'équipe remportant la partie
+        /// </summary>
+        /// <returns>ID de l'équipe gagnante de la partie</returns>
+        internal TeamID GetMatchWinningTeam()
+        {
+            if (AlliesScore == EnemiesScore)
+                return TeamID.None;
+            else if (AlliesScore > EnemiesScore)
+                return TeamID.Ally;
+            else
+                return TeamID.Enemy;
+        }
+
+        /// <summary>
+        /// Met fin à la manche
+        /// </summary>
+        /// <param name="setWinningTeamID">ID de l'équipe gagnante de la manche</param>
+        internal void EndSet(TeamID setWinningTeamID)
+        {
+            switch (setWinningTeamID)
+            {
+                case TeamID.Ally:
+                    ++AlliesScore;
+                    break;
+                case TeamID.Enemy:
+                    ++EnemiesScore;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Met fin à la partie
+        /// </summary>
+        internal void EndMatch()
+        {
+            MatchIsOngoing = false;
         }
 
         #endregion

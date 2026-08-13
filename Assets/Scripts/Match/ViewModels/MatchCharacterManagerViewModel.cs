@@ -262,43 +262,6 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
-        /// Eliminer un personnage
-        /// </summary>
-        /// <param name="characterIndex">ID du perso</param>
-        /// <param name="characterIsAlly">true si c'est un allié</param>
-        internal void EliminateCharacter(int characterIndex, bool characterIsAlly)
-        {
-            if (characterIsAlly)
-            {
-                MatchCharacterState characterState = AllyStates[characterIndex];
-                characterState.IsEliminated = true;
-                AllyStates[characterIndex] = characterState;
-            }
-            else
-            {
-                MatchCharacterState characterState = EnemyStates[characterIndex];
-                characterState.IsEliminated = true;
-                EnemyStates[characterIndex] = characterState;
-            }
-        }
-
-        #endregion
-
-        #region Méthodes privées
-
-        /// <summary>
-        /// Réinitialise les données du perso pour une nouvelle manche
-        /// </summary>
-        private MatchCharacterState ResetPlayer(MatchCharacterState characterState)
-        {
-            characterState.BallIndex = -1;
-            characterState.IsEliminated = false;
-            characterState.Energy = 1f;
-            characterState.OpponentTargetIndex = -1;
-            return characterState;
-        }
-
-        /// <summary>
         /// Retire au perso les infos sur sa cible. Utilisée quand la cible se fait éliminer
         /// </summary>
         /// <param name="characterIndex">L'ID perso concerné</param>
@@ -317,6 +280,66 @@ namespace Assets.Scripts.Match
                 characterState.OpponentTargetIndex = -1;
                 EnemyStates[characterIndex] = characterState;
             }
+        }
+
+        /// <summary>
+        /// Eliminer un personnage
+        /// </summary>
+        /// <param name="characterIndex">ID du perso</param>
+        /// <param name="characterIsAlly">true si c'est un allié</param>
+        internal void EliminateCharacter(int characterIndex, bool characterIsAlly)
+        {
+            if (characterIsAlly)
+            {
+                MatchCharacterState characterState = AllyStates[characterIndex];
+                characterState.IsEliminated = true;
+                characterState.OpponentTargetIndex = -1;
+                AllyStates[characterIndex] = characterState;
+            }
+            else
+            {
+                MatchCharacterState characterState = EnemyStates[characterIndex];
+                characterState.IsEliminated = true;
+                characterState.OpponentTargetIndex = -1;
+                EnemyStates[characterIndex] = characterState;
+            }
+        }
+
+        /// <summary>
+        /// Force le perso à lâcher le ballon
+        /// </summary>
+        /// <param name="characterIndex">ID du perso</param>
+        /// <param name="characterIsAlly">true si c'est un allié</param>
+        internal void ReleaseBall(int characterIndex, bool characterIsAlly)
+        {
+            if (characterIsAlly)
+            {
+                MatchCharacterState characterState = AllyStates[characterIndex];
+                characterState.BallIndex = -1;
+                AllyStates[characterIndex] = characterState;
+            }
+            else
+            {
+                MatchCharacterState characterState = EnemyStates[characterIndex];
+                characterState.BallIndex = -1;
+                EnemyStates[characterIndex] = characterState;
+            }
+        }
+
+        #endregion
+
+        #region Méthodes privées
+
+        /// <summary>
+        /// Réinitialise les données du perso pour une nouvelle manche
+        /// </summary>
+        private MatchCharacterState ResetPlayer(MatchCharacterState characterState)
+        {
+            characterState.BallIndex = -1;
+            characterState.IsEliminated = false;
+            characterState.Energy = 1f;
+            characterState.OpponentTargetIndex = -1;
+            return characterState;
         }
 
         #endregion

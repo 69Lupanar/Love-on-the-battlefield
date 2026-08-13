@@ -24,6 +24,14 @@ namespace Assets.Scripts.Match
         private TMP_InputField _nbBallsField;
 
         [SerializeField]
+        [Tooltip("InputField de la durée d'une partie")]
+        private TMP_InputField _matchDurationField;
+
+        [SerializeField]
+        [Tooltip("InputField de la durée d'une manche")]
+        private TMP_InputField _setDurationField;
+
+        [SerializeField]
         [Tooltip("Paramètres d'un match")]
         private MatchSettingsData _matchSettings;
 
@@ -94,6 +102,24 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
+        /// Appelée par l'InputField
+        /// </summary>
+        public void OnMatchDurationInputFieldEndEdit(string str)
+        {
+            _matchSettings.MatchDuration = math.max(2, int.Parse(str));
+            _matchDurationField.SetTextWithoutNotify(_matchSettings.MatchDuration.ToString());
+        }
+
+        /// <summary>
+        /// Appelée par l'InputField
+        /// </summary>
+        public void OnSetDurationInputFieldEndEdit(string str)
+        {
+            _matchSettings.SetDuration = math.max(2, int.Parse(str));
+            _setDurationField.SetTextWithoutNotify(_matchSettings.SetDuration.ToString());
+        }
+
+        /// <summary>
         /// Appelée par le bouton Start New Match
         /// </summary>
         public void OnStartNewMatchBtnClick()
@@ -114,6 +140,8 @@ namespace Assets.Scripts.Match
             _nbAlliesField.SetTextWithoutNotify(_matchSettings.NbAllies.ToString());
             _nbEnemiesField.SetTextWithoutNotify(_matchSettings.NbEnemies.ToString());
             _nbBallsField.SetTextWithoutNotify(_matchSettings.NbBalls.ToString());
+            _matchDurationField.SetTextWithoutNotify(_matchSettings.MatchDuration.ToString());
+            _setDurationField.SetTextWithoutNotify(_matchSettings.SetDuration.ToString());
         }
 
         #endregion

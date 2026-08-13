@@ -220,7 +220,7 @@ namespace Assets.Scripts.Match
         {
             _matchV.OnNewMatchStartedEvent += OnNewMatchStarted;
             _matchV.OnNewSetStartedEvent += OnNewSetStarted;
-            _matchV.OnMatchEndedEvent += OnMatchEnded;
+            _matchV.OnSetEndedEvent += OnSetEnded;
         }
 
         /// <summary>
@@ -230,7 +230,7 @@ namespace Assets.Scripts.Match
         {
             _matchV.OnNewMatchStartedEvent -= OnNewMatchStarted;
             _matchV.OnNewSetStartedEvent -= OnNewSetStarted;
-            _matchV.OnMatchEndedEvent -= OnMatchEnded;
+            _matchV.OnSetEndedEvent -= OnSetEnded;
         }
 
         /// <summary>
@@ -444,11 +444,11 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
-        /// Appelée quand le match est terminé
+        /// Appelée quand une manche est terminée
         /// </summary>
         /// <param name="_"></param>
         /// <param name="e">Données de l'événement</param>
-        private void OnMatchEnded(object _, TeamID e)
+        private void OnSetEnded(object _, TeamID e)
         {
             EnablePlayersInput(false);
         }
@@ -824,13 +824,24 @@ namespace Assets.Scripts.Match
         {
             _vm.EliminateCharacter(characterIndex, characterIsAlly);
 
-            ClearTarget(characterIndex, characterIsAlly);
-
             if (characterIsAlly)
             {
                 MatchCharacterControllerView character = Allies[characterIndex];
                 character.EnableInput(false);
                 character.EnablePhysics(false);
+
+                if (AllyStates[characterIndex].IsHoldingABall)
+                    ReleaseBall(character, characterIndex, characterIsAlly);
+
+                // Efface les cibles de tous les persos ayant ciblé celui-ci
+                for (int i = 0; i < EnemyStates.Count; ++i)
+                {
+                    if (EnemyStates[i].OpponentTargetIndex == characterIndex)
+                    {
+                        ClearTarget(i, false);
+                    }
+                }
+
                 _eliminatedAllies.Enqueue(character);
                 character.transform.SetParent(_eliminatedAlliesQueueT);
                 DisplayEliminatedCharacters(_eliminatedAlliesQueueT);
@@ -840,6 +851,19 @@ namespace Assets.Scripts.Match
                 MatchCharacterControllerView character = Enemies[characterIndex];
                 character.EnableInput(false);
                 character.EnablePhysics(false);
+
+                if (EnemyStates[characterIndex].IsHoldingABall)
+                    ReleaseBall(character, characterIndex, characterIsAlly);
+
+                // Efface les cibles de tous les persos ayant ciblé celui-ci
+                for (int i = 0; i < AllyStates.Count; ++i)
+                {
+                    if (AllyStates[i].OpponentTargetIndex == characterIndex)
+                    {
+                        ClearTarget(i, true);
+                    }
+                }
+
                 _eliminatedEnemies.Enqueue(character);
                 character.transform.SetParent(_eliminatedEnemiesQueueT);
                 DisplayEliminatedCharacters(_eliminatedEnemiesQueueT);
@@ -878,6 +902,18 @@ namespace Assets.Scripts.Match
             _vm.Shoot(characterIndex, characterState.IsAlly);
             character.Shoot(movementData.FireForceInterval, characterState.Energy);
             OnShootEvent?.Invoke(null, new ShootEventArgs(characterIndex, characterState.BallIndex));
+        }
+
+        /// <summary>
+        /// Force le perso à lâcher le ballon
+        /// </summary>
+        /// <param name="character">Le perso</param>
+        /// <param name="characterIndex">ID du perso</param>
+        /// <param name="characterIsAlly">true si c'est un allié</param>
+        private void ReleaseBall(MatchCharacterControllerView character, int characterIndex, bool characterIsAlly)
+        {
+            _vm.ReleaseBall(characterIndex, characterIsAlly);
+            character.ReleaseBall();
         }
 
         /// <summary>

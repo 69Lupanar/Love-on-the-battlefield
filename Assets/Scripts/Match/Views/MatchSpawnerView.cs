@@ -62,6 +62,7 @@ namespace Assets.Scripts.Match
             _matchV.OnNewMatchStartedEvent += OnNewMatchStarted;
             _matchV.OnNewSetStartedEvent += OnNewSetStarted;
             _matchV.OnMatchEndedEvent += OnMatchEnded;
+            _matchV.OnSetEndedEvent += OnSetEnded;
         }
 
         /// <summary>
@@ -72,6 +73,7 @@ namespace Assets.Scripts.Match
             _matchV.OnNewMatchStartedEvent -= OnNewMatchStarted;
             _matchV.OnNewSetStartedEvent -= OnNewSetStarted;
             _matchV.OnMatchEndedEvent -= OnMatchEnded;
+            _matchV.OnSetEndedEvent -= OnSetEnded;
         }
 
         #endregion
@@ -97,12 +99,21 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
-        /// Appelée quand un match est terminé
+        /// Appelée quand une partie est terminée
         /// </summary>
         /// <param name="e">Données de l'événement</param>
-        private void OnMatchEnded(object sender, TeamID e)
+        private void OnMatchEnded(object _, EventArgs e)
         {
             CleanupField();
+        }
+
+        /// <summary>
+        /// Appelée quand une manche est terminée
+        /// </summary>
+        /// <param name="e">Données de l'événement</param>
+        private void OnSetEnded(object sender, TeamID e)
+        {
+            _vm.ResetEntitiesPoses();
         }
 
         /// <summary>
