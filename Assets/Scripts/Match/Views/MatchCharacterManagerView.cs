@@ -628,10 +628,19 @@ namespace Assets.Scripts.Match
                 LockInputs(playerInput);
             }
 
-            // On annule le changement de perso
-            if (IsSwappingCharacter && playerInput.CancelSwapTrigger)
+            if (playerInput.CancelTargetTrigger)
             {
-                CancelSwap();
+
+                if (IsSwappingCharacter)
+                {
+                    // On annule le changement de perso
+                    CancelSwap();
+                }
+                else
+                {
+                    // On retire au joueur sa cible
+                    ClearTarget(ActivePlayerIndex, true);
+                }
             }
 
             _lastSwapCharacterAxis = playerInput.SwapCharacterAxis;
@@ -668,7 +677,7 @@ namespace Assets.Scripts.Match
                     Enemies[previousTargetIndex].HideHalo();
                 }
 
-                Enemies[EnemyStates[characterIndex].OpponentTargetIndex].DislayHalo(true);
+                Enemies[AllyStates[characterIndex].OpponentTargetIndex].DislayHalo(true);
             }
         }
 

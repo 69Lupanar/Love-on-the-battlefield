@@ -167,7 +167,7 @@ namespace Assets.Scripts.Match
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""CancelSwap"",
+                    ""name"": ""CancelTarget"",
                     ""type"": ""Button"",
                     ""id"": ""00accb1b-f5e1-45c0-a55d-4ffa9c9d52b1"",
                     ""expectedControlType"": """",
@@ -261,7 +261,7 @@ namespace Assets.Scripts.Match
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
-                    ""action"": ""CancelSwap"",
+                    ""action"": ""CancelTarget"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -314,7 +314,7 @@ namespace Assets.Scripts.Match
             m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
             m_Player_Dodge = m_Player.FindAction("Dodge", throwIfNotFound: true);
             m_Player_Block = m_Player.FindAction("Block", throwIfNotFound: true);
-            m_Player_CancelSwap = m_Player.FindAction("CancelSwap", throwIfNotFound: true);
+            m_Player_CancelTarget = m_Player.FindAction("CancelTarget", throwIfNotFound: true);
         }
 
         ~@MatchPlayerInputActions()
@@ -403,7 +403,7 @@ namespace Assets.Scripts.Match
         private readonly InputAction m_Player_Jump;
         private readonly InputAction m_Player_Dodge;
         private readonly InputAction m_Player_Block;
-        private readonly InputAction m_Player_CancelSwap;
+        private readonly InputAction m_Player_CancelTarget;
         /// <summary>
         /// Provides access to input actions defined in input action map "Player".
         /// </summary>
@@ -448,9 +448,9 @@ namespace Assets.Scripts.Match
             /// </summary>
             public InputAction @Block => m_Wrapper.m_Player_Block;
             /// <summary>
-            /// Provides access to the underlying input action "Player/CancelSwap".
+            /// Provides access to the underlying input action "Player/CancelTarget".
             /// </summary>
-            public InputAction @CancelSwap => m_Wrapper.m_Player_CancelSwap;
+            public InputAction @CancelTarget => m_Wrapper.m_Player_CancelTarget;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -501,9 +501,9 @@ namespace Assets.Scripts.Match
                 @Block.started += instance.OnBlock;
                 @Block.performed += instance.OnBlock;
                 @Block.canceled += instance.OnBlock;
-                @CancelSwap.started += instance.OnCancelSwap;
-                @CancelSwap.performed += instance.OnCancelSwap;
-                @CancelSwap.canceled += instance.OnCancelSwap;
+                @CancelTarget.started += instance.OnCancelTarget;
+                @CancelTarget.performed += instance.OnCancelTarget;
+                @CancelTarget.canceled += instance.OnCancelTarget;
             }
 
             /// <summary>
@@ -539,9 +539,9 @@ namespace Assets.Scripts.Match
                 @Block.started -= instance.OnBlock;
                 @Block.performed -= instance.OnBlock;
                 @Block.canceled -= instance.OnBlock;
-                @CancelSwap.started -= instance.OnCancelSwap;
-                @CancelSwap.performed -= instance.OnCancelSwap;
-                @CancelSwap.canceled -= instance.OnCancelSwap;
+                @CancelTarget.started -= instance.OnCancelTarget;
+                @CancelTarget.performed -= instance.OnCancelTarget;
+                @CancelTarget.canceled -= instance.OnCancelTarget;
             }
 
             /// <summary>
@@ -652,12 +652,12 @@ namespace Assets.Scripts.Match
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnBlock(InputAction.CallbackContext context);
             /// <summary>
-            /// Method invoked when associated input action "CancelSwap" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// Method invoked when associated input action "CancelTarget" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
             /// </summary>
             /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-            void OnCancelSwap(InputAction.CallbackContext context);
+            void OnCancelTarget(InputAction.CallbackContext context);
         }
     }
 }

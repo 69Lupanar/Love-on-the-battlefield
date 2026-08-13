@@ -284,15 +284,16 @@ namespace Assets.Scripts.Match
         /// <param name="isAlly">true si le perso est un allié</param>
         internal void ClearTarget(int characterIndex, bool isAlly)
         {
-            MatchCharacterState characterState = isAlly ? AllyStates[characterIndex] : EnemyStates[characterIndex];
-            characterState.OpponentTargetIndex = -1;
-
             if (isAlly)
             {
+                MatchCharacterState characterState = AllyStates[characterIndex];
+                characterState.OpponentTargetIndex = -1;
                 AllyStates[characterIndex] = characterState;
             }
             else
             {
+                MatchCharacterState characterState = EnemyStates[characterIndex];
+                characterState.OpponentTargetIndex = -1;
                 EnemyStates[characterIndex] = characterState;
             }
         }
