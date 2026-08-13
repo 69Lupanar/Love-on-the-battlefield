@@ -46,10 +46,21 @@ namespace Assets.Scripts.Match
         private void Awake()
         {
             _managerV = FindAnyObjectByType<MatchManagerView>();
-            _nbAlliesField.SetTextWithoutNotify(_matchSettings.NbAllies.ToString());
-            _nbEnemiesField.SetTextWithoutNotify(_matchSettings.NbEnemies.ToString());
-            _nbBallsField.SetTextWithoutNotify(_matchSettings.NbBalls.ToString());
+            UpdateUI();
         }
+
+#if UNITY_EDITOR
+
+        /// <summary>
+        /// Quand l'inspecteur change
+        /// </summary>
+        private void OnValidate()
+        {
+            if (Application.isPlaying)
+                UpdateUI();
+        }
+
+#endif
 
         #endregion
 
@@ -60,7 +71,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         public void OnNbAlliesInputFieldEndEdit(string str)
         {
-            _matchSettings.NbAllies = math.max(1, uint.Parse(str));
+            _matchSettings.NbAllies = math.max(1, int.Parse(str));
             _nbAlliesField.SetTextWithoutNotify(_matchSettings.NbAllies.ToString());
         }
 
@@ -69,7 +80,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         public void OnNbEnemiesInputFieldEndEdit(string str)
         {
-            _matchSettings.NbEnemies = math.max(1, uint.Parse(str));
+            _matchSettings.NbEnemies = math.max(1, int.Parse(str));
             _nbEnemiesField.SetTextWithoutNotify(_matchSettings.NbEnemies.ToString());
         }
 
@@ -78,7 +89,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         public void OnNbBallsInputFieldEndEdit(string str)
         {
-            _matchSettings.NbBalls = math.max(1, uint.Parse(str));
+            _matchSettings.NbBalls = math.max(1, int.Parse(str));
             _nbBallsField.SetTextWithoutNotify(_matchSettings.NbBalls.ToString());
         }
 
@@ -89,6 +100,20 @@ namespace Assets.Scripts.Match
         {
             _managerV.StartNewMatch(_matchSettings);
             _managerV.StartNewSet();
+        }
+
+        #endregion
+
+        #region Méthodes privées
+
+        /// <summary>
+        /// Màj l'ui
+        /// </summary>
+        private void UpdateUI()
+        {
+            _nbAlliesField.SetTextWithoutNotify(_matchSettings.NbAllies.ToString());
+            _nbEnemiesField.SetTextWithoutNotify(_matchSettings.NbEnemies.ToString());
+            _nbBallsField.SetTextWithoutNotify(_matchSettings.NbBalls.ToString());
         }
 
         #endregion

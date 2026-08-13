@@ -28,6 +28,11 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal EventHandler<ShootEventArgs> OnShootEvent { get; set; }
 
+        /// <summary>
+        /// Appelée quand un perso est éliminé
+        /// </summary>
+        internal EventHandler<CharacterEliminatedEventArgs> OnCharacterEliminatedEvent { get; set; }
+
         #endregion
 
         #region Propriétés
@@ -111,6 +116,22 @@ namespace Assets.Scripts.Match
         private LayerMask _swapCharacterLayerMask;
 
         [Space(10)]
+        [Header("Elimination")]
+        [Space(10)]
+
+        [SerializeField]
+        [Tooltip("Espacement entre les persos d'une queue")]
+        private float _charactersInQueueSpacing = 1.5f;
+
+        [SerializeField]
+        [Tooltip("La Transform du début de la file pour les alliés éliminés")]
+        private Transform _eliminatedAlliesQueueT;
+
+        [SerializeField]
+        [Tooltip("La Transform du début de la file pour les ennemis éliminés")]
+        private Transform _eliminatedEnemiesQueueT;
+
+        [Space(10)]
         [Header("Physics")]
         [Space(10)]
 
@@ -135,6 +156,16 @@ namespace Assets.Scripts.Match
         /// Les persos ennemis
         /// </summary>
         private readonly List<MatchCharacterControllerView> _enemies = new();
+
+        /// <summary>
+        /// Les persos du joueur éliminés
+        /// </summary>
+        private readonly Queue<MatchCharacterControllerView> _eliminatedAllies = new();
+
+        /// <summary>
+        /// Les persos ennemis éliminés
+        /// </summary>
+        private readonly Queue<MatchCharacterControllerView> _eliminatedEnemies = new();
 
         /// <summary>
         /// Le ViewModel
@@ -189,6 +220,7 @@ namespace Assets.Scripts.Match
         {
             _matchV.OnNewMatchStartedEvent += OnNewMatchStarted;
             _matchV.OnNewSetStartedEvent += OnNewSetStarted;
+            _matchV.OnMatchEndedEvent += OnMatchEnded;
         }
 
         /// <summary>
@@ -198,6 +230,7 @@ namespace Assets.Scripts.Match
         {
             _matchV.OnNewMatchStartedEvent -= OnNewMatchStarted;
             _matchV.OnNewSetStartedEvent -= OnNewSetStarted;
+            _matchV.OnMatchEndedEvent -= OnMatchEnded;
         }
 
         /// <summary>
@@ -205,20 +238,20 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void Update()
         {
-            if (_matchV.MatchIsOver)
-                return;
-
-            for (int i = 0; i < Allies.Count; ++i)
+            if (_matchV.MatchIsOngoing)
             {
-                ComputeCommonInput(i, true, Allies[i], AllyMovementDatas[i]);
-            }
+                for (int i = 0; i < Allies.Count; ++i)
+                {
+                    ComputeCommonInput(i, true, Allies[i], AllyMovementDatas[i]);
+                }
 
-            for (int i = 0; i < Enemies.Count; ++i)
-            {
-                ComputeCommonInput(i, false, Enemies[i], EnemyMovementDatas[i]);
-            }
+                for (int i = 0; i < Enemies.Count; ++i)
+                {
+                    ComputeCommonInput(i, false, Enemies[i], EnemyMovementDatas[i]);
+                }
 
-            ComputePlayerInput(Allies[ActivePlayerIndex], _playerInput, _swapCharacterSpherecastLength, _swapCharacterSpherecastRadius, _swapCharacterLayerMask);
+                ComputePlayerInput(Allies[ActivePlayerIndex], _playerInput, _swapCharacterSpherecastLength, _swapCharacterSpherecastRadius, _swapCharacterLayerMask);
+            }
         }
 
         /// <summary>
@@ -226,17 +259,17 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void FixedUpdate()
         {
-            if (_matchV.MatchIsOver)
-                return;
-
-            for (int i = 0; i < Allies.Count; ++i)
+            if (_matchV.MatchIsOngoing)
             {
-                ComputeCommonInputFixed(Allies[i], AllyMovementDatas[i]);
-            }
+                for (int i = 0; i < Allies.Count; ++i)
+                {
+                    ComputeCommonInputFixed(Allies[i], AllyMovementDatas[i]);
+                }
 
-            for (int i = 0; i < Enemies.Count; ++i)
-            {
-                ComputeCommonInputFixed(Enemies[i], EnemyMovementDatas[i]);
+                for (int i = 0; i < Enemies.Count; ++i)
+                {
+                    ComputeCommonInputFixed(Enemies[i], EnemyMovementDatas[i]);
+                }
             }
         }
 
@@ -379,10 +412,12 @@ namespace Assets.Scripts.Match
 
         #region Méthodes privées
 
+        #region Callbacks
+
         /// <summary>
         /// Appelée quand une nouvelle partie commence
         /// </summary>
-        private void OnNewMatchStarted(MatchSettingsData _)
+        private void OnNewMatchStarted(object _, MatchSettingsData matchSettings)
         {
             // Désactive les inputs des joueurs déjà présents avant de les retirer
             EnablePlayersInput(false);
@@ -398,7 +433,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Appelée quand une nouvelle manche commence
         /// </summary>
-        private void OnNewSetStarted()
+        private void OnNewSetStarted(object _, EventArgs e)
         {
             ResetManager();
             SetActivePlayer(ActivePlayerIndex);
@@ -409,13 +444,23 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
+        /// Appelée quand le match est terminé
+        /// </summary>
+        /// <param name="_"></param>
+        /// <param name="e">Données de l'événement</param>
+        private void OnMatchEnded(object _, TeamID e)
+        {
+            EnablePlayersInput(false);
+        }
+
+        /// <summary>
         /// Appelée quand le perso entre en collision avec un ballon
         /// </summary>
         /// <param name="sender">Le perso</param>
         /// <param name="ball">Le ballon</param>
         private void OnCharacterCollisionEnter(object sender, Collision other)
         {
-            if (!other.gameObject.CompareTag(_ballTag))
+            if (!other.gameObject.CompareTag(_ballTag) || !_matchV.MatchIsOngoing)
             {
                 return;
             }
@@ -431,20 +476,24 @@ namespace Assets.Scripts.Match
                 int characterIndex = characterIsAlly ? Allies.IndexOf(character) : Enemies.IndexOf(character);
                 MatchCharacterState characterState = characterIsAlly ? AllyStates[characterIndex] : EnemyStates[characterIndex];
 
+                if (characterState.IsEliminated)
+                    return;
+
                 switch (ballState.ActiveTeamID)
                 {
                     case TeamID.Ally:
                         if (!characterState.IsAlly)
                         {
                             // TAF : Balle adverse, le perso est éliminé
-
+                            EliminateCharacter(characterIndex, characterIsAlly);
                         }
                         break;
+
                     case TeamID.Enemy:
                         if (characterState.IsAlly)
                         {
                             // TAF : Balle adverse, le perso est éliminé
-
+                            EliminateCharacter(characterIndex, characterIsAlly);
                         }
                         break;
                 }
@@ -458,7 +507,7 @@ namespace Assets.Scripts.Match
         /// <param name="ball">Le ballon</param>
         private void OnCharacterTriggerEnter(object sender, Collider other)
         {
-            if (!other.CompareTag(_ballTag))
+            if (!other.CompareTag(_ballTag) || !_matchV.MatchIsOngoing)
             {
                 return;
             }
@@ -475,7 +524,7 @@ namespace Assets.Scripts.Match
             // ou qu'il tente de récupérer une balle réservée à l'ennemi,
             // il ne peut pas en ramasser une nouvelle
 
-            if (characterState.IsHoldingABall || (characterState.IsAlly && ballState.ReservedTeamID == TeamID.Enemy) || (!characterState.IsAlly && ballState.ReservedTeamID == TeamID.Ally))
+            if (characterState.IsEliminated || characterState.IsHoldingABall || (characterState.IsAlly && ballState.ReservedTeamID == TeamID.Enemy) || (!characterState.IsAlly && ballState.ReservedTeamID == TeamID.Ally))
                 return;
 
             if (!ballState.IsLive)
@@ -513,6 +562,10 @@ namespace Assets.Scripts.Match
                 }
             }
         }
+
+        #endregion
+
+        #region Inputs
 
         /// <summary>
         /// Execute les actions en fonction des commandes actives du perso
@@ -657,6 +710,8 @@ namespace Assets.Scripts.Match
             playerInput.HasReleasedFire = false;
         }
 
+        #endregion
+
         /// <summary>
         /// Sélectionne une nouvelle cible pour le perso
         /// </summary>
@@ -761,6 +816,40 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
+        /// Eliminer un personnage
+        /// </summary>
+        /// <param name="characterIndex">ID du perso</param>
+        /// <param name="characterIsAlly">true si c'est un allié</param>
+        private void EliminateCharacter(int characterIndex, bool characterIsAlly)
+        {
+            _vm.EliminateCharacter(characterIndex, characterIsAlly);
+
+            ClearTarget(characterIndex, characterIsAlly);
+
+            if (characterIsAlly)
+            {
+                MatchCharacterControllerView character = Allies[characterIndex];
+                character.EnableInput(false);
+                character.EnablePhysics(false);
+                _eliminatedAllies.Enqueue(character);
+                character.transform.SetParent(_eliminatedAlliesQueueT);
+                DisplayEliminatedCharacters(_eliminatedAlliesQueueT);
+            }
+            else
+            {
+                MatchCharacterControllerView character = Enemies[characterIndex];
+                character.EnableInput(false);
+                character.EnablePhysics(false);
+                _eliminatedEnemies.Enqueue(character);
+                character.transform.SetParent(_eliminatedEnemiesQueueT);
+                DisplayEliminatedCharacters(_eliminatedEnemiesQueueT);
+            }
+
+
+            OnCharacterEliminatedEvent?.Invoke(this, new CharacterEliminatedEventArgs(characterIsAlly));
+        }
+
+        /// <summary>
         /// Récupère le ballon
         /// </summary>
         /// <param name="characterIndex">L'ID du perso</param>
@@ -789,6 +878,18 @@ namespace Assets.Scripts.Match
             _vm.Shoot(characterIndex, characterState.IsAlly);
             character.Shoot(movementData.FireForceInterval, characterState.Energy);
             OnShootEvent?.Invoke(null, new ShootEventArgs(characterIndex, characterState.BallIndex));
+        }
+
+        /// <summary>
+        /// Affiche les persos éliminés dans leur file respective
+        /// </summary>
+        /// <param name="queueT">La file parente des persos éliminés</param>
+        private void DisplayEliminatedCharacters(Transform queueT)
+        {
+            for (int i = 0; i < queueT.childCount; ++i)
+            {
+                queueT.GetChild(i).SetPositionAndRotation(queueT.position + _charactersInQueueSpacing * i * -queueT.right, queueT.rotation);
+            }
         }
 
         #endregion

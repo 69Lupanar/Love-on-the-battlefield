@@ -10,25 +10,78 @@ namespace Assets.Scripts.Match
         #region Propriétés
 
         /// <summary>
-        /// true si aucun match n'est en cours
+        /// true si un match est en cours
         /// </summary>
-        internal bool MatchIsOver { get; set; } = true;
+        internal bool MatchIsOngoing { get; private set; }
+
+        /// <summary>
+        /// Paramètres du match en cours
+        /// </summary>
+        internal MatchSettingsData MatchSettingsData { get; set; }
+
+        /// <summary>
+        /// Nombre d'alliés à instancier
+        /// </summary>
+        internal int NbAllies => MatchSettingsData.NbAllies;
+
+        /// <summary>
+        /// Nombre d'ennemis à instancier
+        /// </summary>
+        internal int NbEnemies => MatchSettingsData.NbAllies;
+
+        /// <summary>
+        /// Nombre de ballons à instancier
+        /// </summary>
+        internal int NbBalls => MatchSettingsData.NbAllies;
+
+        /// <summary>
+        ///  Nb d'alliés encore en jeu
+        /// </summary>
+        internal int NbLiveAllies { get; private set; }
+
+        /// <summary>
+        ///  Nb d'ennemis encore en jeu
+        /// </summary>
+        internal int NbLiveEnemies { get; private set; }
 
         #endregion
 
-        #region Inspecteur
+        #region Méthodes internes
 
-        [field: SerializeField]
-        [field: Tooltip("Nombre d'alliés à instancier")]
-        internal int NbAllies { get; set; } = 6;
+        /// <summary>
+        /// Démarre une nouvelle partie
+        /// </summary>
+        /// <param name="matchSettings">Paramètres d'un match</param>
+        internal void StartNewMatch(MatchSettingsData matchSettings)
+        {
+            MatchIsOngoing = true;
+            MatchSettingsData = matchSettings;
+        }
 
-        [field: SerializeField]
-        [field: Tooltip("Nombre d'ennemis à instancier")]
-        internal int NbEnemies { get; set; } = 6;
+        /// <summary>
+        /// Démarre une nouvelle manche
+        /// </summary>
+        internal void StartNewSet()
+        {
+            NbLiveAllies = NbAllies;
+            NbLiveEnemies = NbEnemies;
+        }
 
-        [field: SerializeField]
-        [field: Tooltip("Nombre de ballons à instancier")]
-        internal int NbBalls { get; set; } = 5;
+        /// <summary>
+        /// Appelée quand un perso est éliminé
+        /// </summary>
+        /// <param name="characterIsAlly">true si c'est un allié</param>
+        internal void OnCharacterEliminated(bool characterIsAlly)
+        {
+            if (characterIsAlly)
+            {
+                --NbLiveAllies;
+            }
+            else
+            {
+                --NbLiveEnemies;
+            }
+        }
 
         #endregion
     }

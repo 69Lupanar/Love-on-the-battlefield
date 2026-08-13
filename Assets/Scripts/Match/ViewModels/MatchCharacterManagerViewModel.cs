@@ -244,10 +244,10 @@ namespace Assets.Scripts.Match
         /// </summary>
         /// <param name="characterIndex">L'ID du personnage concerné</param>
         /// <param name="ballIndex">L'ID de la balle portée par ce perso</param>
-        /// <param name="isAlly">true si le perso est un allié</param>
-        internal void PickUpBall(int characterIndex, int ballIndex, bool isAlly)
+        /// <param name="characterIsAlly">true si le perso est un allié</param>
+        internal void PickUpBall(int characterIndex, int ballIndex, bool characterIsAlly)
         {
-            if (isAlly)
+            if (characterIsAlly)
             {
                 MatchCharacterState characterState = AllyStates[characterIndex];
                 characterState.BallIndex = ballIndex;
@@ -257,6 +257,27 @@ namespace Assets.Scripts.Match
             {
                 MatchCharacterState characterState = EnemyStates[characterIndex];
                 characterState.BallIndex = ballIndex;
+                EnemyStates[characterIndex] = characterState;
+            }
+        }
+
+        /// <summary>
+        /// Eliminer un personnage
+        /// </summary>
+        /// <param name="characterIndex">ID du perso</param>
+        /// <param name="characterIsAlly">true si c'est un allié</param>
+        internal void EliminateCharacter(int characterIndex, bool characterIsAlly)
+        {
+            if (characterIsAlly)
+            {
+                MatchCharacterState characterState = AllyStates[characterIndex];
+                characterState.IsEliminated = true;
+                AllyStates[characterIndex] = characterState;
+            }
+            else
+            {
+                MatchCharacterState characterState = EnemyStates[characterIndex];
+                characterState.IsEliminated = true;
                 EnemyStates[characterIndex] = characterState;
             }
         }
@@ -281,10 +302,10 @@ namespace Assets.Scripts.Match
         /// Retire au perso les infos sur sa cible. Utilisée quand la cible se fait éliminer
         /// </summary>
         /// <param name="characterIndex">L'ID perso concerné</param>
-        /// <param name="isAlly">true si le perso est un allié</param>
-        internal void ClearTarget(int characterIndex, bool isAlly)
+        /// <param name="characterIsAlly">true si le perso est un allié</param>
+        internal void ClearTarget(int characterIndex, bool characterIsAlly)
         {
-            if (isAlly)
+            if (characterIsAlly)
             {
                 MatchCharacterState characterState = AllyStates[characterIndex];
                 characterState.OpponentTargetIndex = -1;

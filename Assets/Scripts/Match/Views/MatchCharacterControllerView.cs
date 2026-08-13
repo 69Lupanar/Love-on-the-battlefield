@@ -78,6 +78,11 @@ namespace Assets.Scripts.Match
         /// </summary>
         private Rigidbody _rb;
 
+        /// <summary>
+        /// Rigidbody
+        /// </summary>
+        private Collider _col;
+
         #endregion
 
         #region Méthodes Unity
@@ -90,6 +95,7 @@ namespace Assets.Scripts.Match
             _rb = GetComponent<Rigidbody>();
             _playerInput = FindAnyObjectByType<MatchPlayerInput>();
             _aiInput = GetComponent<MatchAIInput>();
+            _col = GetComponent<Collider>();
         }
 
         /// <summary>
@@ -146,12 +152,23 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
+        /// Active ou non la physique sur cet objet
+        /// </summary>
+        internal void EnablePhysics(bool enable)
+        {
+            _rb.linearVelocity = Vector3.zero;
+            _rb.isKinematic = !enable;
+            _rb.useGravity = enable;
+            _col.enabled = enable;
+        }
+
+        /// <summary>
         /// Réinitialise le perso pour une nouvelle manche
         /// </summary>
         internal void ResetPlayer()
         {
-            _rb.linearVelocity = Vector3.zero;
             _meshHolder.localEulerAngles = Vector3.zero;
+            EnablePhysics(true);
             HideHalo();
         }
 

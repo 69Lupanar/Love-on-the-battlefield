@@ -90,7 +90,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Appelé quand le perso actif du joueur change
         /// </summary>
-        private void OnNewMatchStarted(MatchSettingsData _)
+        private void OnNewMatchStarted(object _, MatchSettingsData matchSettings)
         {
             _activeCharacterIndex = 0;
             GetActivePlayer(0);

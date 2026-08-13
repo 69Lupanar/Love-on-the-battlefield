@@ -85,7 +85,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Instancie les joueurs et ballons
         /// </summary>
-        internal void SpawnPlayersAndBalls(uint nbAllies, uint nbEnemies, uint nbBalls)
+        internal void SpawnPlayersAndBalls(int nbAllies, int nbEnemies, int nbBalls)
         {
             AlliesT.Clear();
             EnemiesT.Clear();

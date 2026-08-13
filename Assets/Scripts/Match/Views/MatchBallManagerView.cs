@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
@@ -104,9 +105,6 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void Update()
         {
-            if (_matchV.MatchIsOver)
-                return;
-
             for (int i = 0; i < Balls.Count; ++i)
             {
                 Balls[i].UpdateView(_vm.BallStates[i]);
@@ -187,7 +185,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Appelée quand une nouvelle partie commence
         /// </summary>
-        private void OnNewMatchStarted(MatchSettingsData _)
+        private void OnNewMatchStarted(object _, MatchSettingsData matchSettings)
         {
             // Détache les callbacks des anciennes instances
             UnsubscribeEntities();
@@ -199,7 +197,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Appelée quand une nouvelle manche commence
         /// </summary>
-        private void OnNewSetStarted()
+        private void OnNewSetStarted(object _, EventArgs e)
         {
             ResetManager();
         }
@@ -210,6 +208,9 @@ namespace Assets.Scripts.Match
         /// <param name="sender">Le ballon</param>
         private void OnBallCollisionEnter(object sender, Collision collision)
         {
+            if (!_matchV.MatchIsOngoing)
+                return;
+
             int ballIndex = Balls.IndexOf(sender as BallView);
             GameObject go = collision.gameObject;
 

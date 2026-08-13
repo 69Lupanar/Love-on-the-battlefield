@@ -13,15 +13,15 @@ namespace Assets.Scripts.Match
 
         [SerializeField]
         [Tooltip("Nombre d'alliés à instancier")]
-        internal uint NbAllies;
+        internal int NbAllies;
 
         [SerializeField]
         [Tooltip("Nombre d'ennemis à instancier")]
-        internal uint NbEnemies;
+        internal int NbEnemies;
 
         [SerializeField]
         [Tooltip("Nombre de ballons à instancier")]
-        internal uint NbBalls;
+        internal int NbBalls;
 
         #endregion
     }

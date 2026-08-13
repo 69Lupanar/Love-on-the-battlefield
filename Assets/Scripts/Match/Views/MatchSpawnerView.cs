@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -60,6 +61,7 @@ namespace Assets.Scripts.Match
         {
             _matchV.OnNewMatchStartedEvent += OnNewMatchStarted;
             _matchV.OnNewSetStartedEvent += OnNewSetStarted;
+            _matchV.OnMatchEndedEvent += OnMatchEnded;
         }
 
         /// <summary>
@@ -69,6 +71,7 @@ namespace Assets.Scripts.Match
         {
             _matchV.OnNewMatchStartedEvent -= OnNewMatchStarted;
             _matchV.OnNewSetStartedEvent -= OnNewSetStarted;
+            _matchV.OnMatchEndedEvent -= OnMatchEnded;
         }
 
         #endregion
@@ -79,7 +82,7 @@ namespace Assets.Scripts.Match
         /// Appelée quand une nouvelle partie commence
         /// </summary>
         /// <param name="matchSettings">Paramètres d'un match</param>
-        private void OnNewMatchStarted(MatchSettingsData matchSettings)
+        private void OnNewMatchStarted(object _, MatchSettingsData matchSettings)
         {
             CleanupField();
             _vm.SpawnPlayersAndBalls(matchSettings.NbAllies, matchSettings.NbEnemies, matchSettings.NbBalls);
@@ -88,9 +91,18 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Appelée quand une nouvelle manche commence
         /// </summary>
-        private void OnNewSetStarted()
+        private void OnNewSetStarted(object _, EventArgs e)
         {
             _vm.ResetEntitiesPoses();
+        }
+
+        /// <summary>
+        /// Appelée quand un match est terminé
+        /// </summary>
+        /// <param name="e">Données de l'événement</param>
+        private void OnMatchEnded(object sender, TeamID e)
+        {
+            CleanupField();
         }
 
         /// <summary>

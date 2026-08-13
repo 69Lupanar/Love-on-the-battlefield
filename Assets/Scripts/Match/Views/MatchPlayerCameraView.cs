@@ -45,7 +45,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void Update()
         {
-            if (!_matchV.MatchIsOver)
+            if (_matchV.MatchIsOngoing)
             {
                 MatchCharacterControllerView activePlayer = _playerV.Allies[_playerV.ActivePlayerIndex];
 
