@@ -147,6 +147,7 @@ namespace Assets.Scripts.Match
 
                         _vm.ResumeMatch();
                     }
+
                     else if (_vm.SetDuration == _vm.MatchSettingsData.SetDuration && !_vm.SuddenDeath)
                     {
                         // Arrête la manche une fois son temps écoulé

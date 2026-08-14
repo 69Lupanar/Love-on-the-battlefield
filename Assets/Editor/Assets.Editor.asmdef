@@ -1,0 +1,20 @@
+{
+    "name": "Assets.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:e0cd26848372d4e5c891c569017e11f1",
+        "GUID:d8b63aba1907145bea998dd612889d6b",
+        "GUID:935eff8f4a67f8644828a4280e6087cf"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
