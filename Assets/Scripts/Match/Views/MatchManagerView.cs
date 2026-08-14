@@ -195,7 +195,7 @@ namespace Assets.Scripts.Match
                 _matchDurationField.SetText(_vm.MatchDuration.ToString("0:00"));
             else
             {
-                _matchDurationField.SetText($"{_vm.MatchSettingsData.MatchDuration:0:00} (+{_vm.OvertimeDuration:0:00}");
+                _matchDurationField.SetText($"{_vm.MatchSettingsData.MatchDuration:0:00} (+{_vm.OvertimeDuration:0:00})");
             }
         }
 
@@ -238,6 +238,19 @@ namespace Assets.Scripts.Match
             _alliesScoreField.SetText(_vm.AlliesScore.ToString());
             _enemiesScoreField.SetText(_vm.EnemiesScore.ToString());
 
+            switch (setWinningTeamID)
+            {
+                case TeamID.Ally:
+                    print($"Set victoire alliée");
+                    break;
+                case TeamID.Enemy:
+                    print("Set victoire ennemie");
+                    break;
+                case TeamID.None:
+                    print("Set nul");
+                    break;
+            }
+
             OnSetEndedEvent?.Invoke(this, setWinningTeamID);
 
             if (_vm.MatchDuration < _vm.MatchSettingsData.MatchDuration)
@@ -249,10 +262,11 @@ namespace Assets.Scripts.Match
             {
                 // Si le temps est écoulé, on détermine l'équipe gagnante
 
-                if (_vm.GetMatchWinningTeam() != TeamID.None)
+                TeamID matchWinningTeamID = _vm.GetMatchWinningTeam();
+                if (matchWinningTeamID != TeamID.None || _vm.SuddenDeath)
                 {
-                    // Si une équipe a plus de points, on arrête le match.
-                    EndMatch();
+                    // Si une équipe a plus de points ou si c'est la dernière manche (mort subite), on arrête le match.
+                    EndMatch(matchWinningTeamID);
                 }
                 else
                 {
@@ -265,9 +279,24 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Met fin à la partie
         /// </summary>
-        private void EndMatch()
+        /// <param name="matchWinningTeamID">ID de l'équipe gagnante de la manche</param>
+        private void EndMatch(TeamID matchWinningTeamID)
         {
             _vm.EndMatch();
+
+            switch (matchWinningTeamID)
+            {
+                case TeamID.Ally:
+                    print("Match victoire alliée");
+                    break;
+                case TeamID.Enemy:
+                    print("Match victoire ennemie");
+                    break;
+                case TeamID.None:
+                    print("Match nul");
+                    break;
+            }
+
             OnMatchEndedEvent?.Invoke(this, EventArgs.Empty);
         }
 

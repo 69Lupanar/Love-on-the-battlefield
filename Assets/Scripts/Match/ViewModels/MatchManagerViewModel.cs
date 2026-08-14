@@ -92,6 +92,8 @@ namespace Assets.Scripts.Match
         {
             MatchDuration = 0;
             CurrentSet = 0;
+            AlliesScore = 0;
+            EnemiesScore = 0;
             MatchIsOngoing = true;
             MatchSettingsData = matchSettings;
         }
