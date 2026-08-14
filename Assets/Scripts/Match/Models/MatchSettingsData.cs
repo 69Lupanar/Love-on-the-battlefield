@@ -24,8 +24,8 @@ namespace Assets.Scripts.Match
         internal int NbBalls;
 
         [SerializeField]
-        [Tooltip("Durée d'une partie en secondes")]
-        internal int MatchDuration;
+        [Tooltip("Durée d'une moitié de partie en secondes")]
+        internal int HalfDuration;
 
         [SerializeField]
         [Tooltip("Durée d'une manche en secondes")]

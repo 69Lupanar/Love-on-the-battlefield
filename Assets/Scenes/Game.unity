@@ -678,13 +678,13 @@ MonoBehaviour:
   _nbAlliesField: {fileID: 800707691}
   _nbEnemiesField: {fileID: 2082154323}
   _nbBallsField: {fileID: 766272419}
-  _matchDurationField: {fileID: 1680507638}
+  _halfDurationField: {fileID: 1680507638}
   _setDurationField: {fileID: 2063107758}
   _matchSettings:
     NbAllies: 6
     NbEnemies: 6
     NbBalls: 5
-    MatchDuration: 40
+    HalfDuration: 5
     SetDuration: 3
 --- !u!1 &330585543
 GameObject:
@@ -1225,7 +1225,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7067850721601439561, guid: f70f769cac8a0a34dab6be6ea5252f5c, type: 3}
       propertyPath: m_fontSize
-      value: 18
+      value: 36
       objectReference: {fileID: 0}
     - target: {fileID: 7067850721601439561, guid: f70f769cac8a0a34dab6be6ea5252f5c, type: 3}
       propertyPath: m_fontSizeMax
@@ -3283,7 +3283,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1719382443235954902, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_Name
-      value: '"Match Duration"'
+      value: '"Half Duration"'
       objectReference: {fileID: 0}
     - target: {fileID: 3097116812898033642, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_Pivot.x
@@ -3367,11 +3367,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4382061724189064612, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_text
-      value: Match Duration (sec.)
+      value: Half Duration (sec.)
       objectReference: {fileID: 0}
     - target: {fileID: 4382061724189064612, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_fontSize
-      value: 22.05
+      value: 23.1
       objectReference: {fileID: 0}
     - target: {fileID: 5031165631325415339, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_Name
@@ -3451,7 +3451,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6701598416432370036, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnMatchDurationInputFieldEndEdit
+      value: OnHalfDurationInputFieldEndEdit
       objectReference: {fileID: 0}
     - target: {fileID: 6701598416432370036, guid: 0c9163936d83d1e4e9e3ea1c5441ea9e, type: 3}
       propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -4801,7 +4801,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7067850721601439561, guid: f70f769cac8a0a34dab6be6ea5252f5c, type: 3}
       propertyPath: m_fontSize
-      value: 18
+      value: 36
       objectReference: {fileID: 0}
     - target: {fileID: 7067850721601439561, guid: f70f769cac8a0a34dab6be6ea5252f5c, type: 3}
       propertyPath: m_fontSizeMax

@@ -53,7 +53,12 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Temps écoulé depuis le début de la partie
         /// </summary>
-        internal int MatchDuration { get; private set; }
+        internal int MatchTimer { get; private set; }
+
+        /// <summary>
+        /// Durée totale du match
+        /// </summary>
+        internal int MatchDuration => MatchSettingsData.HalfDuration * 2;
 
         /// <summary>
         /// Temps écoulé depuis le début de la manche
@@ -63,7 +68,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Temps écoulé depuis le début des prolongations
         /// </summary>
-        internal int OvertimeDuration => math.max(0, MatchDuration - MatchSettingsData.MatchDuration);
+        internal int OvertimeDuration => math.max(0, MatchTimer - MatchDuration);
 
         /// <summary>
         /// Nb de sets démarrés
@@ -90,7 +95,7 @@ namespace Assets.Scripts.Match
         /// <param name="matchSettings">Paramètres d'un match</param>
         internal void StartNewMatch(MatchSettingsData matchSettings)
         {
-            MatchDuration = 0;
+            MatchTimer = 0;
             CurrentSet = 0;
             AlliesScore = 0;
             EnemiesScore = 0;
@@ -132,7 +137,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal void OnTick()
         {
-            ++MatchDuration;
+            ++MatchTimer;
             ++SetDuration;
         }
 

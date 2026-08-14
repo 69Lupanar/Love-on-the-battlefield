@@ -133,7 +133,21 @@ namespace Assets.Scripts.Match
                     _timer = 0f;
                     OnTick();
 
-                    if (_vm.SetDuration == _vm.MatchSettingsData.SetDuration && !_vm.SuddenDeath)
+                    if (_vm.MatchTimer == _vm.MatchSettingsData.HalfDuration)
+                    {
+                        // On a atteint la mi-temps, on arrête la manche en cours
+
+                        _vm.PauseMatch();
+                        EndSet(_vm.GetSetWinningTeam());
+
+                        print("mi-temps, changement de persos");
+
+                        // TAF: Implémenter l'écran de changement des membres de l'équipe du joueur
+                        // et retirer le ResumeMatch pour les tests
+
+                        _vm.ResumeMatch();
+                    }
+                    else if (_vm.SetDuration == _vm.MatchSettingsData.SetDuration && !_vm.SuddenDeath)
                     {
                         // Arrête la manche une fois son temps écoulé
                         // si elle n'est pas en mort subite.
@@ -191,11 +205,11 @@ namespace Assets.Scripts.Match
             _vm.OnTick();
             _setDurationField.SetText(_vm.SetDuration.ToString("0:00"));
 
-            if (_vm.MatchDuration <= _vm.MatchSettingsData.MatchDuration)
-                _matchDurationField.SetText(_vm.MatchDuration.ToString("0:00"));
+            if (_vm.MatchTimer <= _vm.MatchDuration)
+                _matchDurationField.SetText(_vm.MatchTimer.ToString("0:00"));
             else
             {
-                _matchDurationField.SetText($"{_vm.MatchSettingsData.MatchDuration:0:00} (+{_vm.OvertimeDuration:0:00})");
+                _matchDurationField.SetText($"{_vm.MatchSettingsData.HalfDuration:0:00} (+{_vm.OvertimeDuration:0:00})");
             }
         }
 
@@ -241,7 +255,7 @@ namespace Assets.Scripts.Match
             switch (setWinningTeamID)
             {
                 case TeamID.Ally:
-                    print($"Set victoire alliée");
+                    print("Set victoire alliée");
                     break;
                 case TeamID.Enemy:
                     print("Set victoire ennemie");
@@ -253,7 +267,7 @@ namespace Assets.Scripts.Match
 
             OnSetEndedEvent?.Invoke(this, setWinningTeamID);
 
-            if (_vm.MatchDuration < _vm.MatchSettingsData.MatchDuration)
+            if (_vm.MatchTimer < _vm.MatchDuration)
             {
                 // S'il reste du temps, on lance une nouvelle manche
                 StartNewSet();

@@ -25,7 +25,7 @@ namespace Assets.Scripts.Match
 
         [SerializeField]
         [Tooltip("InputField de la durée d'une partie")]
-        private TMP_InputField _matchDurationField;
+        private TMP_InputField _halfDurationField;
 
         [SerializeField]
         [Tooltip("InputField de la durée d'une manche")]
@@ -104,10 +104,10 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Appelée par l'InputField
         /// </summary>
-        public void OnMatchDurationInputFieldEndEdit(string str)
+        public void OnHalfDurationInputFieldEndEdit(string str)
         {
-            _matchSettings.MatchDuration = math.max(2, int.Parse(str));
-            _matchDurationField.SetTextWithoutNotify(_matchSettings.MatchDuration.ToString());
+            _matchSettings.HalfDuration = math.max(2, int.Parse(str));
+            _halfDurationField.SetTextWithoutNotify(_matchSettings.HalfDuration.ToString());
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace Assets.Scripts.Match
             _nbAlliesField.SetTextWithoutNotify(_matchSettings.NbAllies.ToString());
             _nbEnemiesField.SetTextWithoutNotify(_matchSettings.NbEnemies.ToString());
             _nbBallsField.SetTextWithoutNotify(_matchSettings.NbBalls.ToString());
-            _matchDurationField.SetTextWithoutNotify(_matchSettings.MatchDuration.ToString());
+            _halfDurationField.SetTextWithoutNotify(_matchSettings.HalfDuration.ToString());
             _setDurationField.SetTextWithoutNotify(_matchSettings.SetDuration.ToString());
         }
 
