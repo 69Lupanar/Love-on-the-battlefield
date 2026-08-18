@@ -1,3 +1,4 @@
+using Assets.Scripts.Scenes;
 using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
@@ -32,17 +33,12 @@ namespace Assets.Scripts.Match
         private TMP_InputField _setDurationField;
 
         [SerializeField]
+        [Tooltip("La scène des matchs")]
+        private SceneReference _matchScene;
+
+        [SerializeField]
         [Tooltip("Paramètres d'un match")]
         private MatchSettingsData _matchSettings;
-
-        #endregion
-
-        #region Instance
-
-        /// <summary>
-        /// Le spawner des joueurs et ballons
-        /// </summary>
-        private MatchManagerView _managerV;
 
         #endregion
 
@@ -51,9 +47,8 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Init
         /// </summary>
-        private void Awake()
+        private void Start()
         {
-            _managerV = FindAnyObjectByType<MatchManagerView>();
             UpdateUI();
         }
 
@@ -124,8 +119,16 @@ namespace Assets.Scripts.Match
         /// </summary>
         public void OnStartNewMatchBtnClick()
         {
-            _managerV.StartNewMatch(_matchSettings);
-            _managerV.StartNewSet();
+            SceneLoader.LoadSceneAsync(_matchScene, () =>
+            {
+                MatchManagerView matchManager = FindAnyObjectByType<MatchManagerView>();
+
+                if (matchManager != null)
+                {
+                    matchManager.StartNewMatch(_matchSettings);
+                    matchManager.StartNewSet();
+                }
+            });
         }
 
         #endregion

@@ -23,6 +23,11 @@ namespace Assets.Scripts.Match
         internal EventHandler OnNewSetStartedEvent;
 
         /// <summary>
+        /// Appelée quand on atteint la mi-temps
+        /// </summary>
+        internal EventHandler OnHalfTimeReachedEvent;
+
+        /// <summary>
         /// Appelée quand une partie est terminée
         /// </summary>
         internal EventHandler OnMatchEndedEvent;
@@ -136,18 +141,8 @@ namespace Assets.Scripts.Match
                     if (_vm.MatchTimer == _vm.MatchSettingsData.HalfDuration)
                     {
                         // On a atteint la mi-temps, on arrête la manche en cours
-
-                        _vm.PauseMatch();
-                        EndSet(_vm.GetSetWinningTeam());
-
-                        print("mi-temps, changement de persos");
-
-                        // TAF: Implémenter l'écran de changement des membres de l'équipe du joueur
-                        // et retirer le ResumeMatch pour les tests
-
-                        _vm.ResumeMatch();
+                        OnHalfTimeReached();
                     }
-
                     else if (_vm.SetDuration == _vm.MatchSettingsData.SetDuration && !_vm.SuddenDeath)
                     {
                         // Arrête la manche une fois son temps écoulé
@@ -212,6 +207,24 @@ namespace Assets.Scripts.Match
             {
                 _matchDurationField.SetText($"{_vm.MatchSettingsData.HalfDuration:0:00} (+{_vm.OvertimeDuration:0:00})");
             }
+        }
+
+        /// <summary>
+        /// Appelée quand on atteint la mi-temps
+        /// </summary>
+        private void OnHalfTimeReached()
+        {
+            _vm.PauseMatch();
+            EndSet(_vm.GetSetWinningTeam());
+
+            print("mi-temps, changement de persos");
+
+            OnHalfTimeReachedEvent?.Invoke(this, EventArgs.Empty);
+
+            // TAF: Implémenter l'écran de changement des membres de l'équipe du joueur
+            // et retirer le ResumeMatch pour les tests
+
+            _vm.ResumeMatch();
         }
 
         /// <summary>
