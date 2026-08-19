@@ -37,6 +37,10 @@ namespace Assets.Scripts.Teams
         {
             Name = name;
             Stats.Level = math.clamp(Stats.Level, 1, Constants.MAX_LEVEL);
+            Stats.MaxStrength = math.clamp(Stats.MaxStrength, 1, Constants.MAX_STAT_VALUE);
+            Stats.MaxAgility = math.clamp(Stats.MaxAgility, 1, Constants.MAX_STAT_VALUE);
+            Stats.MaxEndurance = math.clamp(Stats.MaxEndurance, 1, Constants.MAX_STAT_VALUE);
+            Stats.MaxAffection = math.clamp(Stats.MaxAffection, 1, Constants.MAX_STAT_VALUE);
             Stats.Strength = math.clamp(Stats.Strength, 1, Stats.MaxStrength);
             Stats.Agility = math.clamp(Stats.Agility, 1, Stats.MaxAgility);
             Stats.Endurance = math.clamp(Stats.Endurance, 1, Stats.MaxEndurance);

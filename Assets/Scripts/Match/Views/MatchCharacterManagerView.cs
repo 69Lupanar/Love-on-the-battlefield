@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Assets.Scripts.Teams;
 using UnityEngine;
 
 namespace Assets.Scripts.Match
@@ -140,8 +141,12 @@ namespace Assets.Scripts.Match
         private string _ballTag;
 
         [SerializeField]
-        [Tooltip("Données de base de mouvement d'un personnage lors d'un match")]
-        internal MatchCharacterMovementData BaseMovementData;
+        [Tooltip("Valeurs minimales possibles de mouvement d'un personnage lors d'un match")]
+        internal MatchCharacterMovementData _minBaseMovementData;
+
+        [SerializeField]
+        [Tooltip("Valeurs maximales possibles de mouvement d'un personnage lors d'un match")]
+        internal MatchCharacterMovementData _maxBaseMovementData;
 
         #endregion
 
@@ -359,9 +364,11 @@ namespace Assets.Scripts.Match
         /// </summary>
         /// <param name="alliesT">Transforms des persos alliés</param>
         /// <param name="enemiesT">Transforms des persos ennemis</param>
-        internal void SetEntities(List<Transform> alliesT, List<Transform> enemiesT)
+        /// <param name="allyTeamComposition">Composition de joueurs de l'équipe alliée</param>
+        /// <param name="enemyTeamComposition">Composition de joueurs de l'équipe ennemie</param>
+        internal void SetEntities(List<Transform> alliesT, List<Transform> enemiesT, TeamCharacterSO[] allyTeamComposition, TeamCharacterSO[] enemyTeamComposition)
         {
-            _vm.SetEntities(alliesT.Count, enemiesT.Count, BaseMovementData);
+            _vm.SetEntities(alliesT.Count, enemiesT.Count, _minBaseMovementData, _maxBaseMovementData, allyTeamComposition, enemyTeamComposition);
 
             _allies.Clear();
             _enemies.Clear();
@@ -417,7 +424,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Appelée quand une nouvelle partie commence
         /// </summary>
-        private void OnNewMatchStarted(object _, MatchSettingsData matchSettings)
+        private void OnNewMatchStarted(object _, NewMatchStartedEventArgs e)
         {
             // Désactive les inputs des joueurs déjà présents avant de les retirer
             EnablePlayersInput(false);
@@ -425,7 +432,7 @@ namespace Assets.Scripts.Match
             // Détache les callbacks des anciennes instances
             UnsubscribeEntities();
 
-            SetEntities(_spawnerV.AlliesT, _spawnerV.EnemiesT);
+            SetEntities(_spawnerV.AlliesT, _spawnerV.EnemiesT, e.AllyTeamComposition.MainCharacters, e.EnemyTeamComposition.MainCharacters);
             SetTeams();
             SubscribeEntities();
         }

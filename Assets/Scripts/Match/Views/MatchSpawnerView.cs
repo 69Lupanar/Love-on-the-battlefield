@@ -84,10 +84,11 @@ namespace Assets.Scripts.Match
         /// Appelée quand une nouvelle partie commence
         /// </summary>
         /// <param name="matchSettings">Paramètres d'un match</param>
-        private void OnNewMatchStarted(object _, MatchSettingsData matchSettings)
+        private void OnNewMatchStarted(object _, NewMatchStartedEventArgs e)
         {
             CleanupField();
-            _vm.SpawnPlayersAndBalls(matchSettings.NbAllies, matchSettings.NbEnemies, matchSettings.NbBalls);
+            _vm.SpawnPlayersAndBalls(e.MatchSettings.NbAllies, e.MatchSettings.NbEnemies, e.MatchSettings.NbBalls);
+            _vm.SetPlayersSkins(e.AllyTeamComposition.MainCharacters, e.EnemyTeamComposition.MainCharacters);
         }
 
         /// <summary>

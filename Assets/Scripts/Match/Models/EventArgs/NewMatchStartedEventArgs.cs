@@ -1,6 +1,5 @@
 using System;
-using System.Collections.Generic;
-using UnityEngine;
+using Assets.Scripts.Teams;
 
 namespace Assets.Scripts.Match
 {
@@ -12,19 +11,19 @@ namespace Assets.Scripts.Match
         #region Propriétéss
 
         /// <summary>
-        /// Les persos du joueur
+        /// Paramètres d'un match
         /// </summary>
-        internal List<Transform> AlliesT { get; private set; }
+        internal MatchSettingsData MatchSettings { get; private set; }
 
         /// <summary>
-        /// Les persos ennemis
+        /// Composition de joueurs de l'équipe alliée
         /// </summary>
-        internal List<Transform> EnemiesT { get; private set; }
+        internal TeamCompositionData AllyTeamComposition { get; private set; }
 
         /// <summary>
-        /// Les ballons
+        /// Composition de joueurs de l'équipe ennemie
         /// </summary>
-        internal List<Transform> BallsT { get; private set; }
+        internal TeamCompositionData EnemyTeamComposition { get; private set; }
 
         #endregion
 
@@ -33,14 +32,14 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Constructeur
         /// </summary>
-        /// <param name="alliesT">Alliés instanciés</param>
-        /// <param name="enemiesT">Ennemis instanciés</param>
-        /// <param name="ballsT">Ballons instanciés</param>
-        public NewMatchStartedEventArgs(List<Transform> alliesT, List<Transform> enemiesT, List<Transform> ballsT)
+        /// <param name="matchSettings">Paramètres d'un match</param>
+        /// <param name="allyTeamComposition">Composition de joueurs de l'équipe alliée</param>
+        /// <param name="enemyTeamComposition">Composition de joueurs de l'équipe ennemie</param>
+        public NewMatchStartedEventArgs(MatchSettingsData matchSettings, TeamCompositionData allyTeamComposition, TeamCompositionData enemyTeamComposition)
         {
-            AlliesT = alliesT;
-            EnemiesT = enemiesT;
-            BallsT = ballsT;
+            MatchSettings = matchSettings;
+            AllyTeamComposition = allyTeamComposition;
+            EnemyTeamComposition = enemyTeamComposition;
         }
 
         #endregion

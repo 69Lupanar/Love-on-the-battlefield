@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Assets.Scripts.Teams;
 using UnityEngine;
 
 namespace Assets.Scripts.Match
@@ -56,24 +57,25 @@ namespace Assets.Scripts.Match
         /// </summary>
         /// <param name="nbAllies">Nb d'alliés à instancier</param>
         /// <param name="nbEnemies">Nb d'ennemis à instancier</param>
-        /// <param name="baseMovementData">Données de base du mouvement des persos</param>
-        internal void SetEntities(int nbAllies, int nbEnemies, MatchCharacterMovementData baseMovementData)
+        /// <param name="minBaseMovementData">Données de base du mouvement des persos</param>
+        /// <param name="maxBaseMovementData">Données de base du mouvement des persos</param>
+        /// <param name="allyTeamComposition">Composition de joueurs de l'équipe alliée</param>
+        /// <param name="enemyTeamComposition">Composition de joueurs de l'équipe ennemie</param>
+        internal void SetEntities(int nbAllies, int nbEnemies, MatchCharacterMovementData minBaseMovementData, MatchCharacterMovementData maxBaseMovementData, TeamCharacterSO[] allyTeamComposition, TeamCharacterSO[] enemyTeamComposition)
         {
             AllyStates.Clear();
             EnemyStates.Clear();
 
-            // TAF : Changer le mouvementData en fonction des stats du joueur
-
             for (int i = 0; i < nbAllies; ++i)
             {
                 AllyStates.Add(new MatchCharacterState());
-                AllyMovementDatas.Add(baseMovementData);
+                AllyMovementDatas.Add(new MatchCharacterMovementData(allyTeamComposition[i].Stats, minBaseMovementData, maxBaseMovementData));
             }
 
             for (int i = 0; i < nbEnemies; ++i)
             {
                 EnemyStates.Add(new MatchCharacterState());
-                EnemyMovementDatas.Add(baseMovementData);
+                EnemyMovementDatas.Add(new MatchCharacterMovementData(enemyTeamComposition[i].Stats, minBaseMovementData, maxBaseMovementData));
             }
 
         }

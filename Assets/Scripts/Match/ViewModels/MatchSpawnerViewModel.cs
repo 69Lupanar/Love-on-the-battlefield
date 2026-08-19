@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Assets.Scripts.Teams;
 using UnityEngine;
 
 namespace Assets.Scripts.Match
@@ -136,6 +137,35 @@ namespace Assets.Scripts.Match
                 }
 
                 BallsT.Add(ball);
+            }
+        }
+
+        /// <summary>
+        /// Change les meshs des Transforms pour refléter l'apparence des nouveaux joueurs
+        /// </summary>
+        /// <param name="allies">Alliés</param>
+        /// <param name="enemies">Ennemis</param>
+        internal void SetPlayersSkins(TeamCharacterSO[] allies, TeamCharacterSO[] enemies)
+        {
+            // TAF : Remplacer le changement de mesh
+            // une fois qu'on aura de vrais meshs de personnages
+
+            for (int i = 0; i < AlliesT.Count; ++i)
+            {
+                // On retire le mesh précédent
+                MeshFilter mf = AlliesT[i].GetChild(0).GetChild(0).GetComponent<MeshFilter>();
+                MeshRenderer mr = AlliesT[i].GetChild(0).GetChild(0).GetComponent<MeshRenderer>();
+                mf.mesh = allies[i].Appearance.Mesh;
+                mr.material = allies[i].Appearance.Material;
+            }
+
+            for (int i = 0; i < EnemiesT.Count; ++i)
+            {
+                // On retire le mesh précédent
+                MeshFilter mf = EnemiesT[i].GetChild(0).GetChild(0).GetComponent<MeshFilter>();
+                MeshRenderer mr = EnemiesT[i].GetChild(0).GetChild(0).GetComponent<MeshRenderer>();
+                mf.mesh = enemies[i].Appearance.Mesh;
+                mr.material = enemies[i].Appearance.Material;
             }
         }
 

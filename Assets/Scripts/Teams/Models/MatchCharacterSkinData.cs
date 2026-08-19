@@ -14,8 +14,5 @@ namespace Assets.Scripts.Teams
 
         [Tooltip("Le material appliqué au modèle 3D du personnage")]
         public Material Material;
-
-        [Tooltip("Le sprite du joueur dans l'écran de sélection")]
-        public Sprite SelectionSprite;
     }
 }

@@ -213,6 +213,24 @@ MonoBehaviour:
     NbBalls: 5
     HalfDuration: 5
     SetDuration: 3
+  _allyTeamComposition:
+    MainCharacters:
+    - {fileID: 11400000, guid: e644a7e4333af5746948a412d00ca862, type: 2}
+    - {fileID: 11400000, guid: 27be11a197baba04e82113728d258e1c, type: 2}
+    - {fileID: 11400000, guid: 8b88ea9ad767a664da4256b66c4dc502, type: 2}
+    - {fileID: 11400000, guid: 91118a1861e381f4ea451147f7c1c20c, type: 2}
+    - {fileID: 11400000, guid: 623ea2cf047f3424bb56ea72cf11d707, type: 2}
+    - {fileID: 11400000, guid: d48e0abb96c2340428d14b2a9694d5e9, type: 2}
+    Substitutes: []
+  _enemyTeamComposition:
+    MainCharacters:
+    - {fileID: 11400000, guid: 7c6d01634ada5e845ab1a2403ed1fc59, type: 2}
+    - {fileID: 11400000, guid: 337e1b351d42b494f994b87d1c5509b0, type: 2}
+    - {fileID: 11400000, guid: 6ba19c5626b3990449af12f9da63b12a, type: 2}
+    - {fileID: 11400000, guid: cf3149f39bccbc1489ea3ca857c2fccd, type: 2}
+    - {fileID: 11400000, guid: 54d17dd28451e9140bcc951b705534a8, type: 2}
+    - {fileID: 11400000, guid: 5e7cbdf38a46bfb46aff22fd2049240e, type: 2}
+    Substitutes: []
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0

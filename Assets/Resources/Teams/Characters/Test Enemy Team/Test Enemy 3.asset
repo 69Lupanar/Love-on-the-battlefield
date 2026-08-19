@@ -14,19 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assets.Scripts.Teams::Assets.Scripts.Teams.TeamCharacterSO
   Name: Test Enemy 3
   Appearance:
-    Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+    Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
     Material: {fileID: 2100000, guid: c01d412add644044e9f876fc653cc18e, type: 2}
   Stats:
-    Level: 1
+    Level: 30
     Experience: 0
-    Strength: 1
-    Agility: 1
-    Endurance: 1
-    Affection: 1
-    MaxStrength: 0
-    MaxAgility: 0
-    MaxEndurance: 0
-    MaxAffection: 0
+    Strength: 30
+    Agility: 30
+    Endurance: 30
+    Affection: 30
+    MaxStrength: 100
+    MaxAgility: 100
+    MaxEndurance: 100
+    MaxAffection: 100
   ExpProgressCurve:
     serializedVersion: 2
     m_Curve:

@@ -185,7 +185,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Appelée quand une nouvelle partie commence
         /// </summary>
-        private void OnNewMatchStarted(object _, MatchSettingsData matchSettings)
+        private void OnNewMatchStarted(object _, NewMatchStartedEventArgs e)
         {
             // Détache les callbacks des anciennes instances
             UnsubscribeEntities();

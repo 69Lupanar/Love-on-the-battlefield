@@ -1,4 +1,5 @@
 using System;
+using Assets.Scripts.Teams;
 using TMPro;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Appelée quand un nouveau match commence
         /// </summary>
-        internal EventHandler<MatchSettingsData> OnNewMatchStartedEvent;
+        internal EventHandler<NewMatchStartedEventArgs> OnNewMatchStartedEvent;
 
         /// <summary>
         /// Appelée quand une nouvelle manche commence
@@ -161,14 +162,16 @@ namespace Assets.Scripts.Match
         /// Démarre un nouveau match
         /// </summary>
         /// <param name="matchSettings">Paramètres d'un match</param>
-        internal void StartNewMatch(MatchSettingsData matchSettings)
+        /// <param name="allyTeamComposition">Composition de joueurs de l'équipe alliée</param>
+        /// <param name="enemyTeamComposition">Composition de joueurs de l'équipe ennemie</param>
+        internal void StartNewMatch(MatchSettingsData matchSettings, TeamCompositionData allyTeamComposition, TeamCompositionData enemyTeamComposition)
         {
-            _vm.StartNewMatch(matchSettings);
+            _vm.StartNewMatch(matchSettings, allyTeamComposition, enemyTeamComposition);
 
             _matchDurationField.SetText("0:00");
             _currentSetField.SetText("0");
 
-            OnNewMatchStartedEvent?.Invoke(this, matchSettings);
+            OnNewMatchStartedEvent?.Invoke(this, new NewMatchStartedEventArgs(matchSettings, allyTeamComposition, enemyTeamComposition));
         }
 
         /// <summary>

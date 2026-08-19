@@ -1098,13 +1098,24 @@ MonoBehaviour:
   _eliminatedAlliesQueueT: {fileID: 1450539531}
   _eliminatedEnemiesQueueT: {fileID: 391208505}
   _ballTag: Match/Ball
-  BaseMovementData:
+  _minBaseMovementData:
     MoveSpeed: 5
     DodgeSpeed: 10
-    JumpForceInterval: {x: 3, y: 7.5}
-    FireForceInterval: {x: 10, y: 20}
+    JumpForceInterval: {x: 3, y: 5}
+    FireForceInterval: {x: 15, y: 20}
     DodgeDuration: 0.5
     BlockDuration: 0.2
+    DodgeEnergyCost: 0.5
+    BlockEnergyCost: 0.5
+    JumpChargeSpeed: 0.33
+    FireChargeSpeed: 0.33
+  _maxBaseMovementData:
+    MoveSpeed: 5
+    DodgeSpeed: 10
+    JumpForceInterval: {x: 3, y: 5}
+    FireForceInterval: {x: 15, y: 20}
+    DodgeDuration: 0.5
+    BlockDuration: 0.4
     DodgeEnergyCost: 0.5
     BlockEnergyCost: 0.5
     JumpChargeSpeed: 0.33

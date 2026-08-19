@@ -1,3 +1,4 @@
+using Assets.Scripts.Teams;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -24,6 +25,16 @@ namespace Assets.Scripts.Match
         /// Paramètres du match en cours
         /// </summary>
         internal MatchSettingsData MatchSettingsData { get; set; }
+
+        /// <summary>
+        /// Composition de l'équipe alliée, gardée en mémoire pour le changement de joueurs à la mi-temps
+        /// </summary>
+        internal TeamCompositionData AllyTeamComposition { get; set; }
+
+        /// <summary>
+        /// Composition de l'équipe ennemie, gardée en mémoire pour le changement de joueurs à la mi-temps
+        /// </summary>
+        internal TeamCompositionData EnemyTeamComposition { get; set; }
 
         /// <summary>
         /// Nombre d'alliés à instancier
@@ -93,7 +104,9 @@ namespace Assets.Scripts.Match
         /// Démarre une nouvelle partie
         /// </summary>
         /// <param name="matchSettings">Paramètres d'un match</param>
-        internal void StartNewMatch(MatchSettingsData matchSettings)
+        /// <param name="allyTeamComposition">Composition de joueurs de l'équipe alliée</param>
+        /// <param name="enemyTeamComposition">Composition de joueurs de l'équipe ennemie</param>
+        internal void StartNewMatch(MatchSettingsData matchSettings, TeamCompositionData allyTeamComposition, TeamCompositionData enemyTeamComposition)
         {
             MatchTimer = 0;
             CurrentSet = 0;
@@ -101,6 +114,8 @@ namespace Assets.Scripts.Match
             EnemiesScore = 0;
             MatchIsOngoing = true;
             MatchSettingsData = matchSettings;
+            AllyTeamComposition = allyTeamComposition;
+            EnemyTeamComposition = enemyTeamComposition;
         }
 
         /// <summary>
