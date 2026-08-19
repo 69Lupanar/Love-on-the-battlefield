@@ -3,6 +3,7 @@ using Assets.Scripts.Teams;
 using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Assets.Scripts.Match
 {
@@ -128,7 +129,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         public void OnStartNewMatchBtnClick()
         {
-            SceneLoader.LoadSceneAsync(_matchScene, () =>
+            SceneLoader.LoadSceneAsync(_matchScene, LoadSceneMode.Single, () =>
             {
                 MatchManagerView matchManager = FindAnyObjectByType<MatchManagerView>();
 
