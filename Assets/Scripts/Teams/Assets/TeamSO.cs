@@ -5,15 +5,12 @@ using UnityEngine;
 /// Représente une équipe de joueurs
 /// </summary>
 [CreateAssetMenu(fileName = "New Team Roster", menuName = "Scriptable Objects/Teams/Team Roster")]
-public class TeamRosterSO : ScriptableObject
+public class TeamSO : ScriptableObject
 {
     #region Inspecteur
 
     [Tooltip("Les données de l'équipe")]
     public TeamData Data;
-
-    [Tooltip("Les personnages disponibles dans cette équipe")]
-    public TeamCharacterSO[] Roster;
 
     #endregion
 

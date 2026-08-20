@@ -61,7 +61,7 @@ namespace Assets.Scripts.Match
         /// <param name="maxBaseMovementData">Données de base du mouvement des persos</param>
         /// <param name="allyTeamComposition">Composition de joueurs de l'équipe alliée</param>
         /// <param name="enemyTeamComposition">Composition de joueurs de l'équipe ennemie</param>
-        internal void SetEntities(int nbAllies, int nbEnemies, MatchCharacterMovementData minBaseMovementData, MatchCharacterMovementData maxBaseMovementData, TeamCharacterSO[] allyTeamComposition, TeamCharacterSO[] enemyTeamComposition)
+        internal void SetEntities(int nbAllies, int nbEnemies, MatchCharacterMovementData minBaseMovementData, MatchCharacterMovementData maxBaseMovementData, List<TeamCharacterSO> allyTeamComposition, List<TeamCharacterSO> enemyTeamComposition)
         {
             AllyStates.Clear();
             EnemyStates.Clear();

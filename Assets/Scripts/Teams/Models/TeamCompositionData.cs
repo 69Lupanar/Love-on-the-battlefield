@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.Teams
@@ -13,10 +14,10 @@ namespace Assets.Scripts.Teams
     {
         [SerializeField]
         [Tooltip("Joueurs ppaux de l'équipe")]
-        public TeamCharacterSO[] MainCharacters;
+        public List<TeamCharacterSO> MainCharacters;
 
         [SerializeField]
         [Tooltip("Joueurs remplaçants de l'équipe")]
-        public TeamCharacterSO[] Substitutes;
+        public List<TeamCharacterSO> Substitutes;
     }
 }

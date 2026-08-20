@@ -145,7 +145,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         /// <param name="allies">Alliés</param>
         /// <param name="enemies">Ennemis</param>
-        internal void SetPlayersSkins(TeamCharacterSO[] allies, TeamCharacterSO[] enemies)
+        internal void SetPlayersSkins(List<TeamCharacterSO> allies, List<TeamCharacterSO> enemies)
         {
             // TAF : Remplacer le changement de mesh
             // une fois qu'on aura de vrais meshs de personnages

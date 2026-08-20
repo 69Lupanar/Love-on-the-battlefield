@@ -366,7 +366,7 @@ namespace Assets.Scripts.Match
         /// <param name="enemiesT">Transforms des persos ennemis</param>
         /// <param name="allyTeamComposition">Composition de joueurs de l'équipe alliée</param>
         /// <param name="enemyTeamComposition">Composition de joueurs de l'équipe ennemie</param>
-        internal void SetEntities(List<Transform> alliesT, List<Transform> enemiesT, TeamCharacterSO[] allyTeamComposition, TeamCharacterSO[] enemyTeamComposition)
+        internal void SetEntities(List<Transform> alliesT, List<Transform> enemiesT, List<TeamCharacterSO> allyTeamComposition, List<TeamCharacterSO> enemyTeamComposition)
         {
             _vm.SetEntities(alliesT.Count, enemiesT.Count, _minBaseMovementData, _maxBaseMovementData, allyTeamComposition, enemyTeamComposition);
 
@@ -833,6 +833,15 @@ namespace Assets.Scripts.Match
 
             if (characterIsAlly)
             {
+                // Si le perso éjecté est le joueur et qu'il n'est pas le dernier éliminé,
+                // on le fait changer de perso à contrôler
+
+                if (characterIndex == ActivePlayerIndex && GetNextLivePlayer(ActivePlayerIndex, out int nextPlayerIndex))
+                {
+                    SwapControl(ActivePlayerIndex, nextPlayerIndex);
+                }
+
+                // On désactive le perso et on le fait lâcher son ballon
                 MatchCharacterControllerView character = Allies[characterIndex];
                 character.EnableInput(false);
                 character.EnablePhysics(false);
@@ -849,12 +858,14 @@ namespace Assets.Scripts.Match
                     }
                 }
 
+                // Déplace le perso vers la queue des éliminés
                 _eliminatedAllies.Enqueue(character);
                 character.transform.SetParent(_eliminatedAlliesQueueT);
                 DisplayEliminatedCharacters(_eliminatedAlliesQueueT);
             }
             else
             {
+                // On désactive le perso et on le fait lâcher son ballon
                 MatchCharacterControllerView character = Enemies[characterIndex];
                 character.EnableInput(false);
                 character.EnablePhysics(false);
@@ -871,6 +882,7 @@ namespace Assets.Scripts.Match
                     }
                 }
 
+                // Déplace le perso vers la queue des éliminés
                 _eliminatedEnemies.Enqueue(character);
                 character.transform.SetParent(_eliminatedEnemiesQueueT);
                 DisplayEliminatedCharacters(_eliminatedEnemiesQueueT);
@@ -921,6 +933,31 @@ namespace Assets.Scripts.Match
         {
             _vm.ReleaseBall(characterIndex, characterIsAlly);
             character.ReleaseBall();
+        }
+
+        /// <summary>
+        /// Obtient l'index du prochain perso allié contrôlable
+        /// </summary>
+        /// <param name="activePlayerIndex">ID du perso actuellement contrôlé par le joueur</param>
+        /// <param name="nextPlayerIndex">ID du perso à contrôler</param>
+        /// <returns>true si un autre allié a pu être trouvé</returns>
+        private bool GetNextLivePlayer(int activePlayerIndex, out int nextPlayerIndex)
+        {
+            nextPlayerIndex = activePlayerIndex;
+
+            for (int i = 0; i < Allies.Count - 1;)
+            {
+                nextPlayerIndex = nextPlayerIndex == AllyStates.Count - 1 ? 0 : nextPlayerIndex + 1;
+
+                if (!AllyStates[nextPlayerIndex].IsEliminated)
+                {
+                    return true;
+                }
+
+                ++i;
+            }
+
+            return false;
         }
 
         /// <summary>
