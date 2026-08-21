@@ -14,10 +14,10 @@ namespace Assets.Scripts.Teams
     {
         [SerializeField]
         [Tooltip("Joueurs ppaux de l'équipe")]
-        public List<TeamCharacterSO> MainCharacters;
+        public List<CharacterSO> MainCharacters;
 
         [SerializeField]
         [Tooltip("Joueurs remplaçants de l'équipe")]
-        public List<TeamCharacterSO> Substitutes;
+        public List<CharacterSO> Substitutes;
     }
 }

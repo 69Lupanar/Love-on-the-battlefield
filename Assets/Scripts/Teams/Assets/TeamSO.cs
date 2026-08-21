@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 /// Représente une équipe de joueurs
 /// </summary>
-[CreateAssetMenu(fileName = "New Team Roster", menuName = "Scriptable Objects/Teams/Team Roster")]
+[CreateAssetMenu(fileName = "New Team", menuName = "Scriptable Objects/Teams/Team")]
 public class TeamSO : ScriptableObject
 {
     #region Inspecteur

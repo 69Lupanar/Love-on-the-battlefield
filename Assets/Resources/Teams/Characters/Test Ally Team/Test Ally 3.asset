@@ -12,42 +12,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40b3b9fb96c90934a85ad092dcf6f13e, type: 3}
   m_Name: Test Ally 3
   m_EditorClassIdentifier: Assets.Scripts.Teams::Assets.Scripts.Teams.TeamCharacterSO
-  Name: Test Ally 3
-  Appearance:
-    Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
-    Material: {fileID: 2100000, guid: 3dab45debd01e234f9f123ed162eacde, type: 2}
-  Stats:
-    Level: 30
-    Experience: 0
-    Strength: 30
-    Agility: 30
-    Endurance: 30
-    Affection: 30
-    MaxStrength: 100
-    MaxAgility: 100
-    MaxEndurance: 100
-    MaxAffection: 100
-  ExpProgressCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  Data:
+    Name: Test Ally 3
+    Appearance:
+      Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+      Material: {fileID: 2100000, guid: 3dab45debd01e234f9f123ed162eacde, type: 2}
+    Stats:
+      Level: 1
+      Experience: 0
+      Strength: 1
+      Agility: 1
+      Endurance: 1
+      Affection: 1
+      MaxStrength: 100
+      MaxAgility: 100
+      MaxEndurance: 100
+      MaxAffection: 100
+    ExpProgressCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 2
+        outSlope: 2
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4

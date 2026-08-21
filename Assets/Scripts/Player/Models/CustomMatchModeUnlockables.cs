@@ -17,6 +17,6 @@ namespace Assets.Scripts.Player
         /// <summary>
         /// Les personnages débloquées par le joueur
         /// </summary>
-        public static List<TeamCharacterSO> Characters = new();
+        public static List<CharacterSO> Characters = new();
     }
 }

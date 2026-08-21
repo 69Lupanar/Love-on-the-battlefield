@@ -366,7 +366,7 @@ namespace Assets.Scripts.Match
         /// <param name="enemiesT">Transforms des persos ennemis</param>
         /// <param name="allyTeamComposition">Composition de joueurs de l'équipe alliée</param>
         /// <param name="enemyTeamComposition">Composition de joueurs de l'équipe ennemie</param>
-        internal void SetEntities(List<Transform> alliesT, List<Transform> enemiesT, List<TeamCharacterSO> allyTeamComposition, List<TeamCharacterSO> enemyTeamComposition)
+        internal void SetEntities(List<Transform> alliesT, List<Transform> enemiesT, List<CharacterSO> allyTeamComposition, List<CharacterSO> enemyTeamComposition)
         {
             _vm.SetEntities(alliesT.Count, enemiesT.Count, _minBaseMovementData, _maxBaseMovementData, allyTeamComposition, enemyTeamComposition);
 

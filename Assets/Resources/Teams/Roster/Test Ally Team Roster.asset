@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6104ab45e45532140bcb83c9ea54b784, type: 3}
+  m_Name: Test Ally Team Roster
+  m_EditorClassIdentifier: Assets.Scripts.Teams::TeamRosterSO
+  Team: {fileID: 11400000, guid: c194d27dffc6b1e498d43fced8e528e3, type: 2}
+  Roster:
+    MainCharacters:
+    - {fileID: 11400000, guid: e644a7e4333af5746948a412d00ca862, type: 2}
+    - {fileID: 11400000, guid: 27be11a197baba04e82113728d258e1c, type: 2}
+    - {fileID: 11400000, guid: 8b88ea9ad767a664da4256b66c4dc502, type: 2}
+    - {fileID: 11400000, guid: 91118a1861e381f4ea451147f7c1c20c, type: 2}
+    - {fileID: 11400000, guid: 623ea2cf047f3424bb56ea72cf11d707, type: 2}
+    - {fileID: 11400000, guid: d48e0abb96c2340428d14b2a9694d5e9, type: 2}
+    Substitutes: []

@@ -145,7 +145,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         /// <param name="allies">Alliés</param>
         /// <param name="enemies">Ennemis</param>
-        internal void SetPlayersSkins(List<TeamCharacterSO> allies, List<TeamCharacterSO> enemies)
+        internal void SetPlayersSkins(List<CharacterSO> allies, List<CharacterSO> enemies)
         {
             // TAF : Remplacer le changement de mesh
             // une fois qu'on aura de vrais meshs de personnages
@@ -155,8 +155,8 @@ namespace Assets.Scripts.Match
                 // On retire le mesh précédent
                 MeshFilter mf = AlliesT[i].GetChild(0).GetChild(0).GetComponent<MeshFilter>();
                 MeshRenderer mr = AlliesT[i].GetChild(0).GetChild(0).GetComponent<MeshRenderer>();
-                mf.mesh = allies[i].Appearance.Mesh;
-                mr.material = allies[i].Appearance.Material;
+                mf.mesh = allies[i].Data.Appearance.Mesh;
+                mr.material = allies[i].Data.Appearance.Material;
             }
 
             for (int i = 0; i < EnemiesT.Count; ++i)
@@ -164,8 +164,8 @@ namespace Assets.Scripts.Match
                 // On retire le mesh précédent
                 MeshFilter mf = EnemiesT[i].GetChild(0).GetChild(0).GetComponent<MeshFilter>();
                 MeshRenderer mr = EnemiesT[i].GetChild(0).GetChild(0).GetComponent<MeshRenderer>();
-                mf.mesh = enemies[i].Appearance.Mesh;
-                mr.material = enemies[i].Appearance.Material;
+                mf.mesh = enemies[i].Data.Appearance.Mesh;
+                mr.material = enemies[i].Data.Appearance.Material;
             }
         }
 

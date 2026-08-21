@@ -61,7 +61,7 @@ namespace Assets.Scripts.Match
         /// <param name="maxBaseMovementData">Données de base du mouvement des persos</param>
         /// <param name="allyTeamComposition">Composition de joueurs de l'équipe alliée</param>
         /// <param name="enemyTeamComposition">Composition de joueurs de l'équipe ennemie</param>
-        internal void SetEntities(int nbAllies, int nbEnemies, MatchCharacterMovementData minBaseMovementData, MatchCharacterMovementData maxBaseMovementData, List<TeamCharacterSO> allyTeamComposition, List<TeamCharacterSO> enemyTeamComposition)
+        internal void SetEntities(int nbAllies, int nbEnemies, MatchCharacterMovementData minBaseMovementData, MatchCharacterMovementData maxBaseMovementData, List<CharacterSO> allyTeamComposition, List<CharacterSO> enemyTeamComposition)
         {
             AllyStates.Clear();
             EnemyStates.Clear();
@@ -69,13 +69,13 @@ namespace Assets.Scripts.Match
             for (int i = 0; i < nbAllies; ++i)
             {
                 AllyStates.Add(new MatchCharacterState());
-                AllyMovementDatas.Add(new MatchCharacterMovementData(allyTeamComposition[i].Stats, minBaseMovementData, maxBaseMovementData));
+                AllyMovementDatas.Add(new MatchCharacterMovementData(allyTeamComposition[i].Data.Stats, minBaseMovementData, maxBaseMovementData));
             }
 
             for (int i = 0; i < nbEnemies; ++i)
             {
                 EnemyStates.Add(new MatchCharacterState());
-                EnemyMovementDatas.Add(new MatchCharacterMovementData(enemyTeamComposition[i].Stats, minBaseMovementData, maxBaseMovementData));
+                EnemyMovementDatas.Add(new MatchCharacterMovementData(enemyTeamComposition[i].Data.Stats, minBaseMovementData, maxBaseMovementData));
             }
 
         }

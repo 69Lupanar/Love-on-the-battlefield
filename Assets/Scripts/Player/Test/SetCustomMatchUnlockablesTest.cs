@@ -8,6 +8,25 @@ namespace Assets.Scripts.Player.Test
     /// </summary>
     public sealed class SetCustomMatchUnlockablesTest : MonoBehaviour
     {
+        #region Inspecteur
+
+        [Tooltip("L'équipe par défaut du joueur pour ce test")]
+        public TeamRosterSO DefaultAllyTeam;
+
+        [Tooltip("L'équipe par défaut de l'IA ennemie pour ce test")]
+        public TeamRosterSO DefaultEnemyTeam;
+
+        #endregion
+
+        #region Instance
+
+        /// <summary>
+        /// La vue
+        /// </summary>
+        private CustomMatchTeamSelectionManagerView _view;
+
+        #endregion
+
         #region Méthodes Unity
 
         /// <summary>
@@ -15,11 +34,15 @@ namespace Assets.Scripts.Player.Test
         /// </summary>
         private void Awake()
         {
+            _view = FindAnyObjectByType<CustomMatchTeamSelectionManagerView>();
+
             // TAF : Pour les tests, on prend tout dans les Resources.
             // Pour le vrai jeu, utiliser des IDs pour retrouver les ressources correspondantes
 
             CustomMatchModeUnlockables.Teams.AddRange(GetTeamsUnlockedInCustomMatch());
             CustomMatchModeUnlockables.Characters.AddRange(GetCharactersUnlockedInCustomMatch());
+            _view.SetDefaultRosters(DefaultAllyTeam, DefaultEnemyTeam);
+
         }
 
         #endregion
@@ -37,9 +60,9 @@ namespace Assets.Scripts.Player.Test
         /// Obtient la liste des persos débloquées par le joueur
         /// </summary>
         /// <returns>La liste des persos débloquées par le joueur</returns>
-        private TeamCharacterSO[] GetCharactersUnlockedInCustomMatch()
+        private CharacterSO[] GetCharactersUnlockedInCustomMatch()
         {
-            return Resources.LoadAll<TeamCharacterSO>("Teams/Characters");
+            return Resources.LoadAll<CharacterSO>("Teams/Characters");
         }
     }
 }
