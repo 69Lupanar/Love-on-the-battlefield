@@ -7,18 +7,26 @@ namespace Assets.Scripts.Teams
     /// Données d'un personnage
     /// </summary>
     [Serializable]
-    public class CharacterData
+    public struct CharacterData
     {
-        [Tooltip("Le nom du personnage")]
+        /// <summary>
+        /// Le nom du personnage
+        /// </summary>
         public string Name;
 
-        [Tooltip("L'apparence du personnage")]
+        /// <summary>
+        /// L'apparence du personnage
+        /// </summary>
         public MatchCharacterSkinData Appearance;
 
-        [Tooltip("Les stats du personnage")]
+        /// <summary>
+        /// Les stats du personnage
+        /// </summary>
         public CharacterStatsData Stats;
 
-        [Tooltip("Courbe de progression du gain d'expérience du personnage")]
+        /// <summary>
+        /// Courbe de progression du gain d'expérience du personnage
+        /// </summary>
         public AnimationCurve ExpProgressCurve;
     }
 }

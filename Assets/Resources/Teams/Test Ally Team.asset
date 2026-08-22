@@ -14,12 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assets.Scripts.Teams::TeamRosterSO
   Data:
     Name: Test Ally Team
-    LogoSprite: {fileID: 0}
-    Color: {r: 0, g: 0, b: 1, a: 1}
-  Roster:
-  - {fileID: 11400000, guid: e644a7e4333af5746948a412d00ca862, type: 2}
-  - {fileID: 11400000, guid: 27be11a197baba04e82113728d258e1c, type: 2}
-  - {fileID: 11400000, guid: 8b88ea9ad767a664da4256b66c4dc502, type: 2}
-  - {fileID: 11400000, guid: 91118a1861e381f4ea451147f7c1c20c, type: 2}
-  - {fileID: 11400000, guid: 623ea2cf047f3424bb56ea72cf11d707, type: 2}
-  - {fileID: 11400000, guid: d48e0abb96c2340428d14b2a9694d5e9, type: 2}
+    LogoSprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+    Color: {r: 0.17254901, g: 0.38740987, b: 0.7882353, a: 1}
+  Name: Test Ally Team
+  LogoSprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  Color: {r: 0.17254901, g: 0.38740987, b: 0.7882353, a: 1}

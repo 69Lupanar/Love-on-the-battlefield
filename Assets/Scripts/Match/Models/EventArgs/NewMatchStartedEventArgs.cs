@@ -35,11 +35,11 @@ namespace Assets.Scripts.Match
         /// <param name="matchSettings">Paramètres d'un match</param>
         /// <param name="allyTeamComposition">Composition de joueurs de l'équipe alliée</param>
         /// <param name="enemyTeamComposition">Composition de joueurs de l'équipe ennemie</param>
-        public NewMatchStartedEventArgs(MatchSettingsData matchSettings, TeamRosterSO allyTeamComposition, TeamRosterSO enemyTeamComposition)
+        public NewMatchStartedEventArgs(MatchSettingsData matchSettings, TeamCompositionData allyTeamComposition, TeamCompositionData enemyTeamComposition)
         {
             MatchSettings = matchSettings;
-            AllyTeamComposition = allyTeamComposition.Roster;
-            EnemyTeamComposition = enemyTeamComposition.Roster;
+            AllyTeamComposition = allyTeamComposition;
+            EnemyTeamComposition = enemyTeamComposition;
         }
 
         #endregion

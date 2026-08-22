@@ -9,13 +9,19 @@ namespace Assets.Scripts.Teams
     [Serializable]
     public struct TeamData
     {
-        [Tooltip("Le nom de l'équipe")]
+        /// <summary>
+        /// Le nom de l'équipe
+        /// </summary>
         public string Name;
 
-        [Tooltip("Sprite du logo de l'équipe")]
+        /// <summary>
+        /// Sprite du logo de l'équipe
+        /// </summary>
         public Sprite LogoSprite;
 
-        [Tooltip("Couleur de l'équipe")]
+        /// <summary>
+        /// Couleur de l'équipe
+        /// </summary>
         public Color Color;
     }
 }

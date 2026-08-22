@@ -1,4 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Assets.Scripts.Player;
 using Assets.Scripts.Scenes;
+using Assets.Scripts.Teams;
 using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
@@ -11,6 +16,25 @@ namespace Assets.Scripts.Match
     /// </summary>
     public sealed class MatchSettingsView : MonoBehaviour
     {
+        #region Evénements
+
+        /// <summary>
+        /// Appelée quand on change d'équipe alliée
+        /// </summary>
+        public EventHandler<TeamRosterSO> OnAllyTeamChangedEvent { get; set; }
+
+        /// <summary>
+        /// Appelée quand on change d'équipe ennemie
+        /// </summary>
+        public EventHandler<TeamRosterSO> OnEnemyTeamChangedEvent { get; set; }
+
+        /// <summary>
+        /// Appelée quand on récupère les équipes et persos
+        /// </summary>
+        public EventHandler OnCustomMatchUnlockablesLoadedEvent { get; set; }
+
+        #endregion
+
         #region Inspecteur
 
         [SerializeField]
@@ -34,6 +58,14 @@ namespace Assets.Scripts.Match
         private TMP_InputField _setDurationField;
 
         [SerializeField]
+        [Tooltip("Dropdown pour choisir l'équipe alliée")]
+        private TMP_Dropdown _allyTeamField;
+
+        [SerializeField]
+        [Tooltip("Dropdown pour choisir l'équipe ennemie")]
+        private TMP_Dropdown _enemyTeamField;
+
+        [SerializeField]
         [Tooltip("La scène des matchs")]
         private SceneReference _matchScene;
 
@@ -41,13 +73,19 @@ namespace Assets.Scripts.Match
         [Tooltip("Paramètres d'un match")]
         private MatchSettingsData _matchSettings;
 
-        [SerializeField]
-        [Tooltip("Equipe par défaut pour les alliés")]
-        private TeamRosterSO _defaultAllyTeam;
+        #endregion
 
-        [SerializeField]
-        [Tooltip("Equipe par défaut pour les ennemis")]
-        private TeamRosterSO _defaultEnemyTeam;
+        #region Instance
+
+        /// <summary>
+        /// Equipe par défaut pour les alliés
+        /// </summary>
+        private TeamRosterSO _allyTeam;
+
+        /// <summary>
+        /// Equipe par défaut pour les ennemis
+        /// </summary>
+        private TeamRosterSO _enemyTeam;
 
         #endregion
 
@@ -58,7 +96,9 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void Start()
         {
-            UpdateUI();
+            GetCustomMatchUnlockables();
+            UpdateDropdowns();
+            UpdateInputFields();
         }
 
 #if UNITY_EDITOR
@@ -69,7 +109,7 @@ namespace Assets.Scripts.Match
         private void OnValidate()
         {
             if (Application.isPlaying)
-                UpdateUI();
+                UpdateInputFields();
         }
 
 #endif
@@ -124,6 +164,24 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
+        /// Appelée par le dropdown
+        /// </summary>
+        public void OnAllyTeamDropdownValueChanged(int index)
+        {
+            _allyTeam = CustomMatchModeUnlockables.Teams[index];
+            OnAllyTeamChangedEvent?.Invoke(this, _allyTeam);
+        }
+
+        /// <summary>
+        /// Appelée par le dropdown
+        /// </summary>
+        public void OnEnemyTeamDropdownValueChanged(int index)
+        {
+            _enemyTeam = CustomMatchModeUnlockables.Teams[index];
+            OnEnemyTeamChangedEvent?.Invoke(this, _enemyTeam);
+        }
+
+        /// <summary>
         /// Appelée par le bouton Start New Match
         /// </summary>
         public void OnStartNewMatchBtnClick()
@@ -134,7 +192,7 @@ namespace Assets.Scripts.Match
 
                 if (matchManager != null)
                 {
-                    matchManager.StartNewMatch(_matchSettings, _defaultAllyTeam, _defaultEnemyTeam);
+                    matchManager.StartNewMatch(_matchSettings, _allyTeam, _enemyTeam);
                     matchManager.StartNewSet();
                 }
             });
@@ -145,9 +203,42 @@ namespace Assets.Scripts.Match
         #region Méthodes privées
 
         /// <summary>
-        /// Màj l'ui
+        /// Obtient les joueurs et équipes débloqués pour le mode Custom Match
         /// </summary>
-        private void UpdateUI()
+        private void GetCustomMatchUnlockables()
+        {
+            CustomMatchModeUnlockables.Teams.Clear();
+            CustomMatchModeUnlockables.Characters.Clear();
+
+            // Equipes débloquées
+
+            CustomMatchModeUnlockables.Teams.AddRange(CustomMatchModeUnlockables.GetRostersUnlockedInCustomMatch());
+
+            // Persos débloqués
+
+            CustomMatchModeUnlockables.Characters.AddRange(CustomMatchModeUnlockables.GetCharactersUnlockedInCustomMatch());
+
+            OnCustomMatchUnlockablesLoadedEvent?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Màj les dropdowns
+        /// </summary>
+        private void UpdateDropdowns()
+        {
+            List<TMP_Dropdown.OptionData> options = CustomMatchModeUnlockables.Teams.Select(roster => new TMP_Dropdown.OptionData(roster.Team.Data.Name, roster.Team.Data.LogoSprite, roster.Team.Data.Color)).ToList();
+            _allyTeamField.AddOptions(options);
+            _enemyTeamField.AddOptions(options);
+
+            // Va automatiquement assigner les équipes pour nous
+            _allyTeamField.value = 0;
+            _enemyTeamField.value = 0;
+        }
+
+        /// <summary>
+        /// Màj les InputFields
+        /// </summary>
+        private void UpdateInputFields()
         {
             _nbAlliesField.SetTextWithoutNotify(_matchSettings.NbAllies.ToString());
             _nbEnemiesField.SetTextWithoutNotify(_matchSettings.NbEnemies.ToString());

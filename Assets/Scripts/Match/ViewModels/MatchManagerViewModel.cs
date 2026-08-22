@@ -106,7 +106,7 @@ namespace Assets.Scripts.Match
         /// <param name="matchSettings">Paramètres d'un match</param>
         /// <param name="allyTeamComposition">Composition de joueurs de l'équipe alliée</param>
         /// <param name="enemyTeamComposition">Composition de joueurs de l'équipe ennemie</param>
-        internal void StartNewMatch(MatchSettingsData matchSettings, TeamRosterSO allyTeamComposition, TeamRosterSO enemyTeamComposition)
+        internal void StartNewMatch(MatchSettingsData matchSettings, TeamCompositionData allyTeamComposition, TeamCompositionData enemyTeamComposition)
         {
             MatchTimer = 0;
             CurrentSet = 0;
@@ -114,8 +114,8 @@ namespace Assets.Scripts.Match
             EnemiesScore = 0;
             MatchIsOngoing = true;
             MatchSettingsData = matchSettings;
-            AllyTeamComposition = allyTeamComposition.Roster;
-            EnemyTeamComposition = enemyTeamComposition.Roster;
+            AllyTeamComposition = allyTeamComposition;
+            EnemyTeamComposition = enemyTeamComposition;
         }
 
         /// <summary>

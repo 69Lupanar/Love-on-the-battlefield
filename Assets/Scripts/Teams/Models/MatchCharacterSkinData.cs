@@ -9,10 +9,14 @@ namespace Assets.Scripts.Teams
     [Serializable]
     public struct MatchCharacterSkinData
     {
-        [Tooltip("Le modèle 3D du personnage")]
+        /// <summary>
+        /// Le modèle 3D du personnage
+        /// </summary>
         public Mesh Mesh;
 
-        [Tooltip("Le material appliqué au modèle 3D du personnage")]
+        /// <summary>
+        /// Le material appliqué au modèle 3D du personnage
+        /// </summary>
         public Material Material;
     }
 }

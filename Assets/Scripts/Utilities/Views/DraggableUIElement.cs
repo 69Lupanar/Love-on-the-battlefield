@@ -7,7 +7,7 @@ namespace Assets.Scripts.Utilities.Views
     /// <summary>
     /// Elément d'UI pouvant être glissé et déposé par l'utilisateur
     /// </summary>
-    public class DraggableAndDroppableUIElement : MonoBehaviour, IPointerDownHandler, IPointerMoveHandler, IPointerUpHandler
+    public abstract class DraggableUIElement : MonoBehaviour, IPointerDownHandler, IPointerMoveHandler, IPointerUpHandler
     {
         #region Evénements
 

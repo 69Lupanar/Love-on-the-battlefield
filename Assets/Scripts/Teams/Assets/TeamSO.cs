@@ -7,10 +7,23 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Team", menuName = "Scriptable Objects/Teams/Team")]
 public class TeamSO : ScriptableObject
 {
+    #region Propriétés
+
+    /// <summary>
+    /// Les données de l'équipe
+    /// </summary>
+    [HideInInspector]
+    public TeamData Data;
+
+    #endregion
+
     #region Inspecteur
 
-    [Tooltip("Les données de l'équipe")]
-    public TeamData Data;
+    [Tooltip("Sprite du logo de l'équipe")]
+    public Sprite LogoSprite;
+
+    [Tooltip("Couleur de l'équipe")]
+    public Color Color;
 
     #endregion
 
@@ -24,6 +37,8 @@ public class TeamSO : ScriptableObject
     private void OnValidate()
     {
         Data.Name = name;
+        Data.LogoSprite = LogoSprite;
+        Data.Color = Color;
     }
 
 #endif

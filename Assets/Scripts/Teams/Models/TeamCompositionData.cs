@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Assets.Scripts.Teams
 {
@@ -12,12 +11,33 @@ namespace Assets.Scripts.Teams
     [Serializable]
     public struct TeamCompositionData
     {
-        [SerializeField]
-        [Tooltip("Joueurs ppaux de l'équipe")]
-        public List<CharacterSO> MainCharacters;
+        #region Instance
 
-        [SerializeField]
-        [Tooltip("Joueurs remplaçants de l'équipe")]
-        public List<CharacterSO> Substitutes;
+        /// <summary>
+        /// Joueurs ppaux de l'équipe
+        /// </summary>
+        public List<CharacterData> MainCharacters;
+
+        /// <summary>
+        /// Joueurs remplaçants de l'équipe
+        /// </summary>
+        public List<CharacterData> Substitutes;
+
+        #endregion
+
+        #region Constructeur
+
+        /// <summary>
+        /// Constructeur
+        /// </summary>
+        /// <param name="mainCharacters">Joueurs ppaux de l'équipe</param>
+        /// <param name="substitutes">Joueurs remplaçants de l'équipe</param>
+        public TeamCompositionData(IEnumerable<CharacterData> mainCharacters, IEnumerable<CharacterData> substitutes)
+        {
+            MainCharacters = new List<CharacterData>(mainCharacters);
+            Substitutes = new List<CharacterData>(substitutes);
+        }
+
+        #endregion
     }
 }
