@@ -1,7 +1,8 @@
+using Assets.Scripts.Player;
 using Assets.Scripts.Teams;
 using UnityEngine;
 
-namespace Assets.Scripts.Player.Test
+namespace Assets.Scripts.Match.Test
 {
     /// <summary>
     /// Script de test pour vérifier le bon fonctionnement de la sélection de membres d'une équipe
@@ -39,7 +40,16 @@ namespace Assets.Scripts.Player.Test
             // TAF : Pour les tests, on prend tout dans les Resources.
             // Pour le vrai jeu, utiliser des IDs pour retrouver les ressources correspondantes
 
-            CustomMatchModeUnlockables.Teams.AddRange(GetTeamsUnlockedInCustomMatch());
+            foreach (TeamSO team in GetTeamsUnlockedInCustomMatch())
+            {
+                foreach (TeamRosterSO roster in GetRostersUnlockedInCustomMatch())
+                {
+                    if (roster.Team == team)
+                    {
+                        CustomMatchModeUnlockables.Teams.Add(team, roster);
+                    }
+                }
+            }
             CustomMatchModeUnlockables.Characters.AddRange(GetCharactersUnlockedInCustomMatch());
             _view.SetDefaultRosters(DefaultAllyTeam, DefaultEnemyTeam);
 
@@ -53,7 +63,16 @@ namespace Assets.Scripts.Player.Test
         /// <returns>La liste des équipes débloquées par le joueur</returns>
         private TeamSO[] GetTeamsUnlockedInCustomMatch()
         {
-            return Resources.LoadAll<TeamSO>("Teams/Rosters");
+            return Resources.LoadAll<TeamSO>("Teams");
+        }
+
+        /// <summary>
+        /// Obtient la liste des équipes débloquées par le joueur
+        /// </summary>
+        /// <returns>La liste des équipes débloquées par le joueur</returns>
+        private TeamRosterSO[] GetRostersUnlockedInCustomMatch()
+        {
+            return Resources.LoadAll<TeamRosterSO>("Rosters");
         }
 
         /// <summary>
@@ -62,7 +81,7 @@ namespace Assets.Scripts.Player.Test
         /// <returns>La liste des persos débloquées par le joueur</returns>
         private CharacterSO[] GetCharactersUnlockedInCustomMatch()
         {
-            return Resources.LoadAll<CharacterSO>("Teams/Characters");
+            return Resources.LoadAll<CharacterSO>("Characters");
         }
     }
 }

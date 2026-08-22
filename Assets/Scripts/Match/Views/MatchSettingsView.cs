@@ -1,5 +1,4 @@
 using Assets.Scripts.Scenes;
-using Assets.Scripts.Teams;
 using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
@@ -44,11 +43,11 @@ namespace Assets.Scripts.Match
 
         [SerializeField]
         [Tooltip("Equipe par défaut pour les alliés")]
-        private TeamCompositionData _allyTeamComposition;
+        private TeamRosterSO _defaultAllyTeam;
 
         [SerializeField]
         [Tooltip("Equipe par défaut pour les ennemis")]
-        private TeamCompositionData _enemyTeamComposition;
+        private TeamRosterSO _defaultEnemyTeam;
 
         #endregion
 
@@ -135,7 +134,7 @@ namespace Assets.Scripts.Match
 
                 if (matchManager != null)
                 {
-                    matchManager.StartNewMatch(_matchSettings, _allyTeamComposition, _enemyTeamComposition);
+                    matchManager.StartNewMatch(_matchSettings, _defaultAllyTeam, _defaultEnemyTeam);
                     matchManager.StartNewSet();
                 }
             });

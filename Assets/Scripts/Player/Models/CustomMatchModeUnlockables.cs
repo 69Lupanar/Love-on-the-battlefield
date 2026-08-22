@@ -12,7 +12,7 @@ namespace Assets.Scripts.Player
         /// <summary>
         /// Les équipes débloquées par le joueur
         /// </summary>
-        public static List<TeamSO> Teams = new();
+        public static Dictionary<TeamSO, TeamRosterSO> Teams = new();
 
         /// <summary>
         /// Les personnages débloquées par le joueur

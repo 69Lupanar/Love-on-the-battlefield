@@ -1,5 +1,4 @@
 using System;
-using Assets.Scripts.Teams;
 using TMPro;
 using UnityEngine;
 
@@ -164,7 +163,7 @@ namespace Assets.Scripts.Match
         /// <param name="matchSettings">Paramètres d'un match</param>
         /// <param name="allyTeamComposition">Composition de joueurs de l'équipe alliée</param>
         /// <param name="enemyTeamComposition">Composition de joueurs de l'équipe ennemie</param>
-        internal void StartNewMatch(MatchSettingsData matchSettings, TeamCompositionData allyTeamComposition, TeamCompositionData enemyTeamComposition)
+        internal void StartNewMatch(MatchSettingsData matchSettings, TeamRosterSO allyTeamComposition, TeamRosterSO enemyTeamComposition)
         {
             _vm.StartNewMatch(matchSettings, allyTeamComposition, enemyTeamComposition);
 
