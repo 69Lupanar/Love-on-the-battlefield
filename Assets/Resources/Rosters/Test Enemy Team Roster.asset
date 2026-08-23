@@ -17,8 +17,248 @@ MonoBehaviour:
     LogoSprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
     Color: {r: 0.78867924, g: 0.1711284, b: 0.1711284, a: 1}
   CompositionData:
-    MainCharacters: []
+    MainCharacters:
+    - Name: Test Enemy 1
+      Appearance:
+        Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+        Material: {fileID: 2100000, guid: c01d412add644044e9f876fc653cc18e, type: 2}
+      Stats:
+        Level: 1
+        Experience: 400
+        Strength: 1
+        Agility: 1
+        Endurance: 1
+        Affection: 1
+        MaxStrength: 100
+        MaxAgility: 100
+        MaxEndurance: 100
+        MaxAffection: 100
+      ExpProgressCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+    - Name: Test Enemy 2
+      Appearance:
+        Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+        Material: {fileID: 2100000, guid: c01d412add644044e9f876fc653cc18e, type: 2}
+      Stats:
+        Level: 1
+        Experience: 400
+        Strength: 1
+        Agility: 1
+        Endurance: 1
+        Affection: 1
+        MaxStrength: 100
+        MaxAgility: 100
+        MaxEndurance: 100
+        MaxAffection: 100
+      ExpProgressCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+    - Name: Test Enemy 3
+      Appearance:
+        Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+        Material: {fileID: 2100000, guid: c01d412add644044e9f876fc653cc18e, type: 2}
+      Stats:
+        Level: 1
+        Experience: 400
+        Strength: 1
+        Agility: 1
+        Endurance: 1
+        Affection: 1
+        MaxStrength: 100
+        MaxAgility: 100
+        MaxEndurance: 100
+        MaxAffection: 100
+      ExpProgressCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+    - Name: Test Enemy 4
+      Appearance:
+        Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+        Material: {fileID: 2100000, guid: c01d412add644044e9f876fc653cc18e, type: 2}
+      Stats:
+        Level: 1
+        Experience: 400
+        Strength: 1
+        Agility: 1
+        Endurance: 1
+        Affection: 1
+        MaxStrength: 100
+        MaxAgility: 100
+        MaxEndurance: 100
+        MaxAffection: 100
+      ExpProgressCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+    - Name: Test Enemy 5
+      Appearance:
+        Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+        Material: {fileID: 2100000, guid: c01d412add644044e9f876fc653cc18e, type: 2}
+      Stats:
+        Level: 1
+        Experience: 400
+        Strength: 1
+        Agility: 1
+        Endurance: 1
+        Affection: 1
+        MaxStrength: 100
+        MaxAgility: 100
+        MaxEndurance: 100
+        MaxAffection: 100
+      ExpProgressCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+    - Name: Test Enemy 6
+      Appearance:
+        Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+        Material: {fileID: 2100000, guid: c01d412add644044e9f876fc653cc18e, type: 2}
+      Stats:
+        Level: 1
+        Experience: 400
+        Strength: 1
+        Agility: 1
+        Endurance: 1
+        Affection: 1
+        MaxStrength: 100
+        MaxAgility: 100
+        MaxEndurance: 100
+        MaxAffection: 100
+      ExpProgressCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
     Substitutes: []
   Team: {fileID: 11400000, guid: 293cadb00d5f7c44ab3cc1912253c7b9, type: 2}
-  MainCharacters: []
+  MainCharacters:
+  - {fileID: 11400000, guid: 7c6d01634ada5e845ab1a2403ed1fc59, type: 2}
+  - {fileID: 11400000, guid: 337e1b351d42b494f994b87d1c5509b0, type: 2}
+  - {fileID: 11400000, guid: 6ba19c5626b3990449af12f9da63b12a, type: 2}
+  - {fileID: 11400000, guid: cf3149f39bccbc1489ea3ca857c2fccd, type: 2}
+  - {fileID: 11400000, guid: 54d17dd28451e9140bcc951b705534a8, type: 2}
+  - {fileID: 11400000, guid: 5e7cbdf38a46bfb46aff22fd2049240e, type: 2}
   Substitutes: []

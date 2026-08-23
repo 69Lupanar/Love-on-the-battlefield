@@ -5,6 +5,7 @@ using Assets.Scripts.Player;
 using Assets.Scripts.Teams;
 using Assets.Scripts.Utilities.Views;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 
 namespace Assets.Scripts.Match
@@ -24,6 +25,10 @@ namespace Assets.Scripts.Match
         [SerializeField]
         [Tooltip("Préfab des labels glissables/déposables dans l'interface")]
         private GameObject _draggableLabelPrefab;
+
+        [SerializeField]
+        [Tooltip("Le canvas parent")]
+        private RectTransform _draggedItemsRootParent;
 
         [SerializeField]
         [Tooltip("Parent des noms des joueurs ppaux")]
@@ -87,9 +92,13 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void Awake()
         {
+            _t = transform;
             _vm = GetComponent<CustomMatchTeamSelectionManagerViewModel>();
             _settingsV = FindAnyObjectByType<MatchSettingsView>();
-            _t = transform;
+
+            _settingsV.OnAllyTeamChangedEvent += OnAllyTeamChanged;
+            _settingsV.OnEnemyTeamChangedEvent += OnEnemyTeamChanged;
+            _settingsV.OnCustomMatchUnlockablesLoadedEvent += OnCustomMatchUnlockablesLoaded;
         }
 
         /// <summary>
@@ -98,9 +107,6 @@ namespace Assets.Scripts.Match
         private void Start()
         {
             _errorMsgLabel.SetText(string.Empty);
-            _settingsV.OnAllyTeamChangedEvent += OnAllyTeamChanged;
-            _settingsV.OnEnemyTeamChangedEvent += OnEnemyTeamChanged;
-            _settingsV.OnCustomMatchUnlockablesLoadedEvent += OnCustomMatchUnlockablesLoaded;
         }
 
         /// <summary>
@@ -108,9 +114,9 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void OnDestroy()
         {
-            _settingsV.OnAllyTeamChangedEvent += OnAllyTeamChanged;
-            _settingsV.OnEnemyTeamChangedEvent += OnEnemyTeamChanged;
-            _settingsV.OnCustomMatchUnlockablesLoadedEvent += OnCustomMatchUnlockablesLoaded;
+            _settingsV.OnAllyTeamChangedEvent -= OnAllyTeamChanged;
+            _settingsV.OnEnemyTeamChangedEvent -= OnEnemyTeamChanged;
+            _settingsV.OnCustomMatchUnlockablesLoadedEvent -= OnCustomMatchUnlockablesLoaded;
         }
 
         #endregion
@@ -120,44 +126,44 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Assigne les compositions d'équipe par défaut
         /// </summary>
-        /// <param name="allyTeam">Alliés</param>
-        internal void SetAllyTeam(TeamRosterSO allyTeam)
+        /// <param name="allyTeamComposition">Alliés</param>
+        internal void SetAllyTeam(TeamCompositionData allyTeamComposition)
         {
-            _vm.SetAllyTeam(allyTeam.CompositionData);
+            _vm.SetAllyTeam(allyTeamComposition);
 
             Clear(_allyMainParent);
             Clear(_allySubstituteParent);
 
-            for (int i = 0; i < allyTeam.CompositionData.MainCharacters.Count; ++i)
+            for (int i = 0; i < allyTeamComposition.MainCharacters.Count; ++i)
             {
-                CreateDraggableLabel(allyTeam.CompositionData.MainCharacters[i], _allyMainParent);
+                CreateDraggableLabel(allyTeamComposition.MainCharacters[i], _allyMainParent);
             }
 
-            for (int i = 0; i < allyTeam.CompositionData.Substitutes.Count; ++i)
+            for (int i = 0; i < allyTeamComposition.Substitutes.Count; ++i)
             {
-                CreateDraggableLabel(allyTeam.CompositionData.Substitutes[i], _allySubstituteParent);
+                CreateDraggableLabel(allyTeamComposition.Substitutes[i], _allySubstituteParent);
             }
         }
 
         /// <summary>
         /// Assigne les compositions d'équipe par défaut
         /// </summary>
-        /// <param name="enemyTeam">Ennemis</param>
-        internal void SetEnemyTeam(TeamRosterSO enemyTeam)
+        /// <param name="enemyTeamComposition">Ennemis</param>
+        internal void SetEnemyTeam(TeamCompositionData enemyTeamComposition)
         {
-            _vm.SetEnemyTeam(enemyTeam.CompositionData);
+            _vm.SetEnemyTeam(enemyTeamComposition);
 
             Clear(_enemyMainParent);
             Clear(_enemySubstituteParent);
 
-            for (int i = 0; i < enemyTeam.CompositionData.MainCharacters.Count; ++i)
+            for (int i = 0; i < enemyTeamComposition.MainCharacters.Count; ++i)
             {
-                CreateDraggableLabel(enemyTeam.CompositionData.MainCharacters[i], _enemyMainParent);
+                CreateDraggableLabel(enemyTeamComposition.MainCharacters[i], _enemyMainParent);
             }
 
-            for (int i = 0; i < enemyTeam.CompositionData.Substitutes.Count; ++i)
+            for (int i = 0; i < enemyTeamComposition.Substitutes.Count; ++i)
             {
-                CreateDraggableLabel(enemyTeam.CompositionData.Substitutes[i], _enemySubstituteParent);
+                CreateDraggableLabel(enemyTeamComposition.Substitutes[i], _enemySubstituteParent);
             }
         }
 
@@ -186,17 +192,17 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Appelée quand on change d'équipe alliée
         /// </summary>
-        private void OnAllyTeamChanged(object _, TeamRosterSO roster)
+        private void OnAllyTeamChanged(object _, TeamRosterSO teamComposition)
         {
-            SetAllyTeam(roster);
+            SetAllyTeam(teamComposition.CompositionData);
         }
 
         /// <summary>
         /// Appelée quand on change d'équipe ennemie
         /// </summary>
-        private void OnEnemyTeamChanged(object _, TeamRosterSO roster)
+        private void OnEnemyTeamChanged(object _, TeamRosterSO teamComposition)
         {
-            SetEnemyTeam(roster);
+            SetEnemyTeam(teamComposition.CompositionData);
         }
 
         /// <summary>
@@ -205,6 +211,34 @@ namespace Assets.Scripts.Match
         private void OnCustomMatchUnlockablesLoaded(object sender, EventArgs e)
         {
             SetReserveCharacters(CustomMatchModeUnlockables.Characters);
+        }
+
+        /// <summary>
+        /// Appelée quand on commence à glisser un label
+        /// </summary>
+        /// <param name="sender">L'objet</param>
+        private void OnDragStarted(object sender, EventArgs _)
+        {
+            (sender as DraggableLabel).transform.SetParent(_draggedItemsRootParent);
+        }
+
+        /// <summary>
+        /// Appelée quand on dépose un label
+        /// </summary>
+        /// <param name="sender">L'objet</param>
+        private void OnDropped(object sender, EventArgs _)
+        {
+            DraggableLabel label = sender as DraggableLabel;
+
+            if (label.LastParent == _reserveParent)
+            {
+                // Si le label vient de la réserve
+            }
+            else
+            {
+                // Si le label vient d'une des équipes
+
+            }
         }
 
         #endregion
@@ -234,13 +268,16 @@ namespace Assets.Scripts.Match
 
             if (_t.childCount > 0)
             {
-                Transform labelT = _t.GetChild(0);
-                labelT.SetParent(container);
-                label = labelT.GetComponent<DraggableLabel>();
+                Transform child = _t.GetChild(0);
+                child.gameObject.SetActive(true);
+                child.SetParent(container);
+                label = child.GetComponent<DraggableLabel>();
             }
             else
             {
                 label = Instantiate(_draggableLabelPrefab, container).GetComponent<DraggableLabel>();
+                label.OnDragStartedEvent += OnDragStarted;
+                label.OnDroppedEvent += OnDropped;
             }
 
             label.SetText(character.Name);

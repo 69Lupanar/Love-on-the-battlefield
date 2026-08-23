@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using Assets.Scripts.Teams;
 using UnityEngine;
 
@@ -35,7 +34,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Liste des persos en réserve
         /// </summary>
-        private List<CharacterData> _reserve = new();
+        private readonly List<CharacterData> _reserve = new();
 
         #endregion
 
@@ -47,9 +46,7 @@ namespace Assets.Scripts.Match
         /// <param name="allyTeamComposition">Alliés</param>
         internal void SetAllyTeam(TeamCompositionData allyTeamComposition)
         {
-            // On en crée une copie car on veut pouvoir changer les joueurs
-            // sans toucher à l'asset de base
-            AllyTeamComposition = allyTeamComposition.Clone();
+            AllyTeamComposition = allyTeamComposition;
         }
 
         /// <summary>
@@ -58,9 +55,7 @@ namespace Assets.Scripts.Match
         /// <param name="enemyTeamComposition">Ennemis</param>
         internal void SetEnemyTeam(TeamCompositionData enemyTeamComposition)
         {
-            // On en crée une copie car on veut pouvoir changer les joueurs
-            // sans toucher à l'asset de base
-            EnemyTeamComposition = enemyTeamComposition.Clone();
+            EnemyTeamComposition = enemyTeamComposition;
         }
 
         /// <summary>
@@ -70,14 +65,7 @@ namespace Assets.Scripts.Match
         internal void SetReserveCharacters(IEnumerable<CharacterData> characters)
         {
             _reserve.Clear();
-
-            // On vérifie que les personnages à ajouter ne sont pas déjà assignés à une équipe.
-            // Si ce n'est pas le cas, on les ajoute à la réserve.
-
-            _reserve.AddRange(characters.Where(character => !AllyTeamComposition.MainCharacters.Contains(character) &&
-                                                            !AllyTeamComposition.Substitutes.Contains(character) &&
-                                                            !EnemyTeamComposition.MainCharacters.Contains(character) &&
-                                                            !EnemyTeamComposition.Substitutes.Contains(character)));
+            _reserve.AddRange(characters);
         }
 
         #endregion

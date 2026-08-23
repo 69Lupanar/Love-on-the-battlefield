@@ -19,7 +19,7 @@ MonoBehaviour:
       Material: {fileID: 2100000, guid: 3dab45debd01e234f9f123ed162eacde, type: 2}
     Stats:
       Level: 1
-      Experience: 0
+      Experience: 400
       Strength: 1
       Agility: 1
       Endurance: 1

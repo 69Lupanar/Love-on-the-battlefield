@@ -7,7 +7,7 @@ namespace Assets.Scripts.Utilities.Views
     /// <summary>
     /// Elément d'UI pouvant être glissé et déposé par l'utilisateur
     /// </summary>
-    public abstract class DraggableUIElement : MonoBehaviour, IPointerDownHandler, IPointerMoveHandler, IPointerUpHandler
+    public abstract class DraggableUIElement : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         #region Evénements
 
@@ -32,6 +32,15 @@ namespace Assets.Scripts.Utilities.Views
 
         #endregion
 
+        #region Instance
+
+        /// <summary>
+        /// true si l'élément est manipulé
+        /// </summary>
+        protected bool _isDragging;
+
+        #endregion
+
         #region Méthodes Unity
 
         /// <summary>
@@ -49,9 +58,9 @@ namespace Assets.Scripts.Utilities.Views
         /// <summary>
         ///  Appelée quand on commence à glisser l'objet
         /// </summary>
-        /// <param name="_"></param>
-        public void OnPointerDown(PointerEventData _)
+        public void OnBeginDrag(PointerEventData eventData)
         {
+            _isDragging = true;
             OnDragStartedEvent?.Invoke(this, EventArgs.Empty);
         }
 
@@ -59,17 +68,21 @@ namespace Assets.Scripts.Utilities.Views
         ///  Appelée quand on glisse l'objet
         /// </summary>
         /// <param name="eventData">Contexte</param>
-        public void OnPointerMove(PointerEventData eventData)
+        public void OnDrag(PointerEventData eventData)
         {
-            transform.position = eventData.position;
+            if (_isDragging)
+            {
+                transform.position += new Vector3(eventData.delta.x, eventData.delta.y);
+            }
         }
 
         /// <summary>
         ///  Appelée quand on dépose l'objet
         /// </summary>
         /// <param name="_"></param>
-        public void OnPointerUp(PointerEventData _)
+        public void OnEndDrag(PointerEventData eventData)
         {
+            _isDragging = false;
             OnDroppedEvent?.Invoke(this, EventArgs.Empty);
         }
 

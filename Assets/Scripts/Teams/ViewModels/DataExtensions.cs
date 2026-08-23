@@ -13,9 +13,12 @@ namespace Assets.Scripts.Teams
         /// </summary>
         /// <param name="source">Données d'origine</param>
         /// <returns>Une copie des données</returns>
-        public static TeamCompositionData Clone(this TeamCompositionData source)
+        public static TeamRosterSO Clone(this TeamRosterSO source)
         {
-            return new TeamCompositionData(source.MainCharacters, source.Substitutes);
+            TeamRosterSO clone = ScriptableObject.CreateInstance<TeamRosterSO>();
+            clone.TeamData = source.TeamData;
+            clone.CompositionData = new TeamCompositionData(source.CompositionData.MainCharacters, source.CompositionData.Substitutes);
+            return clone;
         }
 
         /// <summary>

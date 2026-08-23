@@ -12,13 +12,253 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6104ab45e45532140bcb83c9ea54b784, type: 3}
   m_Name: Test Ally Team Roster
   m_EditorClassIdentifier: Assets.Scripts.Teams::TeamRosterSO
-  Team: {fileID: 11400000, guid: c194d27dffc6b1e498d43fced8e528e3, type: 2}
-  Roster:
+  TeamData:
+    Name: Test Ally Team
+    LogoSprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+    Color: {r: 0.17254901, g: 0.38740987, b: 0.7882353, a: 1}
+  CompositionData:
     MainCharacters:
-    - {fileID: 11400000, guid: e644a7e4333af5746948a412d00ca862, type: 2}
-    - {fileID: 11400000, guid: 27be11a197baba04e82113728d258e1c, type: 2}
-    - {fileID: 11400000, guid: 8b88ea9ad767a664da4256b66c4dc502, type: 2}
-    - {fileID: 11400000, guid: 91118a1861e381f4ea451147f7c1c20c, type: 2}
-    - {fileID: 11400000, guid: 623ea2cf047f3424bb56ea72cf11d707, type: 2}
-    - {fileID: 11400000, guid: d48e0abb96c2340428d14b2a9694d5e9, type: 2}
+    - Name: Test Ally 1
+      Appearance:
+        Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+        Material: {fileID: 2100000, guid: 3dab45debd01e234f9f123ed162eacde, type: 2}
+      Stats:
+        Level: 1
+        Experience: 400
+        Strength: 1
+        Agility: 1
+        Endurance: 1
+        Affection: 1
+        MaxStrength: 100
+        MaxAgility: 100
+        MaxEndurance: 100
+        MaxAffection: 100
+      ExpProgressCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+    - Name: Test Ally 2
+      Appearance:
+        Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+        Material: {fileID: 2100000, guid: 3dab45debd01e234f9f123ed162eacde, type: 2}
+      Stats:
+        Level: 1
+        Experience: 400
+        Strength: 1
+        Agility: 1
+        Endurance: 1
+        Affection: 1
+        MaxStrength: 100
+        MaxAgility: 100
+        MaxEndurance: 100
+        MaxAffection: 100
+      ExpProgressCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+    - Name: Test Ally 3
+      Appearance:
+        Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+        Material: {fileID: 2100000, guid: 3dab45debd01e234f9f123ed162eacde, type: 2}
+      Stats:
+        Level: 1
+        Experience: 400
+        Strength: 1
+        Agility: 1
+        Endurance: 1
+        Affection: 1
+        MaxStrength: 100
+        MaxAgility: 100
+        MaxEndurance: 100
+        MaxAffection: 100
+      ExpProgressCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+    - Name: Test Ally 4
+      Appearance:
+        Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+        Material: {fileID: 2100000, guid: 3dab45debd01e234f9f123ed162eacde, type: 2}
+      Stats:
+        Level: 1
+        Experience: 400
+        Strength: 1
+        Agility: 1
+        Endurance: 1
+        Affection: 1
+        MaxStrength: 100
+        MaxAgility: 100
+        MaxEndurance: 100
+        MaxAffection: 100
+      ExpProgressCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+    - Name: Test Ally 5
+      Appearance:
+        Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+        Material: {fileID: 2100000, guid: 3dab45debd01e234f9f123ed162eacde, type: 2}
+      Stats:
+        Level: 1
+        Experience: 400
+        Strength: 1
+        Agility: 1
+        Endurance: 1
+        Affection: 1
+        MaxStrength: 100
+        MaxAgility: 100
+        MaxEndurance: 100
+        MaxAffection: 100
+      ExpProgressCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+    - Name: Test Ally 6
+      Appearance:
+        Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+        Material: {fileID: 2100000, guid: 3dab45debd01e234f9f123ed162eacde, type: 2}
+      Stats:
+        Level: 1
+        Experience: 400
+        Strength: 1
+        Agility: 1
+        Endurance: 1
+        Affection: 1
+        MaxStrength: 100
+        MaxAgility: 100
+        MaxEndurance: 100
+        MaxAffection: 100
+      ExpProgressCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
     Substitutes: []
+  Team: {fileID: 11400000, guid: c194d27dffc6b1e498d43fced8e528e3, type: 2}
+  MainCharacters:
+  - {fileID: 11400000, guid: e644a7e4333af5746948a412d00ca862, type: 2}
+  - {fileID: 11400000, guid: 27be11a197baba04e82113728d258e1c, type: 2}
+  - {fileID: 11400000, guid: 8b88ea9ad767a664da4256b66c4dc502, type: 2}
+  - {fileID: 11400000, guid: 91118a1861e381f4ea451147f7c1c20c, type: 2}
+  - {fileID: 11400000, guid: 623ea2cf047f3424bb56ea72cf11d707, type: 2}
+  - {fileID: 11400000, guid: d48e0abb96c2340428d14b2a9694d5e9, type: 2}
+  Substitutes: []

@@ -216,13 +216,7 @@ namespace Assets.Scripts.Match
             _matchV = FindAnyObjectByType<MatchManagerView>();
             _spawnerV = FindAnyObjectByType<MatchSpawnerView>();
             _ballManagerV = FindAnyObjectByType<MatchBallManagerView>();
-        }
 
-        /// <summary>
-        /// Init
-        /// </summary>
-        private void Start()
-        {
             _matchV.OnNewMatchStartedEvent += OnNewMatchStarted;
             _matchV.OnNewSetStartedEvent += OnNewSetStarted;
             _matchV.OnSetEndedEvent += OnSetEnded;

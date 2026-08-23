@@ -8,12 +8,12 @@ namespace Assets.Scripts.Teams
         /// <summary>
         /// Niveau max atteignable par un personnage
         /// </summary>
-        public const int MAX_LEVEL = 100;
+        public const byte MAX_LEVEL = 100;
 
         /// <summary>
         /// Valeur max atteignable par une stat
         /// </summary>
-        public const int MAX_STAT_VALUE = 100;
+        public const byte MAX_STAT_VALUE = 100;
 
         /// <summary>
         /// Total d'expérience nécessaire pour atteindre le niveau maximum

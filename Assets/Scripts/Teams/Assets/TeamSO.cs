@@ -19,11 +19,13 @@ public class TeamSO : ScriptableObject
 
     #region Inspecteur
 
+    [SerializeField]
     [Tooltip("Sprite du logo de l'équipe")]
-    public Sprite LogoSprite;
+    private Sprite LogoSprite;
 
+    [SerializeField]
     [Tooltip("Couleur de l'équipe")]
-    public Color Color;
+    private Color Color;
 
     #endregion
 

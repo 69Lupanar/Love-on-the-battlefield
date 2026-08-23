@@ -21,54 +21,67 @@ namespace Assets.Scripts.Teams
 
         #region Inspecteur
 
+        [SerializeField]
         [Tooltip("Le modèle 3D du personnage")]
-        public Mesh Mesh;
+        private Mesh Mesh;
 
+        [SerializeField]
         [Tooltip("Le material appliqué au modèle 3D du personnage")]
-        public Material Material;
+        private Material Material;
 
+        [SerializeField]
         [Min(1)]
         [Tooltip("Niveau d'un personnage. Ses stats augmentent quand il gagne un niveau. Détermine aussi le niveau d'intelligence des IAs.")]
-        public byte Level;
+        private int Level;
 
+        [SerializeField]
         [HideInInspector]
         [Tooltip("Expérience du personnage, gagnée en participant à des matchs où d'autres événements de l'histoire.")]
-        public uint Experience;
+        private int Experience;
 
+        [SerializeField]
         [Min(1)]
         [Tooltip("Force d'un personnage, représentant sa force de tir et de saut")]
-        public byte Strength;
+        private int Strength;
 
+        [SerializeField]
         [Min(1)]
         [Tooltip("Agilité d'un personnage, représentant sa capacité à esquiver et bloquer les tirs")]
-        public byte Agility;
+        private int Agility;
 
+        [SerializeField]
         [Min(1)]
         [Tooltip("Endurance d'un personnage, représentant sa capacité totale d'énergie")]
-        public byte Endurance;
+        private int Endurance;
 
+        [SerializeField]
         [Min(1)]
         [Tooltip("Affection d'un personnage, représentant le taux de succès de son coup spécial ainsi que la vitesse d'exécution de ce dernier")]
-        public byte Affection;
+        private int Affection;
 
+        [SerializeField]
         [Min(1)]
         [Tooltip("Force max que peut atteindre le personnage")]
-        public byte MaxStrength;
+        private int MaxStrength;
 
+        [SerializeField]
         [Min(1)]
         [Tooltip("Agilité max que peut atteindre le personnage")]
-        public byte MaxAgility;
+        private int MaxAgility;
 
+        [SerializeField]
         [Min(1)]
         [Tooltip("Endurance max que peut atteindre le personnage")]
-        public byte MaxEndurance;
+        private int MaxEndurance;
 
+        [SerializeField]
         [Min(1)]
         [Tooltip("Affection max que peut atteindre le personnage")]
-        public byte MaxAffection;
+        private int MaxAffection;
 
+        [SerializeField]
         [Tooltip("Courbe de progression du gain d'expérience du personnage")]
-        public AnimationCurve ExpProgressCurve;
+        private AnimationCurve ExpProgressCurve;
 
         #endregion
 
@@ -85,26 +98,26 @@ namespace Assets.Scripts.Teams
             Data.Appearance.Mesh = Mesh;
             Data.Appearance.Material = Material;
 
-            Level = (byte)math.clamp(Level, 1, Constants.MAX_LEVEL);
-            MaxStrength = (byte)math.clamp(MaxStrength, 1, Constants.MAX_STAT_VALUE);
-            MaxAgility = (byte)math.clamp(MaxAgility, 1, Constants.MAX_STAT_VALUE);
-            MaxEndurance = (byte)math.clamp(MaxEndurance, 1, Constants.MAX_STAT_VALUE);
-            MaxAffection = (byte)math.clamp(MaxAffection, 1, Constants.MAX_STAT_VALUE);
-            Strength = (byte)math.clamp(Strength, 1, MaxStrength);
-            Agility = (byte)math.clamp(Agility, 1, MaxAgility);
-            Endurance = (byte)math.clamp(Endurance, 1, MaxEndurance);
-            Affection = (byte)math.clamp(Affection, 1, MaxAffection);
+            Level = math.clamp(Level, 1, Constants.MAX_LEVEL);
+            MaxStrength = math.clamp(MaxStrength, 1, Constants.MAX_STAT_VALUE);
+            MaxAgility = math.clamp(MaxAgility, 1, Constants.MAX_STAT_VALUE);
+            MaxEndurance = math.clamp(MaxEndurance, 1, Constants.MAX_STAT_VALUE);
+            MaxAffection = math.clamp(MaxAffection, 1, Constants.MAX_STAT_VALUE);
+            Strength = math.clamp(Strength, 1, MaxStrength);
+            Agility = math.clamp(Agility, 1, MaxAgility);
+            Endurance = math.clamp(Endurance, 1, MaxEndurance);
+            Affection = math.clamp(Affection, 1, MaxAffection);
 
-            Data.Stats.Level = Level;
-            Data.Stats.Experience = DataExtensions.GetExpUntilNextLevel(Level, ExpProgressCurve);
-            Data.Stats.MaxStrength = MaxStrength;
-            Data.Stats.MaxAgility = MaxAgility;
-            Data.Stats.MaxEndurance = MaxEndurance;
-            Data.Stats.MaxAffection = MaxAffection;
-            Data.Stats.Strength = Strength;
-            Data.Stats.Agility = Agility;
-            Data.Stats.Endurance = Endurance;
-            Data.Stats.Affection = Affection;
+            Data.Stats.Level = (byte)Level;
+            Data.Stats.Experience = DataExtensions.GetExpUntilNextLevel((uint)Level, ExpProgressCurve);
+            Data.Stats.MaxStrength = (byte)MaxStrength;
+            Data.Stats.MaxAgility = (byte)MaxAgility;
+            Data.Stats.MaxEndurance = (byte)MaxEndurance;
+            Data.Stats.MaxAffection = (byte)MaxAffection;
+            Data.Stats.Strength = (byte)Strength;
+            Data.Stats.Agility = (byte)Agility;
+            Data.Stats.Endurance = (byte)Endurance;
+            Data.Stats.Affection = (byte)Affection;
         }
 
 #endif

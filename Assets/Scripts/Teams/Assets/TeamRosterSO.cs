@@ -32,14 +32,17 @@ namespace Assets.Scripts.Teams
 
         #region Inspecteur
 
+        [SerializeField]
         [Tooltip("Les données de l'équipe")]
-        public TeamSO Team;
+        private TeamSO Team;
 
+        [SerializeField]
         [Tooltip("Joueurs ppaux de l'équipe")]
-        public List<CharacterSO> MainCharacters;
+        private List<CharacterSO> MainCharacters;
 
+        [SerializeField]
         [Tooltip("Joueurs remplaçants de l'équipe")]
-        public List<CharacterSO> Substitutes;
+        private List<CharacterSO> Substitutes;
 
         #endregion
 

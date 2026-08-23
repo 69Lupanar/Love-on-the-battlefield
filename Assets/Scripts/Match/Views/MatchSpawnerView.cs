@@ -52,13 +52,6 @@ namespace Assets.Scripts.Match
         {
             _vm = GetComponent<MatchSpawnerViewModel>();
             _matchV = FindAnyObjectByType<MatchManagerView>();
-        }
-
-        /// <summary>
-        /// Init
-        /// </summary>
-        private void Start()
-        {
             _matchV.OnNewMatchStartedEvent += OnNewMatchStarted;
             _matchV.OnNewSetStartedEvent += OnNewSetStarted;
             _matchV.OnMatchEndedEvent += OnMatchEnded;

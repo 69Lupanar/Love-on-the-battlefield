@@ -168,7 +168,9 @@ namespace Assets.Scripts.Match
         /// </summary>
         public void OnAllyTeamDropdownValueChanged(int index)
         {
-            _allyTeam = CustomMatchModeUnlockables.Teams[index];
+            // On en crée une copie car on veut pouvoir changer les joueurs
+            // sans toucher à l'asset de base
+            _allyTeam = CustomMatchModeUnlockables.Teams[index].Clone();
             OnAllyTeamChangedEvent?.Invoke(this, _allyTeam);
         }
 
@@ -177,7 +179,9 @@ namespace Assets.Scripts.Match
         /// </summary>
         public void OnEnemyTeamDropdownValueChanged(int index)
         {
-            _enemyTeam = CustomMatchModeUnlockables.Teams[index];
+            // On en crée une copie car on veut pouvoir changer les joueurs
+            // sans toucher à l'asset de base
+            _enemyTeam = CustomMatchModeUnlockables.Teams[index].Clone();
             OnEnemyTeamChangedEvent?.Invoke(this, _enemyTeam);
         }
 
@@ -226,7 +230,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void UpdateDropdowns()
         {
-            List<TMP_Dropdown.OptionData> options = CustomMatchModeUnlockables.Teams.Select(roster => new TMP_Dropdown.OptionData(roster.Team.Data.Name, roster.Team.Data.LogoSprite, roster.Team.Data.Color)).ToList();
+            List<TMP_Dropdown.OptionData> options = CustomMatchModeUnlockables.Teams.Select(roster => new TMP_Dropdown.OptionData(roster.TeamData.Name, roster.TeamData.LogoSprite, roster.TeamData.Color)).ToList();
             _allyTeamField.AddOptions(options);
             _enemyTeamField.AddOptions(options);
 
