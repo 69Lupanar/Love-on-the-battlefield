@@ -164,14 +164,14 @@ namespace Assets.Scripts.Match
         /// <param name="matchSettings">Paramètres d'un match</param>
         /// <param name="allyTeam">Composition de joueurs de l'équipe alliée</param>
         /// <param name="enemyTeam">Composition de joueurs de l'équipe ennemie</param>
-        internal void StartNewMatch(MatchSettingsData matchSettings, TeamRosterSO allyTeam, TeamRosterSO enemyTeam)
+        internal void StartNewMatch(MatchSettingsData matchSettings, TeamCompositionData allyTeam, TeamCompositionData enemyTeam)
         {
-            _vm.StartNewMatch(matchSettings, allyTeam.CompositionData, enemyTeam.CompositionData);
+            _vm.StartNewMatch(matchSettings, allyTeam, enemyTeam);
 
             _matchDurationField.SetText("0:00");
             _currentSetField.SetText("0");
 
-            OnNewMatchStartedEvent?.Invoke(this, new NewMatchStartedEventArgs(matchSettings, allyTeam.CompositionData, enemyTeam.CompositionData));
+            OnNewMatchStartedEvent?.Invoke(this, new NewMatchStartedEventArgs(matchSettings, allyTeam, enemyTeam));
         }
 
         /// <summary>

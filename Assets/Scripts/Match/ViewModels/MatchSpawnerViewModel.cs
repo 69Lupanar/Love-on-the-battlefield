@@ -150,7 +150,7 @@ namespace Assets.Scripts.Match
             // TAF : Remplacer le changement de mesh
             // une fois qu'on aura de vrais meshs de personnages
 
-            for (int i = 0; i < AlliesT.Count; ++i)
+            for (int i = 0; i < allies.Count; ++i)
             {
                 // On retire le mesh précédent
                 MeshFilter mf = AlliesT[i].GetChild(0).GetChild(0).GetComponent<MeshFilter>();
@@ -159,7 +159,7 @@ namespace Assets.Scripts.Match
                 mr.material = allies[i].Appearance.Material;
             }
 
-            for (int i = 0; i < EnemiesT.Count; ++i)
+            for (int i = 0; i < enemies.Count; ++i)
             {
                 // On retire le mesh précédent
                 MeshFilter mf = EnemiesT[i].GetChild(0).GetChild(0).GetComponent<MeshFilter>();

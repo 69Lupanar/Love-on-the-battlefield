@@ -362,7 +362,7 @@ namespace Assets.Scripts.Match
         /// <param name="enemyTeamComposition">Composition de joueurs de l'équipe ennemie</param>
         internal void SetEntities(List<Transform> alliesT, List<Transform> enemiesT, List<CharacterData> allyTeamComposition, List<CharacterData> enemyTeamComposition)
         {
-            _vm.SetEntities(alliesT.Count, enemiesT.Count, _minBaseMovementData, _maxBaseMovementData, allyTeamComposition, enemyTeamComposition);
+            _vm.SetEntities(_minBaseMovementData, _maxBaseMovementData, allyTeamComposition, enemyTeamComposition);
 
             _allies.Clear();
             _enemies.Clear();
