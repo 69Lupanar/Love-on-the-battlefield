@@ -42,18 +42,18 @@ namespace Assets.Scripts.Match
         [Tooltip("Paramètres d'un match")]
         private MatchSettingsData _matchSettings;
 
+        #endregion
+
+        #region Instance
+
         /// <summary>
         /// Composition de l'équipe alliée
         /// </summary>
-        [SerializeField]
-        [Tooltip("Composition de l'équipe alliée")]
         private TeamRosterSO _allyTeam;
 
         /// <summary>
         /// Composition de l'équipe ennemie
         /// </summary>
-        [SerializeField]
-        [Tooltip("Composition de l'équipe ennemie")]
         private TeamRosterSO _enemyTeam;
 
         #endregion
@@ -84,6 +84,18 @@ namespace Assets.Scripts.Match
         #endregion
 
         #region Méthodes publiques
+
+        /// <summary>
+        /// Assigne les équipes devant être jouées
+        /// </summary>
+        /// <param name="allyTeam">Alliés</param>
+        /// <param name="enemyTeam">Ennemis</param>
+        public void SetTeams(TeamRosterSO allyTeam, TeamRosterSO enemyTeam)
+        {
+            //On en fait des copies pour éviter de modifier les assets d'origine
+            _allyTeam = allyTeam.Clone();
+            _enemyTeam = enemyTeam.Clone();
+        }
 
         /// <summary>
         /// Appelée par l'InputField
