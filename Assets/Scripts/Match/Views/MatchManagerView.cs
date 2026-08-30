@@ -208,10 +208,8 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal void ResumeMatchAfterHalfTime()
         {
-            DecideNext();
+            StartNewSet();
             _vm.ResumeMatch();
-
-            OnHalfTimeEndedEvent?.Invoke(this, new HalfTimeEndedEventArgs(_vm.AllyTeamComposition, _vm.EnemyTeamComposition));
         }
 
         #endregion
