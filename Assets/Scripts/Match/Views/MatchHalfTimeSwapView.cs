@@ -1,4 +1,5 @@
 ﻿using System;
+using Assets.Scripts.Scenes;
 using Assets.Scripts.Teams;
 using Assets.Scripts.Utilities.Views;
 using UnityEngine;
@@ -37,6 +38,10 @@ namespace Assets.Scripts.Match
         [Tooltip("Parent des noms des joueurs remplaçants")]
         private RectTransform _enemySubstituteParent;
 
+        [SerializeField]
+        [Tooltip("La scène de rotation des joueurs à la mi-temps")]
+        private SceneReference _halfTimeSwapScene;
+
         #endregion
 
         #region Instance
@@ -67,6 +72,36 @@ namespace Assets.Scripts.Match
         #endregion
 
         #region Méthodes publiques
+
+        /// <summary>
+        /// Appelée par le bouton de reprise du match
+        /// </summary>
+        public void OnResumeMatchBtnClick()
+        {
+            SceneLoader.UnloadSceneAsync(_halfTimeSwapScene, () =>
+            {
+                // Une fois la scène déchargée, on réassigne les joueurs actifs
+                // et on démarre une nouvelle manche
+                MatchManagerView matchManager = FindAnyObjectByType<MatchManagerView>();
+
+                if (matchManager != null)
+                {
+                    matchManager.ResumeMatchAfterHalfTime();
+                }
+            });
+        }
+
+        /// <summary>
+        /// Appelée par le bouton de rotation des ennemis
+        /// </summary>
+        public void OnSwapEnemiesBtn()
+        {
+            SwapEnemies();
+        }
+
+        #endregion
+
+        #region Méthodes internes
 
         /// <summary>
         /// Assigne les compositions d'équipe par défaut
@@ -169,6 +204,19 @@ namespace Assets.Scripts.Match
             }
 
             label.SetText(character.Name);
+        }
+
+        /// <summary>
+        /// Fait tourner les membres de l'équipe ennemie.
+        /// Le changement est fait aléatoirement par le jeu
+        /// en s'adaptant à la formation du joueur
+        /// ou en fonction de la progression dans l'histoire (à déterminer)
+        /// </summary>
+        private void SwapEnemies()
+        {
+            //TAF : Faire la rotation et afficher les changements dans l'UI
+
+            _vm.SwapEnemies();
         }
 
         #endregion

@@ -1439,6 +1439,9 @@ MonoBehaviour:
   _currentSetField: {fileID: 8038552504006798873}
   _alliesScoreField: {fileID: 7184995455295295286}
   _enemiesScoreField: {fileID: 7629657810610288732}
+  _halfTimeSwapScene:
+    sceneAsset: {fileID: 102900000, guid: f193aae910347e241bffe1d248f8920b, type: 3}
+    scenePath: Assets/Scenes/HalfTimeSwapUIScene.unity
 --- !u!114 &1831745582
 MonoBehaviour:
   m_ObjectHideFlags: 0

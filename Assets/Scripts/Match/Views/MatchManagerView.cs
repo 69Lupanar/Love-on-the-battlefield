@@ -1,4 +1,5 @@
 using System;
+using Assets.Scripts.Scenes;
 using Assets.Scripts.Teams;
 using TMPro;
 using UnityEngine;
@@ -17,6 +18,11 @@ namespace Assets.Scripts.Match
         /// Appelée quand un nouveau match commence
         /// </summary>
         internal EventHandler<NewMatchStartedEventArgs> OnNewMatchStartedEvent;
+
+        /// <summary>
+        /// Appelée quand un nouveau match commence
+        /// </summary>
+        internal EventHandler<HalfTimeEndedEventArgs> OnHalfTimeEndedEvent;
 
         /// <summary>
         /// Appelée quand une nouvelle manche commence
@@ -70,6 +76,10 @@ namespace Assets.Scripts.Match
         [SerializeField]
         [Tooltip("Label affichant le score des ennemis")]
         private TextMeshProUGUI _enemiesScoreField;
+
+        [SerializeField]
+        [Tooltip("La scène de rotation des joueurs à la mi-temps")]
+        private SceneReference _halfTimeSwapScene;
 
         #endregion
 
@@ -149,6 +159,7 @@ namespace Assets.Scripts.Match
                         // Arrête la manche une fois son temps écoulé
                         // si elle n'est pas en mort subite.
                         EndSet(_vm.GetSetWinningTeam());
+                        DecideNext();
                     }
                 }
             }
@@ -192,6 +203,17 @@ namespace Assets.Scripts.Match
             // TAF: Démarrer le décompte avant de rendre le contrôle aux persos
         }
 
+        /// <summary>
+        /// Reprend le match après la mi-temps
+        /// </summary>
+        internal void ResumeMatchAfterHalfTime()
+        {
+            DecideNext();
+            _vm.ResumeMatch();
+
+            OnHalfTimeEndedEvent?.Invoke(this, new HalfTimeEndedEventArgs(_vm.AllyTeamComposition, _vm.EnemyTeamComposition));
+        }
+
         #endregion
 
         #region Méthodes privées
@@ -202,6 +224,7 @@ namespace Assets.Scripts.Match
         private void OnTick()
         {
             _vm.OnTick();
+
             _setDurationField.SetText(_vm.SetDuration.ToString("0:00"));
 
             if (_vm.MatchTimer <= _vm.MatchDuration)
@@ -222,12 +245,20 @@ namespace Assets.Scripts.Match
 
             print("mi-temps, changement de persos");
 
+            // On lance l'écran de rotation des joueurs actifs.
+            // C'est depuis cet écran-là qu'on reprendra le match.
+
+            SceneLoader.LoadSceneAsync(_halfTimeSwapScene, UnityEngine.SceneManagement.LoadSceneMode.Additive, () =>
+            {
+                MatchHalfTimeSwapView halfTimeManager = FindAnyObjectByType<MatchHalfTimeSwapView>();
+
+                if (halfTimeManager != null)
+                {
+                    halfTimeManager.SetTeams(_vm.AllyTeamComposition, _vm.EnemyTeamComposition);
+                }
+            });
+
             OnHalfTimeReachedEvent?.Invoke(this, EventArgs.Empty);
-
-            // TAF: Implémenter l'écran de changement des membres de l'équipe du joueur
-            // et retirer le ResumeMatch pour les tests
-
-            _vm.ResumeMatch();
         }
 
         /// <summary>
@@ -256,6 +287,8 @@ namespace Assets.Scripts.Match
             {
                 EndSet(_vm.GetSetWinningTeam());
             }
+
+            DecideNext();
         }
 
         /// <summary>
@@ -283,7 +316,13 @@ namespace Assets.Scripts.Match
             }
 
             OnSetEndedEvent?.Invoke(this, setWinningTeamID);
+        }
 
+        /// <summary>
+        /// Décide quoi faire après qu'une manche soit terminée
+        /// </summary>
+        private void DecideNext()
+        {
             if (_vm.MatchTimer < _vm.MatchDuration)
             {
                 // S'il reste du temps, on lance une nouvelle manche

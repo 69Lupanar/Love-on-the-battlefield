@@ -55,7 +55,7 @@ namespace Assets.Scripts.Match
             _matchV.OnNewMatchStartedEvent += OnNewMatchStarted;
             _matchV.OnNewSetStartedEvent += OnNewSetStarted;
             _matchV.OnMatchEndedEvent += OnMatchEnded;
-            _matchV.OnSetEndedEvent += OnSetEnded;
+            _matchV.OnHalfTimeEndedEvent += OnHalfTimeEnded;
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace Assets.Scripts.Match
             _matchV.OnNewMatchStartedEvent -= OnNewMatchStarted;
             _matchV.OnNewSetStartedEvent -= OnNewSetStarted;
             _matchV.OnMatchEndedEvent -= OnMatchEnded;
-            _matchV.OnSetEndedEvent -= OnSetEnded;
+            _matchV.OnHalfTimeEndedEvent += OnHalfTimeEnded;
         }
 
         #endregion
@@ -102,12 +102,12 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
-        /// Appelée quand une manche est terminée
+        /// Appelée quand la mi-temps est terminée
         /// </summary>
         /// <param name="e">Données de l'événement</param>
-        private void OnSetEnded(object sender, TeamID e)
+        private void OnHalfTimeEnded(object _, HalfTimeEndedEventArgs e)
         {
-            _vm.ResetEntitiesPoses();
+            _vm.SetPlayersSkins(e.AllyTeamComposition.MainCharacters, e.EnemyTeamComposition.MainCharacters);
         }
 
         /// <summary>

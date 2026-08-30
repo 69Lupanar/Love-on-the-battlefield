@@ -27,7 +27,7 @@ namespace Assets.Scripts.Scenes
         /// </summary>
         /// <param name="scene">Scène à charger</param>
         /// <param name="onComplete">Callback appelé en fin de chargement</param>
-        public static async void LoadSceneAsync(SceneReference scene, Action onComplete = null)
+        public static async void UnloadSceneAsync(SceneReference scene, Action onComplete = null)
         {
             await SceneManager.UnloadSceneAsync(scene, UnloadSceneOptions.None);
             await Awaitable.NextFrameAsync();   // Pause d'une frame pour laisser les vues appeler leur Awake

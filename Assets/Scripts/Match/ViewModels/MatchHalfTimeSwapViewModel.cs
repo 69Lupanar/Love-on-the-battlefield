@@ -31,7 +31,7 @@ namespace Assets.Scripts.Match
 
         #endregion
 
-        #region Méthodes publiques
+        #region Méthodes internes
 
         /// <summary>
         /// Assigne les compositions d'équipe par défaut
@@ -44,6 +44,17 @@ namespace Assets.Scripts.Match
             _enforceStrictCountLimit = enforceStrictCountLimit;
             AllyTeamComposition = allyTeamComposition;
             EnemyTeamComposition = enemyTeamComposition;
+        }
+
+        /// <summary>
+        /// Fait tourner les membres de l'équipe ennemie.
+        /// Le changement est fait aléatoirement par le jeu
+        /// en s'adaptant à la formation du joueur
+        /// ou en fonction de la progression dans l'histoire (à déterminer)
+        /// </summary>
+        internal void SwapEnemies()
+        {
+            //TAF : Faire la rotation
         }
 
         #endregion
