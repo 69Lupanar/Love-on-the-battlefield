@@ -11,6 +11,11 @@ namespace Assets.Scripts.Match
         #region Propriétéss
 
         /// <summary>
+        /// Paramètres d'un match
+        /// </summary>
+        internal MatchSettingsData MatchSettings { get; private set; }
+
+        /// <summary>
         /// Composition de joueurs de l'équipe alliée
         /// </summary>
         internal TeamCompositionData AllyTeamComposition { get; private set; }
@@ -27,10 +32,12 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Constructeur
         /// </summary>
+        /// <param name="matchSettings">Paramètres d'un match</param>
         /// <param name="allyTeamComposition">Composition de joueurs de l'équipe alliée</param>
         /// <param name="enemyTeamComposition">Composition de joueurs de l'équipe ennemie</param>
-        public HalfTimeEndedEventArgs(TeamCompositionData allyTeamComposition, TeamCompositionData enemyTeamComposition)
+        public HalfTimeEndedEventArgs(MatchSettingsData matchSettings, TeamCompositionData allyTeamComposition, TeamCompositionData enemyTeamComposition)
         {
+            MatchSettings = matchSettings;
             AllyTeamComposition = allyTeamComposition;
             EnemyTeamComposition = enemyTeamComposition;
         }

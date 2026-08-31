@@ -24,7 +24,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Paramètres du match en cours
         /// </summary>
-        internal MatchSettingsData MatchSettingsData { get; set; }
+        internal MatchSettingsData MatchSettings { get; set; }
 
         /// <summary>
         /// Composition de l'équipe alliée, gardée en mémoire pour le changement de joueurs à la mi-temps
@@ -39,17 +39,17 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Nombre d'alliés à instancier
         /// </summary>
-        internal int NbAllies => MatchSettingsData.NbAllies;
+        internal int NbAllies => MatchSettings.NbAllies;
 
         /// <summary>
         /// Nombre d'ennemis à instancier
         /// </summary>
-        internal int NbEnemies => MatchSettingsData.NbAllies;
+        internal int NbEnemies => MatchSettings.NbAllies;
 
         /// <summary>
         /// Nombre de ballons à instancier
         /// </summary>
-        internal int NbBalls => MatchSettingsData.NbAllies;
+        internal int NbBalls => MatchSettings.NbAllies;
 
         /// <summary>
         /// Nb d'alliés encore en jeu
@@ -69,7 +69,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Durée totale du match
         /// </summary>
-        internal int MatchDuration => MatchSettingsData.HalfDuration * 2;
+        internal int MatchDuration => MatchSettings.HalfDuration * 2;
 
         /// <summary>
         /// Temps écoulé depuis le début de la manche
@@ -113,7 +113,7 @@ namespace Assets.Scripts.Match
             AlliesScore = 0;
             EnemiesScore = 0;
             MatchIsOngoing = true;
-            MatchSettingsData = matchSettings;
+            MatchSettings = matchSettings;
             AllyTeamComposition = allyTeamComposition;
             EnemyTeamComposition = enemyTeamComposition;
         }

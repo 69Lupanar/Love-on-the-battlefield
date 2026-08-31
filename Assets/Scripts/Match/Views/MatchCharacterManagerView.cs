@@ -220,6 +220,7 @@ namespace Assets.Scripts.Match
             _matchV.OnNewMatchStartedEvent += OnNewMatchStarted;
             _matchV.OnNewSetStartedEvent += OnNewSetStarted;
             _matchV.OnSetEndedEvent += OnSetEnded;
+            _matchV.OnHalfTimeEndedEvent += OnHalfTimeEnded;
         }
 
         /// <summary>
@@ -230,6 +231,7 @@ namespace Assets.Scripts.Match
             _matchV.OnNewMatchStartedEvent -= OnNewMatchStarted;
             _matchV.OnNewSetStartedEvent -= OnNewSetStarted;
             _matchV.OnSetEndedEvent -= OnSetEnded;
+            _matchV.OnHalfTimeEndedEvent -= OnHalfTimeEnded;
         }
 
         /// <summary>
@@ -451,19 +453,33 @@ namespace Assets.Scripts.Match
         /// <param name="e">Données de l'événement</param>
         private void OnSetEnded(object _, TeamID e)
         {
+            EnablePlayersInput(false);
+
             for (int i = 0; i < Allies.Count; ++i)
             {
-                if (_vm.AllyStates[i].IsHoldingABall)
+                if (AllyStates[i].IsHoldingABall)
                     Allies[i].ReleaseBall();
             }
 
             for (int i = 0; i < Enemies.Count; ++i)
             {
-                if (_vm.EnemyStates[i].IsHoldingABall)
+                if (EnemyStates[i].IsHoldingABall)
                     Enemies[i].ReleaseBall();
             }
+        }
 
-            EnablePlayersInput(false);
+        /// <summary>
+        /// Appelée une fois la mi-temps terminée
+        /// </summary>
+        /// <param name="e">Données de l'événement</param>
+        private void OnHalfTimeEnded(object _, HalfTimeEndedEventArgs e)
+        {
+            // Détache les callbacks des anciennes instances
+            UnsubscribeEntities();
+
+            SetEntities(_spawnerV.AlliesT, _spawnerV.EnemiesT, e.AllyTeamComposition.MainCharacters, e.EnemyTeamComposition.MainCharacters);
+            SetTeams();
+            SubscribeEntities();
         }
 
         /// <summary>

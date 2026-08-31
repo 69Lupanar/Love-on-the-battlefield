@@ -53,6 +53,11 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal bool MatchIsOngoing => _vm.MatchIsOngoing;
 
+        /// <summary>
+        /// true si la manche se déroule en mort subite
+        /// </summary>
+        internal bool SuddenDeath => _vm.SuddenDeath;
+
         #endregion
 
         #region Inspecteur
@@ -149,12 +154,12 @@ namespace Assets.Scripts.Match
                     _timer = 0f;
                     OnTick();
 
-                    if (_vm.MatchTimer == _vm.MatchSettingsData.HalfDuration)
+                    if (_vm.MatchTimer == _vm.MatchSettings.HalfDuration)
                     {
                         // On a atteint la mi-temps, on arrête la manche en cours
                         OnHalfTimeReached();
                     }
-                    else if (_vm.SetDuration == _vm.MatchSettingsData.SetDuration && !_vm.SuddenDeath)
+                    else if (_vm.SetDuration == _vm.MatchSettings.SetDuration && !_vm.SuddenDeath)
                     {
                         // Arrête la manche une fois son temps écoulé
                         // si elle n'est pas en mort subite.
@@ -208,6 +213,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal void ResumeMatchAfterHalfTime()
         {
+            OnHalfTimeEndedEvent?.Invoke(this, new HalfTimeEndedEventArgs(_vm.MatchSettings, _vm.AllyTeamComposition, _vm.EnemyTeamComposition));
             StartNewSet();
             _vm.ResumeMatch();
         }
@@ -229,7 +235,7 @@ namespace Assets.Scripts.Match
                 _matchDurationField.SetText(_vm.MatchTimer.ToString("0:00"));
             else
             {
-                _matchDurationField.SetText($"{_vm.MatchSettingsData.HalfDuration:0:00} (+{_vm.OvertimeDuration:0:00})");
+                _matchDurationField.SetText($"{_vm.MatchSettings.HalfDuration:0:00} (+{_vm.OvertimeDuration:0:00})");
             }
         }
 

@@ -53,7 +53,7 @@ namespace Assets.Scripts.Match
         #region Méthodes internes
 
         /// <summary>
-        /// Crée les données des entités en jeu
+        /// Initialise les états des joueurs et calcule leurs stats de jeu
         /// </summary>
         /// <param name="minBaseMovementData">Données de base du mouvement des persos</param>
         /// <param name="maxBaseMovementData">Données de base du mouvement des persos</param>

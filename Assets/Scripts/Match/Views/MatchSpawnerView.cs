@@ -80,7 +80,8 @@ namespace Assets.Scripts.Match
         private void OnNewMatchStarted(object _, NewMatchStartedEventArgs e)
         {
             CleanupField();
-            _vm.SpawnPlayersAndBalls(e.MatchSettings.NbAllies, e.MatchSettings.NbEnemies, e.MatchSettings.NbBalls);
+            _vm.SpawnPlayers(e.MatchSettings.NbAllies, e.MatchSettings.NbEnemies);
+            _vm.SpawnBalls(e.MatchSettings.NbBalls);
             _vm.SetPlayersSkins(e.AllyTeamComposition.MainCharacters, e.EnemyTeamComposition.MainCharacters);
         }
 
@@ -107,6 +108,11 @@ namespace Assets.Scripts.Match
         /// <param name="e">Données de l'événement</param>
         private void OnHalfTimeEnded(object _, HalfTimeEndedEventArgs e)
         {
+            // On recrée entièrement les persos
+            // car leur nombre peut avoir changé lors de la mi-temps
+
+            _vm.DisableActivePlayers();
+            _vm.SpawnPlayers(e.MatchSettings.NbAllies, e.MatchSettings.NbEnemies);
             _vm.SetPlayersSkins(e.AllyTeamComposition.MainCharacters, e.EnemyTeamComposition.MainCharacters);
         }
 
@@ -117,7 +123,8 @@ namespace Assets.Scripts.Match
         {
             if (_vm.AlliesT != null)
             {
-                _vm.DisableActivePlayersAndBalls();
+                _vm.DisableActivePlayers();
+                _vm.DisableActiveBalls();
             }
         }
 

@@ -63,9 +63,9 @@ namespace Assets.Scripts.Match
         #region Méthodes publiques
 
         /// <summary>
-        /// Désactive les joueurs et ballons actifs
+        /// Désactive les joueurs actifs
         /// </summary>
-        internal void DisableActivePlayersAndBalls()
+        internal void DisableActivePlayers()
         {
             for (int i = 0; i < AlliesT.Count; ++i)
             {
@@ -76,7 +76,13 @@ namespace Assets.Scripts.Match
             {
                 EnemiesT[i].SetParent(_inactiveEnemiesParent);
             }
+        }
 
+        /// <summary>
+        /// Désactive les ballons actifs
+        /// </summary>
+        internal void DisableActiveBalls()
+        {
             for (int i = 0; i < BallsT.Count; ++i)
             {
                 BallsT[i].SetParent(_inactiveBallsParent);
@@ -86,13 +92,11 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Instancie les joueurs et ballons
         /// </summary>
-        internal void SpawnPlayersAndBalls(int nbAllies, int nbEnemies, int nbBalls)
+        internal void SpawnPlayers(int nbAllies, int nbEnemies)
         {
             AlliesT.Clear();
             EnemiesT.Clear();
-            BallsT.Clear();
             Transform character;
-            Transform ball;
 
             for (int i = 0; i < nbAllies; ++i)
             {
@@ -123,6 +127,15 @@ namespace Assets.Scripts.Match
 
                 EnemiesT.Add(character);
             }
+        }
+
+        /// <summary>
+        /// Instancie les ballons
+        /// </summary>
+        internal void SpawnBalls(int nbBalls)
+        {
+            BallsT.Clear();
+            Transform ball;
 
             for (int i = 0; i < nbBalls; ++i)
             {
