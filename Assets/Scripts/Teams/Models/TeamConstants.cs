@@ -3,7 +3,7 @@ namespace Assets.Scripts.Teams
     /// <summary>
     /// Constantes
     /// </summary>
-    public static class Constants
+    public static class TeamConstants
     {
         /// <summary>
         /// Niveau max atteignable par un personnage

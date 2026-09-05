@@ -2,6 +2,7 @@
 using Assets.Scripts.Scenes;
 using Assets.Scripts.Teams;
 using Assets.Scripts.Utilities.Views;
+using TMPro;
 using UnityEngine;
 
 namespace Assets.Scripts.Match
@@ -17,6 +18,10 @@ namespace Assets.Scripts.Match
         [SerializeField]
         [Tooltip("Préfab des labels glissables/déposables dans l'interface")]
         private GameObject _draggableLabelPrefab;
+
+        [SerializeField]
+        [Tooltip("Label du message d'erreur")]
+        private TextMeshProUGUI _errorMsgLabel;
 
         [SerializeField]
         [Tooltip("Le canvas parent")]
@@ -39,6 +44,10 @@ namespace Assets.Scripts.Match
         private RectTransform _enemySubstituteParent;
 
         [SerializeField]
+        [Tooltip("La liste des parents, regroupés pour la détection du rect du label à glisser")]
+        private RectTransform[] _containersRectTransforms;
+
+        [SerializeField]
         [Tooltip("La scène de rotation des joueurs à la mi-temps")]
         private SceneReference _halfTimeSwapScene;
 
@@ -50,6 +59,11 @@ namespace Assets.Scripts.Match
         /// Le MatchHalfTimeSwapViewModel
         /// </summary>
         private MatchHalfTimeSwapViewModel _vm;
+
+        /// <summary>
+        /// Le MatchManagerViewModel
+        /// </summary>
+        private MatchManagerViewModel _matchManagerVM;
 
         /// <summary>
         /// Transform
@@ -67,6 +81,15 @@ namespace Assets.Scripts.Match
         {
             _t = transform;
             _vm = GetComponent<MatchHalfTimeSwapViewModel>();
+            _matchManagerVM = FindAnyObjectByType<MatchManagerViewModel>();
+        }
+
+        /// <summary>
+        /// init
+        /// </summary>
+        private void Start()
+        {
+            _errorMsgLabel.enabled = false;
         }
 
         #endregion
@@ -78,17 +101,32 @@ namespace Assets.Scripts.Match
         /// </summary>
         public void OnResumeMatchBtnClick()
         {
-            SceneLoader.UnloadSceneAsync(_halfTimeSwapScene, () =>
-            {
-                // Une fois la scène déchargée, on réassigne les joueurs actifs
-                // et on démarre une nouvelle manche
-                MatchManagerView matchManager = FindAnyObjectByType<MatchManagerView>();
+            // Vérifie que les équipes sont valides avant de retourner en jeu
+            int error = _vm.CheckTeamCompositions(_matchManagerVM.NbAllies, _matchManagerVM.NbEnemies);
 
-                if (matchManager != null)
+            if (error == -1)
+            {
+                _errorMsgLabel.enabled = false;
+
+                SceneLoader.UnloadSceneAsync(_halfTimeSwapScene, () =>
                 {
-                    matchManager.ResumeMatchAfterHalfTime();
-                }
-            });
+                    // Une fois la scène déchargée, on réassigne les joueurs actifs
+                    // et on démarre une nouvelle manche
+                    MatchManagerView matchManager = FindAnyObjectByType<MatchManagerView>();
+
+                    if (matchManager != null)
+                    {
+                        matchManager.ResumeMatchAfterHalfTime();
+                    }
+                });
+            }
+            else
+            {
+                string errMsg = MatchConstants.ERROR_MESSAGES[error];
+                Debug.LogError(error);
+                _errorMsgLabel.SetText(errMsg);
+                _errorMsgLabel.enabled = true;
+            }
         }
 
         /// <summary>
@@ -162,6 +200,35 @@ namespace Assets.Scripts.Match
         {
             DraggableLabel label = sender as DraggableLabel;
 
+            for (int i = 0; i < _containersRectTransforms.Length; ++i)
+            {
+                RectTransform rt = _containersRectTransforms[i];
+                if (rt.rect.Contains(Input.mousePosition))
+                {
+                    bool childOverlaps = false;
+                    foreach (RectTransform child in rt)
+                    {
+                        if (child.rect.Contains(Input.mousePosition))
+                        {
+                            // TAF : Echanger les deux labels
+
+                            SwapLabels(rt, label, child.GetComponent<DraggableLabel>());
+
+                            childOverlaps = true;
+                            return;
+                        }
+                    }
+
+                    if (!childOverlaps)
+                    {
+                        // TAF : Ajouter le label en fin de liste
+                        AddLabelToContainer(rt, label);
+                        return;
+                    }
+                }
+            }
+
+            // TAF : Si on ne survole aucun élément, on renvoie le label à sa position d'origine
         }
 
         #endregion
@@ -204,6 +271,61 @@ namespace Assets.Scripts.Match
             }
 
             label.SetText(character.Name);
+        }
+
+        /// <summary>
+        /// Echange 2 labels de place
+        /// </summary>
+        /// <param name="container">Le parent du label cible</param>
+        /// <param name="draggedLabel">Le label déplacé par le joueur</param>
+        /// <param name="targetLabel">Le label à échanger</param>
+        private void SwapLabels(RectTransform container, DraggableLabel draggedLabel, DraggableLabel targetLabel)
+        {
+            int oldListIndex = draggedLabel.LastParent == _allyMainParent ? 0 :
+                               draggedLabel.LastParent == _allySubstituteParent ? 1 :
+                               draggedLabel.LastParent == _enemyMainParent ? 2 :
+                               draggedLabel.LastParent == _enemySubstituteParent ? 3 :
+                               -1;
+
+            int newListIndex = container == _allyMainParent ? 0 :
+                               container == _allySubstituteParent ? 1 :
+                               container == _enemyMainParent ? 2 :
+                               container == _enemySubstituteParent ? 3 :
+                               -1;
+
+            _vm.SwapCharacters(oldListIndex, newListIndex, draggedLabel.LastSiblingIndex, targetLabel.LastSiblingIndex);
+
+            string temp = draggedLabel.Text;
+            draggedLabel.SetText(targetLabel.Text);
+            targetLabel.SetText(temp);
+
+            draggedLabel.transform.SetParent(draggedLabel.LastParent);
+            draggedLabel.transform.SetSiblingIndex(draggedLabel.LastSiblingIndex);
+        }
+
+        /// <summary>
+        /// Ajoute le label au conteneur cible
+        /// </summary>
+        /// <param name="container">Le parent du label cible</param>
+        /// <param name="label">Le label déplacé par le joueur</param>
+        private void AddLabelToContainer(RectTransform container, DraggableLabel label)
+        {
+            int oldListIndex = label.LastParent == _allyMainParent ? 0 :
+                               label.LastParent == _allySubstituteParent ? 1 :
+                               label.LastParent == _enemyMainParent ? 2 :
+                               label.LastParent == _enemySubstituteParent ? 3 :
+                               -1;
+
+            int newListIndex = container == _allyMainParent ? 0 :
+                               container == _allySubstituteParent ? 1 :
+                               container == _enemyMainParent ? 2 :
+                               container == _enemySubstituteParent ? 3 :
+                               -1;
+
+            _vm.AddCharacterToList(oldListIndex, newListIndex, label.LastSiblingIndex);
+
+            label.transform.SetParent(container);
+            label.transform.SetSiblingIndex(container.childCount - 1);
         }
 
         /// <summary>

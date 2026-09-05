@@ -30,6 +30,11 @@ namespace Assets.Scripts.Utilities.Views
         /// </summary>
         public Transform LastParent { get; set; }
 
+        /// <summary>
+        /// Le dernier ID de cet objet avant d'être déplacé
+        /// </summary>
+        public int LastSiblingIndex { get; set; }
+
         #endregion
 
         #region Instance
@@ -49,6 +54,7 @@ namespace Assets.Scripts.Utilities.Views
         private void Start()
         {
             LastParent = transform.parent;
+            LastSiblingIndex = transform.GetSiblingIndex();
         }
 
         #endregion

@@ -29,7 +29,7 @@ namespace Assets.Scripts.Teams
         /// <returns>Le montant d'expérience requis pour atteindre le niveau suivant</returns>
         public static uint GetExpUntilNextLevel(uint level, AnimationCurve expProgressCurve)
         {
-            return (uint)math.round(expProgressCurve.Evaluate((float)(level + 1) / (float)Constants.MAX_LEVEL) * Constants.MAX_EXP);
+            return (uint)math.round(expProgressCurve.Evaluate((float)(level + 1) / (float)TeamConstants.MAX_LEVEL) * TeamConstants.MAX_EXP);
         }
     }
 }

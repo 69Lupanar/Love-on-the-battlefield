@@ -98,11 +98,11 @@ namespace Assets.Scripts.Teams
             Data.Appearance.Mesh = Mesh;
             Data.Appearance.Material = Material;
 
-            Level = math.clamp(Level, 1, Constants.MAX_LEVEL);
-            MaxStrength = math.clamp(MaxStrength, 1, Constants.MAX_STAT_VALUE);
-            MaxAgility = math.clamp(MaxAgility, 1, Constants.MAX_STAT_VALUE);
-            MaxEndurance = math.clamp(MaxEndurance, 1, Constants.MAX_STAT_VALUE);
-            MaxAffection = math.clamp(MaxAffection, 1, Constants.MAX_STAT_VALUE);
+            Level = math.clamp(Level, 1, TeamConstants.MAX_LEVEL);
+            MaxStrength = math.clamp(MaxStrength, 1, TeamConstants.MAX_STAT_VALUE);
+            MaxAgility = math.clamp(MaxAgility, 1, TeamConstants.MAX_STAT_VALUE);
+            MaxEndurance = math.clamp(MaxEndurance, 1, TeamConstants.MAX_STAT_VALUE);
+            MaxAffection = math.clamp(MaxAffection, 1, TeamConstants.MAX_STAT_VALUE);
             Strength = math.clamp(Strength, 1, MaxStrength);
             Agility = math.clamp(Agility, 1, MaxAgility);
             Endurance = math.clamp(Endurance, 1, MaxEndurance);
