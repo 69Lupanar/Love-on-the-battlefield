@@ -63,6 +63,10 @@ namespace Assets.Scripts.Match
         #region Inspecteur
 
         [SerializeField]
+        [Tooltip("Canvas apparaissant en fin de match")]
+        private Canvas _canvasEndMatch;
+
+        [SerializeField]
         [Tooltip("Label affichant la durée de la partie")]
         private TextMeshProUGUI _matchDurationField;
 
@@ -85,6 +89,10 @@ namespace Assets.Scripts.Match
         [SerializeField]
         [Tooltip("La scène de rotation des joueurs à la mi-temps")]
         private SceneReference _halfTimeSwapScene;
+
+        [SerializeField]
+        [Tooltip("La scène de paramétrage d'un match custom")]
+        private SceneReference _matchSettingsScene;
 
         #endregion
 
@@ -130,6 +138,7 @@ namespace Assets.Scripts.Match
         private void Start()
         {
             _playerV.OnCharacterEliminatedEvent += OnCharacterEliminated;
+            _canvasEndMatch.enabled = false;
         }
 
         /// <summary>
@@ -172,6 +181,30 @@ namespace Assets.Scripts.Match
 
         #endregion
 
+        #region Méthodes publiques
+
+        /// <summary>
+        /// Appelée par le bouton RestartMatch
+        /// </summary>
+        public void OnRestartMatchBtnClick()
+        {
+            StartNewMatch(_vm.MatchSettings, _vm.StartAllyTeamComposition, _vm.StartEnemyTeamComposition);
+            StartNewSet();
+        }
+
+        /// <summary>
+        /// Appelée par le bouton Return
+        /// </summary>
+        public void OnReturnBtnClick()
+        {
+            // Retourne au menu de paramètres d'un match.
+            // TAF : Créer un bouton pour revenir au jeu ppal au lieu du mode custom match.
+
+            SceneLoader.LoadSceneAsync(_matchSettingsScene);
+        }
+
+        #endregion
+
         #region Méthodes internes
 
         /// <summary>
@@ -186,6 +219,7 @@ namespace Assets.Scripts.Match
 
             _matchDurationField.SetText("0:00");
             _currentSetField.SetText("0");
+            _canvasEndMatch.enabled = false;
 
             OnNewMatchStartedEvent?.Invoke(this, new NewMatchStartedEventArgs(matchSettings, allyTeam, enemyTeam));
         }
@@ -213,7 +247,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal void ResumeMatchAfterHalfTime()
         {
-            OnHalfTimeEndedEvent?.Invoke(this, new HalfTimeEndedEventArgs(_vm.MatchSettings, _vm.AllyTeamComposition, _vm.EnemyTeamComposition));
+            OnHalfTimeEndedEvent?.Invoke(this, new HalfTimeEndedEventArgs(_vm.MatchSettings, _vm.CurAllyTeamComposition, _vm.CurEnemyTeamComposition));
             StartNewSet();
             _vm.ResumeMatch();
         }
@@ -258,7 +292,7 @@ namespace Assets.Scripts.Match
 
                 if (halfTimeManager != null)
                 {
-                    halfTimeManager.SetTeams(_vm.AllyTeamComposition, _vm.EnemyTeamComposition);
+                    halfTimeManager.SetTeams(_vm.CurAllyTeamComposition, _vm.CurEnemyTeamComposition);
                 }
             });
 
@@ -370,6 +404,8 @@ namespace Assets.Scripts.Match
                     print("Match nul");
                     break;
             }
+
+            _canvasEndMatch.enabled = true;
 
             OnMatchEndedEvent?.Invoke(this, EventArgs.Empty);
         }

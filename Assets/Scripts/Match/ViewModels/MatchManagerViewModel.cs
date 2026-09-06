@@ -29,12 +29,22 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Composition de l'équipe alliée, gardée en mémoire pour le changement de joueurs à la mi-temps
         /// </summary>
-        internal TeamCompositionData AllyTeamComposition { get; set; }
+        internal TeamCompositionData StartAllyTeamComposition { get; set; }
 
         /// <summary>
         /// Composition de l'équipe ennemie, gardée en mémoire pour le changement de joueurs à la mi-temps
         /// </summary>
-        internal TeamCompositionData EnemyTeamComposition { get; set; }
+        internal TeamCompositionData StartEnemyTeamComposition { get; set; }
+
+        /// <summary>
+        /// Composition de l'équipe alliée en cours de jeu
+        /// </summary>
+        internal TeamCompositionData CurAllyTeamComposition { get; set; }
+
+        /// <summary>
+        /// Composition de l'équipe ennemie en cours de jeu
+        /// </summary>
+        internal TeamCompositionData CurEnemyTeamComposition { get; set; }
 
         /// <summary>
         /// Nombre d'alliés à instancier
@@ -114,8 +124,10 @@ namespace Assets.Scripts.Match
             EnemiesScore = 0;
             MatchIsOngoing = true;
             MatchSettings = matchSettings;
-            AllyTeamComposition = allyTeamComposition;
-            EnemyTeamComposition = enemyTeamComposition;
+            StartAllyTeamComposition = allyTeamComposition;
+            StartEnemyTeamComposition = enemyTeamComposition;
+            CurAllyTeamComposition = new TeamCompositionData(allyTeamComposition.MainCharacters, allyTeamComposition.Substitutes);
+            CurEnemyTeamComposition = new TeamCompositionData(enemyTeamComposition.MainCharacters, enemyTeamComposition.Substitutes);
         }
 
         /// <summary>
