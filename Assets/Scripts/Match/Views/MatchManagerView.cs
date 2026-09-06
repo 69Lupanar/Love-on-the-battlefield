@@ -3,6 +3,7 @@ using Assets.Scripts.Scenes;
 using Assets.Scripts.Teams;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Scripts.Match
 {
@@ -53,11 +54,6 @@ namespace Assets.Scripts.Match
         /// </summary>
         internal bool MatchIsOngoing => _vm.MatchIsOngoing;
 
-        /// <summary>
-        /// true si la manche se déroule en mort subite
-        /// </summary>
-        internal bool SuddenDeath => _vm.SuddenDeath;
-
         #endregion
 
         #region Inspecteur
@@ -65,6 +61,10 @@ namespace Assets.Scripts.Match
         [SerializeField]
         [Tooltip("Canvas apparaissant en fin de match")]
         private Canvas _canvasEndMatch;
+
+        [SerializeField]
+        [Tooltip("Bouton de redémarrage de la partie")]
+        private Button _restartMatchBtn;
 
         [SerializeField]
         [Tooltip("Label affichant la durée de la partie")]
@@ -93,6 +93,10 @@ namespace Assets.Scripts.Match
         [SerializeField]
         [Tooltip("La scène de paramétrage d'un match custom")]
         private SceneReference _matchSettingsScene;
+
+        [SerializeField]
+        [Tooltip("La scène du jeu ppal")]
+        private SceneReference _storyScene;
 
         #endregion
 
@@ -197,10 +201,10 @@ namespace Assets.Scripts.Match
         /// </summary>
         public void OnReturnBtnClick()
         {
-            // Retourne au menu de paramètres d'un match.
-            // TAF : Créer un bouton pour revenir au jeu ppal au lieu du mode custom match.
+            // Si custom match,
+            // on retourne à l'écran de paramétrage, sinon on poursuit l'histoire
 
-            SceneLoader.LoadSceneAsync(_matchSettingsScene);
+            SceneLoader.LoadSceneAsync(_vm.MatchSettings.CustomMatch ? _matchSettingsScene : _storyScene);
         }
 
         #endregion
@@ -220,6 +224,7 @@ namespace Assets.Scripts.Match
             _matchDurationField.SetText("0:00");
             _currentSetField.SetText("0");
             _canvasEndMatch.enabled = false;
+            _restartMatchBtn.enabled = matchSettings.CustomMatch;
 
             OnNewMatchStartedEvent?.Invoke(this, new NewMatchStartedEventArgs(matchSettings, allyTeam, enemyTeam));
         }

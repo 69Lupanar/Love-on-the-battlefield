@@ -31,6 +31,10 @@ namespace Assets.Scripts.Match
         [Tooltip("Durée d'une manche en secondes")]
         internal int SetDuration;
 
+        [SerializeField]
+        [Tooltip("True si c'est un match paramétré par le joueur")]
+        internal bool CustomMatch;
+
         #endregion
     }
 }

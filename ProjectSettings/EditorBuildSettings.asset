@@ -14,6 +14,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/HalfTimeSwapUIScene.unity
     guid: f193aae910347e241bffe1d248f8920b
+  - enabled: 1
+    path: Assets/Scenes/StoryScene.unity
+    guid: 3754b9c7b99e2044d91b179bdb45937b
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 961e386628d9699428fcf6a2f755903d, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

@@ -256,6 +256,7 @@ MonoBehaviour:
     NbBalls: 5
     HalfDuration: 5
     SetDuration: 3
+    CustomMatch: 1
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0

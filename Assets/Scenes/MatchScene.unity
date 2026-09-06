@@ -1947,6 +1947,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assets.Scripts.Match::MatchManagerView
   _canvasEndMatch: {fileID: 993312382}
+  _restartMatchBtn: {fileID: 2035460694}
   _matchDurationField: {fileID: 6900574997443332453}
   _setDurationField: {fileID: 4862754191603489981}
   _currentSetField: {fileID: 8038552504006798873}
@@ -1958,6 +1959,9 @@ MonoBehaviour:
   _matchSettingsScene:
     sceneAsset: {fileID: 102900000, guid: 0b5b7c56fd883b443bbdc122747d3f06, type: 3}
     scenePath: Assets/Scenes/MatchSettingsScene.unity
+  _storyScene:
+    sceneAsset: {fileID: 102900000, guid: 3754b9c7b99e2044d91b179bdb45937b, type: 3}
+    scenePath: Assets/Scenes/StoryScene.unity
 --- !u!114 &1831745582
 MonoBehaviour:
   m_ObjectHideFlags: 0
