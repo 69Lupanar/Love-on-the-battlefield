@@ -1126,8 +1126,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 833655867}
-        m_TargetAssemblyTypeName: Assets.Scripts.Utilities.Views.ToggleActiveState,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: Assets.Scripts.Utilities.Views.ToggleActiveState, Assembly-CSharp
         m_MethodName: Toggle
         m_Mode: 2
         m_Arguments:
@@ -1565,7 +1564,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1

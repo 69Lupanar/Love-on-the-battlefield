@@ -1,9 +1,8 @@
-﻿using System;
-using Assets.Scripts.Scenes;
+﻿using Assets.Scripts.Scenes;
 using Assets.Scripts.Teams;
-using Assets.Scripts.Utilities.Views;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Scripts.Match
 {
@@ -16,8 +15,8 @@ namespace Assets.Scripts.Match
         #region Inspecteur
 
         [SerializeField]
-        [Tooltip("Préfab des labels glissables/déposables dans l'interface")]
-        private GameObject _draggableLabelPrefab;
+        [Tooltip("Préfab des boutons des persos dans l'interface")]
+        private GameObject _swapCharacterBtnPrefab;
 
         [SerializeField]
         [Tooltip("Label du message d'erreur")]
@@ -70,6 +69,16 @@ namespace Assets.Scripts.Match
         /// </summary>
         private Transform _t;
 
+        /// <summary>
+        /// Les IDs des boutons sélectionnés
+        /// </summary>
+        private int _firstIndex = -1, _secondIndex = -1;
+
+        /// <summary>
+        /// Le RectTransform où placer le bouton
+        /// </summary>
+        private RectTransform _sourceRT;
+
         #endregion
 
         #region Méthodes Unity
@@ -107,6 +116,8 @@ namespace Assets.Scripts.Match
             if (error == -1)
             {
                 _errorMsgLabel.enabled = false;
+
+                SwapEnemies();
 
                 SceneLoader.UnloadSceneAsync(_halfTimeSwapScene, () =>
                 {
@@ -158,22 +169,22 @@ namespace Assets.Scripts.Match
 
             for (int i = 0; i < allyTeamComposition.MainCharacters.Count; ++i)
             {
-                CreateDraggableLabel(allyTeamComposition.MainCharacters[i], _allyMainParent);
+                CreateSwapCharacterBtn(allyTeamComposition.MainCharacters[i], _allyMainParent);
             }
 
             for (int i = 0; i < allyTeamComposition.Substitutes.Count; ++i)
             {
-                CreateDraggableLabel(allyTeamComposition.Substitutes[i], _allySubstituteParent);
+                CreateSwapCharacterBtn(allyTeamComposition.Substitutes[i], _allySubstituteParent);
             }
 
             for (int i = 0; i < enemyTeamComposition.MainCharacters.Count; ++i)
             {
-                CreateDraggableLabel(enemyTeamComposition.MainCharacters[i], _enemyMainParent);
+                CreateSwapCharacterBtn(enemyTeamComposition.MainCharacters[i], _enemyMainParent);
             }
 
             for (int i = 0; i < enemyTeamComposition.Substitutes.Count; ++i)
             {
-                CreateDraggableLabel(enemyTeamComposition.Substitutes[i], _enemySubstituteParent);
+                CreateSwapCharacterBtn(enemyTeamComposition.Substitutes[i], _enemySubstituteParent);
             }
         }
 
@@ -184,51 +195,33 @@ namespace Assets.Scripts.Match
         #region Callbacks
 
         /// <summary>
-        /// Appelée quand on commence é glisser un label
+        /// Appelée quand on clique sur les boutons des persos
         /// </summary>
-        /// <param name="sender">L'objet</param>
-        private void OnDragStarted(object sender, EventArgs _)
+        /// <param name="sender">Le bouton sur lequel on clique</param>
+        private void OnSwapCharacterBtnClick(Button sender)
         {
-            (sender as DraggableLabel).transform.SetParent(_draggedItemsRootParent);
-        }
-
-        /// <summary>
-        /// Appelée quand on dépose un label
-        /// </summary>
-        /// <param name="sender">L'objet</param>
-        private void OnDropped(object sender, EventArgs _)
-        {
-            DraggableLabel label = sender as DraggableLabel;
-
-            for (int i = 0; i < _containersRectTransforms.Length; ++i)
+            if (_firstIndex == -1)
             {
-                RectTransform rt = _containersRectTransforms[i];
-                if (rt.rect.Contains(Input.mousePosition))
-                {
-                    bool childOverlaps = false;
-                    foreach (RectTransform child in rt)
-                    {
-                        if (child.rect.Contains(Input.mousePosition))
-                        {
-                            // TAF : Echanger les deux labels
-
-                            SwapLabels(rt, label, child.GetComponent<DraggableLabel>());
-
-                            childOverlaps = true;
-                            return;
-                        }
-                    }
-
-                    if (!childOverlaps)
-                    {
-                        // TAF : Ajouter le label en fin de liste
-                        AddLabelToContainer(rt, label);
-                        return;
-                    }
-                }
+                // Sélectionne le 1er perso
+                _firstIndex = sender.transform.GetSiblingIndex();
+                _sourceRT = sender.transform.parent as RectTransform;
+                sender.OnSelect(null);
             }
+            else
+            {
+                // Sélectionne le 2è perso et lance l'échange
+                _secondIndex = sender.transform.GetSiblingIndex();
+                RectTransform targetRT = sender.transform.parent as RectTransform;
 
-            // TAF : Si on ne survole aucun élément, on renvoie le label à sa position d'origine
+                if (_sourceRT != targetRT || _firstIndex != _secondIndex)
+                {
+                    SwapCharacters(_sourceRT, targetRT, _firstIndex, _secondIndex);
+                }
+
+                _sourceRT.GetChild(_firstIndex).GetComponent<Button>().OnDeselect(null);
+                _firstIndex = -1;
+                _secondIndex = -1;
+            }
         }
 
         #endregion
@@ -252,80 +245,56 @@ namespace Assets.Scripts.Match
         /// </summary>
         /// <param name="character">Le perso</param>
         /// <param name="container">Conteneur parent</param>
-        private void CreateDraggableLabel(CharacterData character, RectTransform container)
+        private void CreateSwapCharacterBtn(CharacterData character, RectTransform container)
         {
-            DraggableLabel label;
+            Button btn;
 
             if (_t.childCount > 0)
             {
                 Transform child = _t.GetChild(0);
                 child.gameObject.SetActive(true);
                 child.SetParent(container);
-                label = child.GetComponent<DraggableLabel>();
+                btn = child.GetComponent<Button>();
             }
             else
             {
-                label = Instantiate(_draggableLabelPrefab, container).GetComponent<DraggableLabel>();
-                label.OnDragStartedEvent += OnDragStarted;
-                label.OnDroppedEvent += OnDropped;
+                btn = Instantiate(_swapCharacterBtnPrefab, container).GetComponent<Button>();
+                btn.onClick.AddListener(() => OnSwapCharacterBtnClick(btn));
             }
 
-            label.SetText(character.Name);
+            btn.GetComponentInChildren<TextMeshProUGUI>().SetText(character.Name);
         }
 
         /// <summary>
-        /// Echange 2 labels de place
+        /// Echange les boutons de place
         /// </summary>
-        /// <param name="container">Le parent du label cible</param>
-        /// <param name="draggedLabel">Le label déplacé par le joueur</param>
-        /// <param name="targetLabel">Le label à échanger</param>
-        private void SwapLabels(RectTransform container, DraggableLabel draggedLabel, DraggableLabel targetLabel)
+        /// <param name="sourceRT">Le parent du label source</param>
+        /// <param name="targetRT">Le parent du label cible</param>
+        /// <param name="firstIndex">Le label déplacé par le joueur</param>
+        /// <param name="secondIndex">Le label à échanger</param>
+        private void SwapCharacters(RectTransform sourceRT, RectTransform targetRT, int firstIndex, int secondIndex)
         {
-            int oldListIndex = draggedLabel.LastParent == _allyMainParent ? 0 :
-                               draggedLabel.LastParent == _allySubstituteParent ? 1 :
-                               draggedLabel.LastParent == _enemyMainParent ? 2 :
-                               draggedLabel.LastParent == _enemySubstituteParent ? 3 :
+            int oldListIndex = sourceRT == _allyMainParent ? 0 :
+                               sourceRT == _allySubstituteParent ? 1 :
+                               sourceRT == _enemyMainParent ? 2 :
+                               sourceRT == _enemySubstituteParent ? 3 :
                                -1;
 
-            int newListIndex = container == _allyMainParent ? 0 :
-                               container == _allySubstituteParent ? 1 :
-                               container == _enemyMainParent ? 2 :
-                               container == _enemySubstituteParent ? 3 :
+            int newListIndex = targetRT == _allyMainParent ? 0 :
+                               targetRT == _allySubstituteParent ? 1 :
+                               targetRT == _enemyMainParent ? 2 :
+                               targetRT == _enemySubstituteParent ? 3 :
                                -1;
 
-            _vm.SwapCharacters(oldListIndex, newListIndex, draggedLabel.LastSiblingIndex, targetLabel.LastSiblingIndex);
+            _vm.SwapCharacters(oldListIndex, newListIndex, firstIndex, secondIndex);
 
-            string temp = draggedLabel.Text;
-            draggedLabel.SetText(targetLabel.Text);
-            targetLabel.SetText(temp);
+            Transform firstBtn = sourceRT.GetChild(firstIndex);
+            Transform secondBtn = targetRT.GetChild(secondIndex);
 
-            draggedLabel.transform.SetParent(draggedLabel.LastParent);
-            draggedLabel.transform.SetSiblingIndex(draggedLabel.LastSiblingIndex);
-        }
-
-        /// <summary>
-        /// Ajoute le label au conteneur cible
-        /// </summary>
-        /// <param name="container">Le parent du label cible</param>
-        /// <param name="label">Le label déplacé par le joueur</param>
-        private void AddLabelToContainer(RectTransform container, DraggableLabel label)
-        {
-            int oldListIndex = label.LastParent == _allyMainParent ? 0 :
-                               label.LastParent == _allySubstituteParent ? 1 :
-                               label.LastParent == _enemyMainParent ? 2 :
-                               label.LastParent == _enemySubstituteParent ? 3 :
-                               -1;
-
-            int newListIndex = container == _allyMainParent ? 0 :
-                               container == _allySubstituteParent ? 1 :
-                               container == _enemyMainParent ? 2 :
-                               container == _enemySubstituteParent ? 3 :
-                               -1;
-
-            _vm.AddCharacterToList(oldListIndex, newListIndex, label.LastSiblingIndex);
-
-            label.transform.SetParent(container);
-            label.transform.SetSiblingIndex(container.childCount - 1);
+            firstBtn.SetParent(targetRT);
+            firstBtn.SetSiblingIndex(secondIndex);
+            secondBtn.SetParent(sourceRT);
+            secondBtn.SetSiblingIndex(firstIndex);
         }
 
         /// <summary>
@@ -336,9 +305,19 @@ namespace Assets.Scripts.Match
         /// </summary>
         private void SwapEnemies()
         {
-            //TAF : Faire la rotation et afficher les changements dans l'UI
+            // On récupère uniquement les indices des persos à tourner.
+            // Pour l'instant, la sélection est purement aléatoire,
+            // mais on pourra à l'avenir choisir les persos
+            // en fonction de la formation du joueur
+            // ou de la progression dans l'histoire
+            // pour choisir des joueurs spécifiques.
 
-            _vm.SwapEnemies();
+            _vm.SelectEnemiesToSwap(out int[] mainIndices, out int[] substituteIndices);
+
+            for (int i = 0; i < mainIndices.Length; ++i)
+            {
+                SwapCharacters(_enemyMainParent, _enemySubstituteParent, mainIndices[i], substituteIndices[i]);
+            }
         }
 
         #endregion

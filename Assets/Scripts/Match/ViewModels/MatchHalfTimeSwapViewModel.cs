@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Assets.Scripts.Teams;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Assets.Scripts.Match
@@ -112,9 +113,44 @@ namespace Assets.Scripts.Match
         /// en s'adaptant à la formation du joueur
         /// ou en fonction de la progression dans l'histoire (à déterminer)
         /// </summary>
-        internal void SwapEnemies()
+        /// <param name="mainIndices">Les IDs des persos actifs à tourner</param>
+        /// <param name="substituteIndices">Les IDs des persos remplaçants à tourner</param>
+        internal void SelectEnemiesToSwap(out int[] mainIndices, out int[] substituteIndices)
         {
-            //TAF : Faire la rotation
+            // On récupère uniquement les indices des persos à tourner.
+            // Pour l'instant, la sélection est purement aléatoire,
+            // mais on pourra à l'avenir choisir les persos
+            // en fonction de la formation du joueur
+            // ou de la progression dans l'histoire
+            // pour choisir des joueurs spécifiques.
+
+            int nb = math.min(EnemyTeamComposition.MainCharacters.Count, EnemyTeamComposition.Substitutes.Count);
+            nb = UnityEngine.Random.Range(0, nb + 1);
+            List<int> mains = new(nb);
+            List<int> substitutes = new(nb);
+
+            for (int i = 0; i < nb; ++i)
+            {
+                int mainIndex;
+                int substituteIndex;
+
+                do
+                {
+                    mainIndex = UnityEngine.Random.Range(0, EnemyTeamComposition.MainCharacters.Count);
+                }
+                while (mains.Contains(mainIndex));
+                mains.Add(mainIndex);
+
+                do
+                {
+                    substituteIndex = UnityEngine.Random.Range(0, EnemyTeamComposition.Substitutes.Count);
+                }
+                while (substitutes.Contains(substituteIndex));
+                substitutes.Add(substituteIndex);
+            }
+
+            mainIndices = mains.ToArray();
+            substituteIndices = substitutes.ToArray();
         }
 
         /// <summary>
