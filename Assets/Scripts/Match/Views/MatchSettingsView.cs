@@ -153,7 +153,7 @@ namespace Assets.Scripts.Match
 
                 if (matchManager != null)
                 {
-                    matchManager.StartNewMatch(_matchSettings, _allyTeam.CompositionData, _enemyTeam.CompositionData);
+                    matchManager.StartNewMatch(_matchSettings, _allyTeam, _enemyTeam);
                     matchManager.StartNewSet();
                 }
             });

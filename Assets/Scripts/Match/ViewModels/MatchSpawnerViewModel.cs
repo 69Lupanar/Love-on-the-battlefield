@@ -183,6 +183,22 @@ namespace Assets.Scripts.Match
         }
 
         /// <summary>
+        /// Change les Materials des ballons pour refléter leur équipe
+        /// </summary>
+        /// <param name="allyBallMaterial">Material des ballons alliés</param>
+        /// <param name="enemyBallMaterial">Material des ballons ennemis</param>
+        /// <param name="defaultBallMaterial">Material par défaut des ballons</param>
+        internal void SetBallsSkins(Material allyBallMaterial, Material enemyBallMaterial, Material defaultBallMaterial)
+        {
+            for (int i = 0; i < BallsT.Count; ++i)
+            {
+                MeshRenderer mr = BallsT[i].GetChild(0).GetComponent<MeshRenderer>();
+                TeamID teamID = GetBallTeamID(i, BallsT.Count);
+                mr.material = teamID == TeamID.Ally ? allyBallMaterial : teamID == TeamID.Enemy ? enemyBallMaterial : defaultBallMaterial;
+            }
+        }
+
+        /// <summary>
         /// Ramène les joueurs et ballons à leurs positions et rotations d'origine
         /// </summary>
         internal void ResetEntitiesPoses()
@@ -219,6 +235,32 @@ namespace Assets.Scripts.Match
             float startPosX = -Mathf.Floor(max / 2f) * _spawnSpacing + (max % 2 == 0 ? _spawnSpacing / 2f : 0f) + _spawnSpacing * i;
             origin.x += startPosX;
             return origin;
+        }
+
+        /// <summary>
+        /// Calcule l'ID d'équipe de la balle
+        /// </summary>
+        /// <param name="index">L'ordre d'instantiation de la balle sur le terrain. Permet de déterminer l'équipe à laquelle elle est réservée.</param>
+        /// <param name="nbBalls">Nombre total de balles sur le terrain</param>
+        private TeamID GetBallTeamID(int index, int nbBalls)
+        {
+            // Selon les règles du dodgeball avec balles en tissu, il y a par défaut 5 balles ;
+            // Les 2 balles les plus à gauche sont réservées à l'ennemi,
+            // les 2 à droite sont aux alliés, celles au centre sont neutres.
+            // Comme on peut changer le nombre de balles avant chaque match,
+            // on essaye de calculer automatiquement le nb de balles à réserver à chaque équipe.
+
+            if (nbBalls == 1)
+                return TeamID.None;
+
+            int nbReserved = Mathf.CeilToInt(nbBalls / 3f);
+
+            if (index < nbReserved)
+                return TeamID.Enemy;
+            else if (index >= nbBalls - nbReserved)
+                return TeamID.Ally;
+            else
+                return TeamID.None;
         }
 
         #endregion

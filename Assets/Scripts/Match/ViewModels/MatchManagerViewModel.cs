@@ -29,12 +29,12 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Composition de l'équipe alliée, gardée en mémoire pour le changement de joueurs à la mi-temps
         /// </summary>
-        internal TeamCompositionData StartAllyTeamComposition { get; set; }
+        internal TeamRosterSO AllyTeam { get; set; }
 
         /// <summary>
         /// Composition de l'équipe ennemie, gardée en mémoire pour le changement de joueurs à la mi-temps
         /// </summary>
-        internal TeamCompositionData StartEnemyTeamComposition { get; set; }
+        internal TeamRosterSO EnemyTeam { get; set; }
 
         /// <summary>
         /// Composition de l'équipe alliée en cours de jeu
@@ -116,7 +116,7 @@ namespace Assets.Scripts.Match
         /// <param name="matchSettings">Paramètres d'un match</param>
         /// <param name="allyTeamComposition">Composition de joueurs de l'équipe alliée</param>
         /// <param name="enemyTeamComposition">Composition de joueurs de l'équipe ennemie</param>
-        internal void StartNewMatch(MatchSettingsData matchSettings, TeamCompositionData allyTeamComposition, TeamCompositionData enemyTeamComposition)
+        internal void StartNewMatch(MatchSettingsData matchSettings, TeamRosterSO allyTeamComposition, TeamRosterSO enemyTeamComposition)
         {
             MatchTimer = 0;
             CurrentSet = 0;
@@ -124,10 +124,10 @@ namespace Assets.Scripts.Match
             EnemiesScore = 0;
             MatchIsOngoing = true;
             MatchSettings = matchSettings;
-            StartAllyTeamComposition = allyTeamComposition;
-            StartEnemyTeamComposition = enemyTeamComposition;
-            CurAllyTeamComposition = new TeamCompositionData(allyTeamComposition.MainCharacters, allyTeamComposition.Substitutes);
-            CurEnemyTeamComposition = new TeamCompositionData(enemyTeamComposition.MainCharacters, enemyTeamComposition.Substitutes);
+            AllyTeam = allyTeamComposition;
+            EnemyTeam = enemyTeamComposition;
+            CurAllyTeamComposition = new TeamCompositionData(allyTeamComposition.CompositionData.MainCharacters, allyTeamComposition.CompositionData.Substitutes);
+            CurEnemyTeamComposition = new TeamCompositionData(enemyTeamComposition.CompositionData.MainCharacters, enemyTeamComposition.CompositionData.Substitutes);
         }
 
         /// <summary>

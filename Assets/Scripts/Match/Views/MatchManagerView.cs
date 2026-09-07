@@ -28,7 +28,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Appelée quand une nouvelle manche commence
         /// </summary>
-        internal EventHandler OnNewSetStartedEvent;
+        internal EventHandler<NewSetStartedEventArgs> OnNewSetStartedEvent;
 
         /// <summary>
         /// Appelée quand on atteint la mi-temps
@@ -192,7 +192,7 @@ namespace Assets.Scripts.Match
         /// </summary>
         public void OnRestartMatchBtnClick()
         {
-            StartNewMatch(_vm.MatchSettings, _vm.StartAllyTeamComposition, _vm.StartEnemyTeamComposition);
+            StartNewMatch(_vm.MatchSettings, _vm.AllyTeam, _vm.EnemyTeam);
             StartNewSet();
         }
 
@@ -215,9 +215,9 @@ namespace Assets.Scripts.Match
         /// Démarre un nouveau match
         /// </summary>
         /// <param name="matchSettings">Paramètres d'un match</param>
-        /// <param name="allyTeam">Composition de joueurs de l'équipe alliée</param>
-        /// <param name="enemyTeam">Composition de joueurs de l'équipe ennemie</param>
-        internal void StartNewMatch(MatchSettingsData matchSettings, TeamCompositionData allyTeam, TeamCompositionData enemyTeam)
+        /// <param name="allyTeam">Equipe alliée</param>
+        /// <param name="enemyTeam">Equipe ennemie</param>
+        internal void StartNewMatch(MatchSettingsData matchSettings, TeamRosterSO allyTeam, TeamRosterSO enemyTeam)
         {
             _vm.StartNewMatch(matchSettings, allyTeam, enemyTeam);
 
@@ -242,7 +242,7 @@ namespace Assets.Scripts.Match
             _alliesScoreField.SetText("0");
             _enemiesScoreField.SetText("0");
 
-            OnNewSetStartedEvent?.Invoke(this, EventArgs.Empty);
+            OnNewSetStartedEvent?.Invoke(this, new NewSetStartedEventArgs(suddenDeath, _vm.AllyTeam.TeamData, _vm.EnemyTeam.TeamData));
 
             // TAF: Démarrer le décompte avant de rendre le contrôle aux persos
         }

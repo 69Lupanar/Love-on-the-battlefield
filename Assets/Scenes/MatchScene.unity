@@ -167,6 +167,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce98315f66d9b4b4e853b4d83a3f750c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assets.Scripts.Match::Assets.Scripts.Match.MatchManagerView
+  _defaultBallMaterial: {fileID: 2100000, guid: 0257637c52783864b934fbe0b46ca8f6, type: 2}
+  _defaultBallMaterialSuddenDeath: {fileID: 2100000, guid: 818a68efee00df847b152abaa9a3fb2e, type: 2}
 --- !u!114 &14516229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2306,8 +2308,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assets.Scripts.Match::MatchBallManagerView
   _obstacleTags:
   - Obstacles/Field
-  - Obstacles/Wall
   - Obstacles/OutOfField
+  - Obstacles/Decoration
   _outOfFieldTag: Obstacles/OutOfField
   _characterTag: Match/Character
 --- !u!114 &2055119901

@@ -428,7 +428,7 @@ namespace Assets.Scripts.Match
             // Détache les callbacks des anciennes instances
             UnsubscribeEntities();
 
-            SetEntities(_spawnerV.AlliesT, _spawnerV.EnemiesT, e.AllyTeamComposition.MainCharacters, e.EnemyTeamComposition.MainCharacters);
+            SetEntities(_spawnerV.AlliesT, _spawnerV.EnemiesT, e.AllyTeam.CompositionData.MainCharacters, e.EnemyTeam.CompositionData.MainCharacters);
             SetTeams();
             SubscribeEntities();
         }
@@ -436,7 +436,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Appelée quand une nouvelle manche commence
         /// </summary>
-        private void OnNewSetStarted(object _, EventArgs e)
+        private void OnNewSetStarted(object _, NewSetStartedEventArgs e)
         {
             ResetManager();
             SetActivePlayer(ActivePlayerIndex);
@@ -646,7 +646,6 @@ namespace Assets.Scripts.Match
         /// Execute les actions en fonction des commandes actives du perso
         /// </summary>
         /// <param name="characterView">Le perso</param>
-        /// <param name="characterState">L'état du perso</param>
         /// <param name="movementData">Les données de mouvement du joueur</param>
         private void ComputeCommonInputFixed(MatchCharacterControllerView characterView, MatchCharacterMovementData movementData)
         {

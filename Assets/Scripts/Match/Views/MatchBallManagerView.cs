@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
@@ -197,7 +196,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Appelée quand une nouvelle manche commence
         /// </summary>
-        private void OnNewSetStarted(object _, EventArgs e)
+        private void OnNewSetStarted(object _, NewSetStartedEventArgs e)
         {
             ResetManager();
         }

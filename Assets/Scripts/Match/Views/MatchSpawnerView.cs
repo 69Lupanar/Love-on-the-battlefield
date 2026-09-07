@@ -29,6 +29,18 @@ namespace Assets.Scripts.Match
 
         #endregion
 
+        #region Inspecteur
+
+        [SerializeField]
+        [Tooltip("Material par défaut des ballons")]
+        private Material _defaultBallMaterial;
+
+        [SerializeField]
+        [Tooltip("Material par défaut des ballons en mort subite")]
+        private Material _defaultBallMaterialSuddenDeath;
+
+        #endregion
+
         #region Instance
 
         /// <summary>
@@ -66,7 +78,7 @@ namespace Assets.Scripts.Match
             _matchV.OnNewMatchStartedEvent -= OnNewMatchStarted;
             _matchV.OnNewSetStartedEvent -= OnNewSetStarted;
             _matchV.OnMatchEndedEvent -= OnMatchEnded;
-            _matchV.OnHalfTimeEndedEvent += OnHalfTimeEnded;
+            _matchV.OnHalfTimeEndedEvent -= OnHalfTimeEnded;
         }
 
         #endregion
@@ -76,21 +88,28 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Appelée quand une nouvelle partie commence
         /// </summary>
-        /// <param name="matchSettings">Paramètres d'un match</param>
+        /// <param name="e">Données de l'événement</param>
         private void OnNewMatchStarted(object _, NewMatchStartedEventArgs e)
         {
             CleanupField();
             _vm.SpawnPlayers(e.MatchSettings.NbAllies, e.MatchSettings.NbEnemies);
             _vm.SpawnBalls(e.MatchSettings.NbBalls);
-            _vm.SetPlayersSkins(e.AllyTeamComposition.MainCharacters, e.EnemyTeamComposition.MainCharacters);
+            _vm.SetPlayersSkins(e.AllyTeam.CompositionData.MainCharacters, e.EnemyTeam.CompositionData.MainCharacters);
+            _vm.SetBallsSkins(e.AllyTeam.TeamData.BallMaterial, e.EnemyTeam.TeamData.BallMaterial, _defaultBallMaterial);
         }
 
         /// <summary>
         /// Appelée quand une nouvelle manche commence
         /// </summary>
-        private void OnNewSetStarted(object _, EventArgs e)
+        /// <param name="e">Données de l'événement</param>
+        private void OnNewSetStarted(object _, NewSetStartedEventArgs e)
         {
             _vm.ResetEntitiesPoses();
+
+            if (e.SuddenDeath)
+            {
+                _vm.SetBallsSkins(e.AllyTeamData.BallMaterialSuddenDeath, e.EnemyTeamData.BallMaterialSuddenDeath, _defaultBallMaterialSuddenDeath);
+            }
         }
 
         /// <summary>
@@ -119,7 +138,7 @@ namespace Assets.Scripts.Match
         /// <summary>
         /// Nettoie le terrain si on a déjà lancé un match
         /// </summary>
-        internal void CleanupField()
+        private void CleanupField()
         {
             if (_vm.AlliesT != null)
             {

@@ -16,6 +16,9 @@ MonoBehaviour:
     Name: Test Enemy Team
     LogoSprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
     Color: {r: 0.78867924, g: 0.1711284, b: 0.1711284, a: 1}
-  Name: Test Enemy Team
+    BallMaterial: {fileID: 2100000, guid: a9000e2b686f6e340901ff0551158c45, type: 2}
+    BallMaterialSuddenDeath: {fileID: 2100000, guid: e8c02cca2548c7b4390d304e3da4471f, type: 2}
   LogoSprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   Color: {r: 0.78867924, g: 0.1711284, b: 0.1711284, a: 1}
+  BallMaterial: {fileID: 2100000, guid: a9000e2b686f6e340901ff0551158c45, type: 2}
+  BallMaterialSuddenDeath: {fileID: 2100000, guid: e8c02cca2548c7b4390d304e3da4471f, type: 2}

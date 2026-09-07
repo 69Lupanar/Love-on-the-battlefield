@@ -27,6 +27,13 @@ public class TeamSO : ScriptableObject
     [Tooltip("Couleur de l'équipe")]
     private Color Color;
 
+    [SerializeField]
+    [Tooltip("Material du ballon de l'équipe")]
+    private Material BallMaterial;
+
+    [SerializeField]
+    [Tooltip("Material du ballon de l'équipe en mort subite")]
+    private Material BallMaterialSuddenDeath;
     #endregion
 
     #region Méthodes Unity
@@ -41,6 +48,8 @@ public class TeamSO : ScriptableObject
         Data.Name = name;
         Data.LogoSprite = LogoSprite;
         Data.Color = Color;
+        Data.BallMaterial = BallMaterial;
+        Data.BallMaterialSuddenDeath = BallMaterialSuddenDeath;
     }
 
 #endif

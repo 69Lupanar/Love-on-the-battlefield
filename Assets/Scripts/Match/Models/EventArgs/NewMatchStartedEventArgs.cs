@@ -16,14 +16,14 @@ namespace Assets.Scripts.Match
         internal MatchSettingsData MatchSettings { get; private set; }
 
         /// <summary>
-        /// Composition de joueurs de l'équipe alliée
+        /// Equipe alliée
         /// </summary>
-        internal TeamCompositionData AllyTeamComposition { get; private set; }
+        internal TeamRosterSO AllyTeam { get; private set; }
 
         /// <summary>
-        /// Composition de joueurs de l'équipe ennemie
+        /// Equipe ennemie
         /// </summary>
-        internal TeamCompositionData EnemyTeamComposition { get; private set; }
+        internal TeamRosterSO EnemyTeam { get; private set; }
 
         #endregion
 
@@ -33,13 +33,13 @@ namespace Assets.Scripts.Match
         /// Constructeur
         /// </summary>
         /// <param name="matchSettings">Paramètres d'un match</param>
-        /// <param name="allyTeamComposition">Composition de joueurs de l'équipe alliée</param>
-        /// <param name="enemyTeamComposition">Composition de joueurs de l'équipe ennemie</param>
-        public NewMatchStartedEventArgs(MatchSettingsData matchSettings, TeamCompositionData allyTeamComposition, TeamCompositionData enemyTeamComposition)
+        /// <param name="allyTeam">Equipe alliée</param>
+        /// <param name="enemyTeam">Equipe ennemie</param>
+        public NewMatchStartedEventArgs(MatchSettingsData matchSettings, TeamRosterSO allyTeam, TeamRosterSO enemyTeam)
         {
             MatchSettings = matchSettings;
-            AllyTeamComposition = allyTeamComposition;
-            EnemyTeamComposition = enemyTeamComposition;
+            AllyTeam = allyTeam;
+            EnemyTeam = enemyTeam;
         }
 
         #endregion

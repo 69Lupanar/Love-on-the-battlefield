@@ -23,5 +23,15 @@ namespace Assets.Scripts.Teams
         /// Couleur de l'équipe
         /// </summary>
         public Color Color;
+
+        /// <summary>
+        /// Material du ballon de l'équipe
+        /// </summary>
+        public Material BallMaterial;
+
+        /// <summary>
+        /// Material du ballon de l'équipe en mort subite
+        /// </summary>
+        public Material BallMaterialSuddenDeath;
     }
 }
