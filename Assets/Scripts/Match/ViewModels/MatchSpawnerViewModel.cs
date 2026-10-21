@@ -256,9 +256,9 @@ namespace Assets.Scripts.Match
             int nbReserved = Mathf.CeilToInt(nbBalls / 3f);
 
             if (index < nbReserved)
-                return TeamID.Enemy;
-            else if (index >= nbBalls - nbReserved)
                 return TeamID.Ally;
+            else if (index >= nbBalls - nbReserved)
+                return TeamID.Enemy;
             else
                 return TeamID.None;
         }
