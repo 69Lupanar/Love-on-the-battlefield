@@ -1,5 +1,6 @@
 Pour la prochaine fois:
 
+- Echanger l'ordre des factions des ballons (gauche pour les alliés)
 - Nettoyer le code du spawner pour bien séparer les GameObjects du code C# normal
 - Orienter le joueurs vers sa cible s'il a un ballon
 - Saut, esquive, coup spécial
